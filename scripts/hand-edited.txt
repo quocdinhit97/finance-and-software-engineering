@@ -6,3 +6,6 @@ products/ch04-customer-journey.md
 products/ch05-revenue-portfolio.md
 system/ch08-account-management.md
 system/ch09-billing-cycle.md
+system/ch06-financial-system-architecture.md
+system/ch07-origination.md
+system/ch10-collections.md

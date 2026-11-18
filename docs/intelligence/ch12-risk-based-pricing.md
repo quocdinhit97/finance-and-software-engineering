@@ -1010,7 +1010,7 @@ Yêu cầu:
 (b) Design the pricing strategy: what rate to charge each segment?
 (c) If offering "0% lãi," calculate required merchant subsidy
 (d) APR calculation (including any fees): does it comply with rate cap?
-(e) Tariff configuration: what TariffItems would you create?
+(e) Tariff configuration: what FeeComponents would you create?
 
 **Bài 2 - Competitive Response Analysis:**
 
