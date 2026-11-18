@@ -1,46 +1,49 @@
 ---
-title: "Chương 8. Quản lý tài khoản và Billing Engine"
-sidebar_label: "8. Quản lý tài khoản và Billing Engine"
+title: "Chương 8. Quản lý tài khoản và billing engine"
+sidebar_label: "8. Quản lý tài khoản và billing engine"
 sidebar_position: 2
 chapter: 8
 subtitle: "Account Management & Billing Engine"
-reading_time: 38
+reading_time: 40
+description: "Mô hình miền của LAS, luồng xử lý giao dịch từ authorization đến confirmation, bill-in-past, billing pipeline, vòng đời kỳ trả nợ (prescribing và pairing), kiến trúc EOM batch và đối soát số dư."
 source_file: "phan-2-chuong-8.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Billing không phải là việc tính toán. Billing là việc thực hiện đúng một lời hứa - với từng đồng tiền, với từng khách hàng, lúc 3 giờ sáng khi không ai thức."*
+> *"Billing không phải là việc tính toán. Billing là việc giữ đúng một lời hứa, với từng đồng tiền, với từng khách hàng, lúc 3 giờ sáng khi không ai còn thức."*
 
-## Dẫn nhập: Một đêm của một triệu khoản vay
-
-::::story
-Đêm cuối tháng 3. Lúc 23h00, hệ thống bắt đầu tiến trình End-of-Month *(EOM)*. Trong 8 giờ tiếp theo, LAS module phải:
-
-- Tính lãi cho 1,247,832 tài khoản đang hoạt động
-- Tạo 2,891,440 instalment records mới
-- Cập nhật 1,247,832 running balance records
-- Publish 1,247,832 events đến STS để generate statements
-- Xử lý 34,221 tài khoản quá hạn theo protocol đặc biệt
-- Hoàn thành trước 7h00 sáng - khi chi nhánh mở cửa
-
-Không được phép sai một đồng nào. Không được miss một tài khoản nào. Không được để bất kỳ tài khoản nào trong trạng thái inconsistent.
-
-Và tất cả điều này phải xảy ra trong khi hệ thống vẫn tiếp tục xử lý các giao dịch real-time của khách hàng trả nợ lúc 2h sáng.
-::::
-
-Chương này đi vào LAS module - trái tim của VLP. Từ domain model chi tiết (Account, Transaction, Instalment, CurrentBalance) đến transaction processing pipeline, từ billing cycle architecture đến instalment prescribing và pairing, từ EOM batch processing đến failure recovery. Đây là chương kỹ thuật nhất trong sách - và cũng là chương quan trọng nhất để hiểu cách consumer finance thực sự vận hành ở tầng engine.
-
-## 8.1 Domain Model của LAS
-
-### Tại sao Domain Model quan trọng trước Code
+## Dẫn nhập: một đêm của một triệu khoản vay
 
 ::::story
-Kỹ sư Tuấn mới join team LAS. Ngày đầu tiên, Tech Lead đưa cho anh một tờ giấy - không phải requirement document, không phải architecture diagram. Đó là domain model:
+Đêm cuối tháng 3. Lúc 23 giờ, hệ thống bắt đầu tiến trình cuối kỳ *(end of month, EOM)*. Trong tám giờ tiếp theo, module LAS phải:
 
-"Học cái này trước. Nếu bạn hiểu domain model, bạn sẽ hiểu tại sao mọi thứ trong codebase được viết như vậy. Nếu bạn không hiểu domain model, bạn sẽ fix bugs mà không hiểu mình đang làm gì."
+- tính lãi cho 1,247,832 tài khoản đang hoạt động;
+- tạo 2,891,440 kỳ trả nợ *(instalment)* mới;
+- cập nhật 1,247,832 bản ghi số dư hiện thời *(CurrentBalance)*;
+- phát 1,247,832 sự kiện sang STS để tạo sao kê;
+- xử lý 34,221 tài khoản quá hạn theo quy trình riêng;
+- và hoàn tất trước 7 giờ sáng, khi chi nhánh mở cửa.
+
+Không được sai một đồng. Không được sót một tài khoản. Không tài khoản nào được ở trạng thái nửa vời.
+
+Và tất cả diễn ra trong khi hệ thống vẫn phải nhận các khoản trả nợ của khách hàng lúc 2 giờ sáng.
 ::::
 
-### Account: Gốc rễ của mọi thứ
+Chương này đi vào LAS, trái tim của VLP. Mục 8.1 trình bày mô hình miền: tài khoản, giao dịch, bút toán, kỳ trả nợ và số dư. Mục 8.2 đi theo một giao dịch từ lúc được giữ chỗ đến lúc được xác nhận, kể cả trường hợp khó nhất là giao dịch đến muộn. Mục 8.3 mô tả billing pipeline. Mục 8.4 là vòng đời của kỳ trả nợ: tạo kỳ trả nợ *(prescribing)* và ghép thanh toán vào kỳ trả nợ *(pairing)*. Mục 8.5 là kiến trúc EOM batch, và mục 8.6 là cách giữ cho số dư luôn đúng. Đây là chương kỹ thuật nhất của sách, và cũng là chương quan trọng nhất để hiểu tài chính tiêu dùng vận hành thế nào ở tầng engine.
+
+## 8.1 Mô hình miền của LAS
+
+### Vì sao học mô hình miền trước khi đọc code
+
+::::story
+Kỹ sư Tuấn vừa chuyển sang đội LAS. Ngày đầu tiên, trưởng nhóm kỹ thuật đưa anh một tờ giấy. Không phải tài liệu yêu cầu, cũng không phải sơ đồ kiến trúc, mà là mô hình miền.
+
+"Học cái này trước. Hiểu mô hình miền thì sẽ hiểu vì sao mọi thứ trong code được viết như vậy. Không hiểu nó thì em sẽ sửa lỗi mà không biết mình đang làm gì."
+::::
+
+### Account: gốc của mọi thứ
+
+Mỗi khoản vay trong VLP sống trong một tài khoản `LAS_ACCOUNT`. Tài khoản mang mã nghiệp vụ, liên kết tới hợp đồng ở CTM và tới khách hàng ở CIS, cùng trạng thái và ngày chạy EOM của nó.
 
 ```text
 LAS_ACCOUNT
@@ -62,7 +65,9 @@ LAS_ACCOUNT
 └─────────────────────────────────────────────────────────┘
 ```
 
-**AccountStatus State Machine (7 states):**
+Trường `billingPeriod` cho biết EOM của tài khoản chạy vào ngày nào trong tháng (`BP_1`, `BP_5`, `BP_20`...). Nhờ đó không phải mọi tài khoản đều dồn vào một đêm cuối tháng: công ty có thể chia danh mục thành nhiều nhóm chạy vào các ngày khác nhau.
+
+Trạng thái tài khoản là một máy trạng thái:
 
 ```mermaid
 stateDiagram-v2
@@ -70,7 +75,7 @@ stateDiagram-v2
     CREATED --> ACTIVE : supplement signed
     CREATED --> CANCELLED : supplement rejected
     ACTIVE --> PENDING_CLOSE : payoff initiated
-    ACTIVE --> WRITTEN_OFF : DPD >= threshold
+    ACTIVE --> WRITTEN_OFF : write-off signal (DRG)
     PENDING_CLOSE --> PAID_OFF : all debt cleared
     PENDING_CLOSE --> CLOSED : closure approved
     PAID_OFF --> WRITTEN_OFF : write-off (overrides)
@@ -84,7 +89,10 @@ stateDiagram-v2
         (FRAUD, LEGAL_HOLD, etc.)
     end note
 ```
-**Tất cả 7 trạng thái:**
+
+*Hình 8.1. Máy trạng thái của tài khoản trong LAS.*
+
+Ý nghĩa của từng trạng thái:
 
 ```text
 CREATED (CR):
@@ -124,7 +132,11 @@ SUSPENDED: KHÔNG phải AccountStatus
   → Blocking reasons: FLEXI_TERMINATION, FLEXI_CONVERSION, FRAUD, LEGAL_HOLD
 ```
 
-### CurrentBalance: Real-Time Financial State
+Có hai điểm đáng chú ý. Thứ nhất, `WRITTEN_OFF` không có nghĩa là ngừng nhận tiền: khoản nợ đã được đưa ra khỏi bảng cân đối, nhưng mọi khoản khách hàng trả sau đó vẫn được ghi nhận như thu hồi nợ đã xóa. Thứ hai, "tạm ngưng" không phải là một trạng thái. Nó được biểu diễn bằng cờ `blocked` cùng các lý do chặn `BlockingReason`, vì một tài khoản có thể bị chặn vì nhiều lý do cùng lúc (nghi gian lận, phong tỏa theo lệnh tòa, đang chuyển đổi sản phẩm) mà vẫn giữ nguyên trạng thái vòng đời của nó.
+
+### CurrentBalance: trạng thái tài chính hiện thời
+
+Mỗi tài khoản có đúng một bản ghi `LAS_CURRENT_BALANCE`, chứa mọi con số mà hệ thống cần biết ngay lập tức: tiền đang giữ chỗ, dư nợ, số dư khả dụng, số tiền quá hạn, khoản trả tối thiểu kỳ tới.
 
 ```text
 LAS_CURRENT_BALANCE (One per Account)
@@ -146,7 +158,7 @@ LAS_CURRENT_BALANCE (One per Account)
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Tại sao CurrentBalance là materialized view - không phải tính real-time:**
+Vì sao lưu sẵn các con số này, thay vì tính lại từ lịch sử bút toán mỗi lần cần?
 
 ```text
 Option A: Tính real-time từ event store
@@ -169,24 +181,28 @@ Option B: CurrentBalance materialized view
   → Cần reconciliation job định kỳ
 ```
 
-**Available balance formula:**
+`CurrentBalance` là một **materialized view**: một bản tổng hợp được cập nhật dần sau mỗi sự kiện. Đổi lại tốc độ, hệ thống phải chấp nhận một rủi ro: nếu logic cập nhật có lỗi, bản tổng hợp sẽ lệch khỏi lịch sử bút toán. Mục 8.6 trình bày cách phát hiện và xử lý độ lệch đó.
+
+Số dư khả dụng được tính theo công thức sau. Ví dụ dưới đây giả định khoản vay của chị Lan nằm trên một tài khoản hạn mức linh hoạt `FLEXI_LIMIT` với hạn mức đúng bằng số tiền vay, sau ba kỳ trả nợ:
 
 ```text
 availableBalance = CREDIT_LIMIT - holdBalance - holdIPBalance - outstandingDebt + customerCredit
 
-Ví dụ (chị Lan, sau 3 tháng):
+Ví dụ (chị Lan, sau 3 kỳ trả nợ):
   CREDIT_LIMIT = 18,500,000 VNĐ
-  holdBalance = 0 (không có pending auths)
+  holdBalance = 0 (không có giao dịch đang giữ chỗ)
   holdIPBalance = 0
-  outstandingDebt = 13,500,000 VNĐ (đã trả 3 × 1,668,400 = 5,005,200, gốc còn lại)
+  outstandingDebt = 14,180,104 VNĐ (gốc còn lại sau 3 kỳ trả 1,696,080 VNĐ)
   customerCredit = 0
 
-  availableBalance = 18,500,000 - 0 - 0 - 13,500,000 + 0 = 5,000,000 VNĐ
-  → Chị Lan có thể chi tiêu thêm 5 triệu
-  (Đây là revolving feature — phần gốc đã trả → trở thành available lại)
+  availableBalance = 18,500,000 - 0 - 0 - 14,180,104 + 0 = 4,319,896 VNĐ
+  → Chị Lan có thể chi tiêu thêm khoảng 4.3 triệu
+  (Đây là tính năng quay vòng: phần gốc đã trả trở thành hạn mức khả dụng)
 ```
 
-**FLEXI_LIMIT_ACCOUNT - Revolving Draw Mechanics:**
+Dư nợ 14,180,104 VNĐ là gốc còn lại theo lịch trả nợ ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending); tiền lãi đã trả không làm tăng hạn mức khả dụng.
+
+Với tài khoản `FLEXI_LIMIT`, mỗi lần rút tiền hoặc mua hàng tạo một chuỗi bản ghi riêng, và kế hoạch trả góp là tùy chọn:
 
 ```text
 Mỗi lần draw (mua hàng, rút tiền):
@@ -208,12 +224,11 @@ Sau flexi-to-fixed conversion (EOM autoFlexiToFixed step):
   → Dần dần trả hết theo fixed instalment schedule
 ```
 
-### Transaction vs LedgerEntry: Hai khái niệm khác nhau
+### Transaction và LedgerEntry: hai khái niệm khác nhau
 
-Đây là điểm dễ nhầm lẫn nhất trong LAS domain.
+Đây là điểm dễ nhầm nhất trong mô hình miền của LAS.
 
-**Transaction (LAS_TRANSACTION):**
-> Ghi lại một sự kiện từ thế giới bên ngoài - một lần mua hàng, một lần thanh toán, một lần rút tiền.
+Một **Transaction** (`LAS_TRANSACTION`) ghi lại một sự kiện từ thế giới bên ngoài: một lần mua hàng, một lần thanh toán, một lần rút tiền.
 
 ```text
 Transaction ví dụ:
@@ -225,8 +240,7 @@ Transaction ví dụ:
   Status: CONFIRMED
 ```
 
-**LedgerEntry (LAS_LEDGER_ENTRY):**
-> Hậu quả tài chính của một transaction hoặc event billing. Một transaction có thể tạo ra nhiều AccountItems.
+Một **LedgerEntry** (`LAS_LEDGER_ENTRY`) ghi lại hệ quả tài chính của một giao dịch hoặc một sự kiện billing. Một giao dịch có thể sinh ra nhiều bút toán, vào những thời điểm khác nhau:
 
 ```text
 Từ transaction RTL 2,500,000 VNĐ ở trên:
@@ -240,8 +254,9 @@ Từ transaction RTL 2,500,000 VNĐ ở trên:
   LedgerEntry #4: Late fee 200,000 VNĐ
 ```
 
-**PostingUnit:**
-> Tracking chi tiết allocation của một LedgerEntry across tariff types.
+Tiền lãi 37,500 VNĐ là 2,500,000 × 1.5%, tức lãi một tháng với lãi suất 18%/năm. Bút toán lãi không sinh ra cùng lúc với giao dịch mà ở bước EOM, còn phí trả trễ chỉ sinh ra nếu có trễ hạn.
+
+Bên dưới mỗi bút toán là một hoặc nhiều **PostingUnit**, đơn vị theo dõi chi tiết: thuộc loại phí nào, đã được đưa vào kỳ trả nợ bao nhiêu, đã được thanh toán bao nhiêu.
 
 ```text
 LedgerEntry #1 (Principal 2,500,000 VNĐ) có PostingUnit:
@@ -254,9 +269,11 @@ LedgerEntry #1 (Principal 2,500,000 VNĐ) có PostingUnit:
   UpdatingAvailableAmount: true (giảm available balance)
 ```
 
-### Instalment và InstalmentSummary: Two-Level Hierarchy
+Hai cờ `ApplyIr` và `UpdatingAvailableAmount` được sao từ cấu hình `AccountFeeComponentType` đã trình bày ở [Chương 3, mục 3.3](/docs/products/ch03-product-design#33-thiết-kế-dựa-trên-biểu-phí-vì-sao-không-viết-cứng-trong-code). Đây là chỗ cấu hình biểu phí trở thành hành vi trên từng đồng tiền.
 
-**Tại sao cần hai level:**
+### Instalment và InstalmentSummary: hai tầng
+
+Một tài khoản có thể có nhiều khoản nợ cùng đến hạn một ngày. Vì vậy LAS dùng hai tầng: `Instalment` cho từng khoản, và `InstalmentSummary` gom các khoản cùng ngày đến hạn, cùng loại.
 
 ```text
 Một account có nhiều khoản vay (items) với cùng due date:
@@ -282,7 +299,9 @@ Tại sao gom lại:
   4. Pairing logic có thể apply payment cho nhóm theo priority
 ```
 
-**Gotcha nổi tiếng (VLP-670) - PersistentBag stale:**
+Khách hàng chỉ thấy một con số: "Tháng này trả 1,690,000 VNĐ". Nhưng hệ thống vẫn biết chính xác 1,690,000 đó gồm những gì, để ghép thanh toán đúng thứ tự và báo cáo đúng loại doanh thu.
+
+Hai tầng cũng mang theo một cái bẫy kỹ thuật nổi tiếng trong đội LAS, sự cố VLP-670: tổng của header bị tính sai khi thêm kỳ trả nợ mới vào một header đã có trong cơ sở dữ liệu.
 
 ```java
 // BUG: dùng refreshInstalmentSummary() khi prescribing
@@ -312,9 +331,11 @@ if (existingHeader.isPersisted()) {
 // → KHÔNG dùng trong prescribing (khi adding new children)
 ```
 
-### ContractService: Service trên Account
+Bài học: tính lại tổng từ tập con chỉ an toàn khi mọi phần tử con đã được lưu. Khi đang thêm phần tử con mới, phải cộng dồn tăng thêm *(incremental update)*.
 
-**ContractService là gì:**
+### ContractService: dịch vụ trên tài khoản
+
+Một tài khoản chỉ được nhận giao dịch khi các dịch vụ cần thiết đang hoạt động trên nó.
 
 ```text
 ContractService (bảng `CONTRACT_SERVICE` trong CTM schema, LAS đọc qua JPA cross-schema) đại diện cho một service
@@ -330,7 +351,7 @@ Ví dụ services:
   LIFEINS: Life Insurance
 ```
 
-**Tại sao transaction confirmation cần check ContractService:**
+`ACCMAINT` là dịch vụ lõi; phí quản lý tài khoản của nó được tính theo tariff item `SVCFEE` như đã nói ở [Chương 3](/docs/products/ch03-product-design). Vì vậy mỗi lần xác nhận giao dịch, LAS phải kiểm tra dịch vụ:
 
 ```text
 Business rule: Một giao dịch chỉ hợp lệ nếu:
@@ -366,7 +387,9 @@ Sentinel date values:
   tránh nhầm lẫn khi viết queries!
 ```
 
-**Gotcha VLP-706 - Wrong effectiveDate:**
+Ba giá trị "ngày ở rất xa" trong khối trên là nguồn gây lỗi truy vấn kinh điển: `validTo` rỗng được đổi thành 3000-01-01, `endDate` mặc định là 3000-01-01, còn `firstPrescribeDate` của phân bổ kế hoạch trả góp lại dùng 3333-01-01 để đánh dấu "chưa tạo kỳ trả nợ". Ai viết truy vấn cũng phải biết bảng mình đang đọc dùng quy ước nào.
+
+Sự cố VLP-706 cho thấy chọn sai ngày hiệu lực khi kiểm tra dịch vụ dẫn đến hậu quả gì:
 
 ```java
 // BUG: dùng billingDate khi chargeTransactionInPast=true
@@ -392,7 +415,7 @@ if (tx.isChargeTransactionInPast()) {
 }
 ```
 
-**Lý do kinh tế của fix này:**
+Lý do nghiệp vụ của cách sửa:
 
 ```text
 Check "current permission to charge" vs "historical permission":
@@ -408,32 +431,24 @@ Scenario:
   Semantic: "Bây giờ có quyền charge không?" thay vì "Ngày đó có quyền không?"
 ```
 
-:::summary[Domain Model]
-Account: state machine, root entity
-CurrentBalance: materialized view, update
-incremental, reconcile periodically
-Transaction: external event; LedgerEntry:
-financial consequence - 1 tx → nhiều items
-InstalmentSummary: aggregate; Instalment: child
-→ PersistentBag gotcha khi prescribing
-ContractService: check BOTH status AND operation
-active → VLP-706 fix: currentDate khi past-tx
+Câu hỏi đúng không phải là "ngày đó có được tính phí không?", mà là "bây giờ có được tính phí không?". Người bán đã giao hàng; giao dịch là hợp lệ, chỉ đến muộn.
+
+:::summary[Mục 8.1]
+`Account` là thực thể gốc, có máy trạng thái riêng; "tạm ngưng" là cờ chặn chứ không phải trạng thái. `CurrentBalance` là materialized view được cập nhật dần, nhanh nhưng phải đối soát định kỳ. `Transaction` là sự kiện bên ngoài; `LedgerEntry` là hệ quả tài chính, một giao dịch có thể sinh nhiều bút toán. `InstalmentSummary` gom các `Instalment` cùng ngày đến hạn và phải được cập nhật tăng dần khi thêm phần tử mới. Kiểm tra dịch vụ của giao dịch đến muộn phải dùng ngày hiện tại, không phải ngày giao dịch.
 :::
 
-## 8.2 Transaction Processing Pipeline
+## 8.2 Luồng xử lý giao dịch
 
-### Authorization vs Confirmation: Tại sao hai bước
+### Authorization và confirmation: vì sao cần hai bước
 
 ::::story
-Chị Lan dùng thẻ tín dụng tại siêu thị. Cô quẹt thẻ, máy POS báo "Approved" trong 3 giây. Nhưng tiền chưa thực sự bị trừ - nó sẽ được trừ sau 1-3 ngày khi merchant settle.
+Chị Lan dùng thẻ tại siêu thị. Chị quẹt thẻ, máy POS báo "Approved" trong 3 giây. Nhưng tiền chưa thực sự bị trừ; nó chỉ được ghi nợ một đến ba ngày sau, khi người bán quyết toán.
 
-Đây là Authorization vs Confirmation.
+Đó là hai bước authorization và confirmation.
 ::::
 
-**Authorization (Pre-authorization):**
-
-:::key
-**Authorization** là việc "giữ chỗ" một khoản tiền - đảm bảo khách hàng có đủ available balance tại thời điểm giao dịch, nhưng chưa thực sự debit.
+:::key[Authorization]
+**Authorization** là bước "giữ chỗ" một khoản tiền: bảo đảm khách hàng có đủ số dư khả dụng tại thời điểm giao dịch, nhưng chưa ghi nợ thật.
 :::
 
 ```text
@@ -447,15 +462,13 @@ Chị Lan quẹt thẻ 2,500,000 VNĐ:
   (chưa có LedgerEntry, chưa có instalment)
 
 CurrentBalance sau auth:
-  availableBalance: 5,000,000 - 2,500,000 = 2,500,000 VNĐ
+  availableBalance: 4,319,896 - 2,500,000 = 1,819,896 VNĐ
   holdBalance: 2,500,000
-  outstandingDebt: 13,500,000 (chưa thay đổi)
+  outstandingDebt: 14,180,104 (chưa thay đổi)
 ```
 
-**Confirmation:**
-
-:::key
-**Confirmation** là việc "settle" authorization - chuyển từ hold thành actual debt.
+:::key[Confirmation]
+**Confirmation** là bước quyết toán authorization: chuyển khoản giữ chỗ thành nợ thật.
 :::
 
 ```text
@@ -472,11 +485,11 @@ CurrentBalance sau auth:
 
 CurrentBalance sau confirmation:
   holdBalance: 0
-  outstandingDebt: 13,500,000 + 2,500,000 = 16,000,000
-  availableBalance: 2,500,000 (không đổi)
+  outstandingDebt: 14,180,104 + 2,500,000 = 16,680,104
+  availableBalance: 1,819,896 (không đổi)
 ```
 
-**Tại sao cần hai bước - không settle ngay:**
+Số dư khả dụng không đổi khi xác nhận, vì nó đã giảm từ lúc authorization; khoản giữ chỗ chỉ đổi thành dư nợ. Vì sao không quyết toán ngay từ đầu?
 
 ```text
 Lý do 1: Merchant settlement cycle
@@ -496,15 +509,15 @@ Lý do 4: Float management (liquidity)
   → Card network net settle hàng ngày
 ```
 
-### Bill-in-Past: Nghiệp vụ phức tạp nhất
+### Bill-in-past: nghiệp vụ phức tạp nhất
 
 ::::story
-Ngày 15/3, một merchant POS gửi một transaction đáng lẽ phải được settle từ ngày 28/2 - nhưng bị delay do lỗi hệ thống của merchant. Transaction có `transactionDate = 28/2` nhưng được gửi đến LAS vào ngày 15/3.
+Ngày 15/3, một máy POS gửi giao dịch lẽ ra phải được quyết toán từ ngày 28/2, nhưng bị chậm do lỗi hệ thống của người bán. Giao dịch có `transactionDate = 28/2` nhưng đến LAS ngày 15/3.
 
-LAS phải xử lý transaction này với ngày 28/2 - trong khi đó EOM của tháng 2 đã chạy xong từ ngày 1/3.
+LAS phải ghi nhận giao dịch này vào ngày 28/2, trong khi EOM của tháng 2 đã chạy xong từ ngày 1/3.
 ::::
 
-**Vấn đề:**
+Có hai cách làm đơn giản, và cả hai đều sai:
 
 ```text
 Nếu bill với ngày hiện tại (15/3):
@@ -518,7 +531,7 @@ Nếu bill với ngày quá khứ (28/2) naively:
 Đây là bill-in-past — cần cascade reprocessing.
 ```
 
-**Bill-in-past flow:**
+Cách đúng là chèn sự kiện vào đúng chỗ của nó trên dòng thời gian, rồi xử lý lại mọi sự kiện phía sau:
 
 ```java
 public void billTransactionInPast(LocalDate pastDate, Transaction transaction) {
@@ -544,7 +557,7 @@ public void billTransactionInPast(LocalDate pastDate, Transaction transaction) {
 }
 ```
 
-**Tại sao reprocessing phức tạp:**
+Vì sao việc xử lý lại phức tạp:
 
 ```text
 Timeline:
@@ -566,15 +579,17 @@ Reprocessing đảm bảo:
   → Idempotency: nếu reprocess thêm lần nữa → same result
 ```
 
-### idempotency và sourceTxCode
+Xử lý lại phải nhất quán (mọi phép tính phản ánh đúng thứ tự sự kiện), có dấu vết kiểm toán (mỗi lần xử lý lại được ghi lý do), và idempotent (xử lý lại lần nữa cho cùng kết quả). Bài tập 2 cuối chương đi qua một tình huống bill-in-past nhiều giao dịch.
+
+### Idempotency và sourceTxCode
 
 ::::story
-POS terminal gửi confirmation request. Network timeout - terminal không biết LAS đã xử lý chưa. Terminal retry. LAS nhận request thứ hai với cùng nội dung.
+Máy POS gửi yêu cầu xác nhận. Mạng bị timeout, máy không biết LAS đã xử lý hay chưa, nên gửi lại. LAS nhận yêu cầu thứ hai với nội dung y hệt.
 
-Không có idempotency: hai AccountItems được tạo → balance sai → fraud/error.
+Nếu không có idempotency, hai bút toán được tạo, số dư sai, khách hàng bị trừ tiền hai lần.
 ::::
 
-**sourceTxCode - The Idempotency Key:**
+Khóa idempotency của giao dịch xác nhận là `sourceTxCode`, mã giao dịch do hệ thống nguồn cấp:
 
 ```java
 // illustrative pseudo-code — details differ from actual
@@ -592,7 +607,7 @@ public ExecuteTransactionResult confirmTransaction(ConfirmationRequestTo transac
 // → nếu đã tồn tại: return existing result, không process lại
 ```
 
-**Tại sao cần pessimistic locking ở đây:**
+Idempotency chống được yêu cầu trùng lặp, nhưng chưa chống được hai yêu cầu *khác nhau* cùng sửa một tài khoản một lúc. Việc đó cần khóa bi quan:
 
 ```text
 Race condition nếu không có locking:
@@ -610,22 +625,17 @@ Thread 2: Chờ Thread 1 release → proceed safely
 → Serial processing per account, no conflict
 ```
 
-:::summary[Transaction Processing]
-Authorization: hold balance, chưa debit thực tế
-Confirmation: release hold, create actual debt
-Bill-in-past: cascade reprocessing từ pastDate
-→ tất cả events sau must be reprocessed
-sourceTxCode: idempotency key → prevent double
-processing (via getAuthorizationFromConfirm)
+LAS khóa ở cấp tài khoản bằng `AccountLockGuard`: các giao dịch trên cùng một tài khoản được xử lý tuần tự, còn các tài khoản khác nhau vẫn chạy song song. [Chương 6](/docs/system/ch06-financial-system-architecture) phân tích lựa chọn khóa bi quan so với khóa lạc quan.
+
+:::summary[Mục 8.2]
+Authorization giữ chỗ số dư nhưng chưa ghi nợ; confirmation giải phóng khoản giữ chỗ và ghi nợ thật. Giao dịch đến muộn được chèn vào đúng ngày của nó, và mọi sự kiện phía sau phải được xử lý lại. `sourceTxCode` là khóa idempotency chống xử lý trùng; khóa bi quan ở cấp tài khoản chống cập nhật đồng thời.
 :::
 
-## 8.3 Billing Cycle: Từ Trigger đến Statement
+## 8.3 Billing pipeline: từ sự kiện đến sao kê
 
-### Event Types: IMMEDIATE vs EOM
+### Ba loại thời điểm billing
 
-**Khái niệm:**
-
-Không phải mọi transaction đều được billed ngay. LAS phân loại events theo timing:
+Không phải sự kiện nào cũng được tính phí ngay. LAS phân loại sự kiện theo thời điểm billing:
 
 ```text
 IMMEDIATE:
@@ -644,7 +654,7 @@ EOM (End of Month):
   Ví dụ: Phí bảo hiểm hàng tháng → tính cuối tháng
 ```
 
-**Tại sao cần IMMEDIATE_RESPECT_FREEZE:**
+Loại thứ hai, `IMMEDIATE_RESPECT_FREEZE`, tồn tại để giải quyết xung đột giữa giao dịch trong ngày và EOM:
 
 ```text
 Vấn đề: EOM đang chạy, tính lãi tháng 3 cho account X
@@ -663,13 +673,11 @@ Với freeze:
   Payment được process → late billing, but consistent
 ```
 
+Khoản thanh toán được xử lý muộn vài phút nhưng nhất quán. Mục 8.5 quay lại cơ chế đóng băng này ở góc nhìn EOM.
+
 ### ChargingGateway và Spring Integration
 
-**Tại sao Spring Integration:**
-
-Billing pipeline là một chuỗi phức tạp: event → tariff lookup → fee calculation → LedgerEntry creation → balance update → notification. Mỗi bước là independent processing unit.
-
-Spring Integration's MessagingGateway pattern cho phép express pipeline này như một chuỗi Message Channels - mỗi component xử lý một message, chain lại với nhau.
+Billing pipeline là một chuỗi bước: sự kiện, tìm biểu phí, tính phí, tạo bút toán, cập nhật số dư, phát thông báo. LAS biểu diễn chuỗi này bằng mẫu `MessagingGateway` của Spring Integration: mỗi bước là một thành phần xử lý message, nối với nhau qua các message channel.
 
 ```text
 EventRecord
@@ -683,7 +691,7 @@ EventRecord
    ▼ BillingContext (result)
 ```
 
-**Actual ChargingGateway interface:**
+Interface của gateway:
 
 ```java
 // verified: billing-flow.md / ChargingGateway.java
@@ -697,9 +705,9 @@ public interface ChargingGateway {
 }
 ```
 
-Toàn bộ chuỗi billing chỉ đi qua **2 gateway channel**. Các bước resolve tariff, tính phí, tạo item và cập nhật số dư diễn ra bên trong chuỗi xử lý nội bộ, không phải mỗi bước một channel riêng.
+Toàn bộ chuỗi billing chỉ đi qua **hai gateway channel**. Các bước tìm biểu phí, tính phí, tạo bút toán và cập nhật số dư diễn ra bên trong chuỗi xử lý nội bộ, không phải mỗi bước một channel riêng.
 
-**Tại sao pipeline architecture tốt hơn one giant method:**
+Lợi ích của kiến trúc pipeline so với một phương thức khổng lồ là mỗi bước có thể kiểm thử độc lập và có trách nhiệm rõ ràng. Một bước xử lý điển hình trông như sau:
 
 ```text
 // Mỗi processor là independent component:
@@ -714,9 +722,7 @@ public Message<TariffContext> lookupTariff(Message<Long> eventMessage) {
 // → Testable independently, extensible, clear responsibility
 ```
 
-### STS Notification via RabbitMQ
-
-**Flow từ billing đến statement:**
+### Thông báo sang STS qua RabbitMQ
 
 ```text
 1. Transaction confirmed → LAS bills event
@@ -746,31 +752,25 @@ Tại sao publish AFTER commit (TransactionSynchronization):
     → Consistency guaranteed
 ```
 
-:::summary[Billing Cycle]
-IMMEDIATE: bill now; EOM: defer; IMMEDIATE_FREEZE:
-bill now nếu không frozen
-ChargingGateway: Spring Integration pipeline
-→ testable, extensible, clear separation
-STS notification: AFTER commit (not during)
-→ consistency guarantee
-Outbox pattern: publish fails → retry, không mất
+Điểm mấu chốt là thứ tự: chỉ phát sự kiện **sau khi** transaction cơ sở dữ liệu đã commit thành công. Nếu phát trước, STS có thể tạo sao kê cho một giao dịch mà LAS rồi lại rollback. [Chương 6](/docs/system/ch06-financial-system-architecture) trình bày mẫu outbox, cách bảo đảm sự kiện không bị mất khi việc phát thất bại sau commit.
+
+:::summary[Mục 8.3]
+Sự kiện `IMMEDIATE` được tính phí ngay, sự kiện `EOM` chờ đến cuối kỳ, còn `IMMEDIATE_RESPECT_FREEZE` được tính ngay trừ khi tài khoản đang bị đóng băng cho EOM. `ChargingGateway` biểu diễn billing pipeline bằng Spring Integration qua hai gateway channel. Sự kiện sang STS chỉ được phát sau khi commit, và mẫu outbox bảo đảm không mất sự kiện.
 :::
 
-## 8.4 Instalment Lifecycle
+## 8.4 Vòng đời của kỳ trả nợ
 
-### Prescribing: Tạo Instalment
+### Prescribing: tạo kỳ trả nợ
 
 ::::story
-Cuối tháng 3, EOM chạy step "Instalment Generation" cho tài khoản của chị Lan. Anh Minh hỏi Kỹ sư Tuấn: "Instalment được tạo như thế nào? Dựa trên dữ liệu gì?"
+Cuối tháng 3, bước tạo kỳ trả nợ của EOM chạy cho tài khoản của chị Lan. Anh Minh hỏi kỹ sư Tuấn: "Kỳ trả nợ được tạo thế nào? Dựa trên dữ liệu gì?"
 ::::
 
-**Prescribing là gì:**
-
-:::key
-**Prescribing** là quá trình tạo Instalment records từ TechnicalAccountItems - định nghĩa khách hàng nợ bao nhiêu, loại gì, đến hạn khi nào.
+:::key[Prescribing]
+**Prescribing** là quá trình tạo các bản ghi `Instalment` từ các `PostingUnit`: xác định khách hàng nợ bao nhiêu, thuộc loại gì, đến hạn khi nào.
 :::
 
-**Input của prescribing:**
+Đầu vào của bước này:
 
 ```text
 1. Danh sách TechnicalAccountItems chưa được fully prescribed
@@ -782,15 +782,13 @@ Cuối tháng 3, EOM chạy step "Instalment Generation" cho tài khoản của 
 3. Billing cycle info: dueDate cho kỳ này
 ```
 
-**Prescribing algorithm:**
+Thuật toán đi qua các `PostingUnit` theo thứ tự ưu tiên, đưa phần chưa được tạo kỳ trả nợ vào kỳ này cho đến khi hết hạn mức MMI:
 
-```text
+```java
 public List<Instalment> generateInstalments(
         List<PostingUnit> items,
         BigDecimal mmiLimit,
         LocalDate dueDate) {
-```
-
     List<Instalment> result = new ArrayList<>();
     BigDecimal remainingMMI = mmiLimit;
 
@@ -830,8 +828,11 @@ public List<Instalment> generateInstalments(
 
     return result;
 }
+```
 
-**Bốn loại Instalment:**
+Lưu ý dòng cập nhật header: thuật toán cộng dồn vào header (`addInstalmentAmountsToHeader`) thay vì tính lại, đúng như bài học từ sự cố VLP-670 ở mục 8.1.
+
+LAS có bốn loại kỳ trả nợ:
 
 ```text
 REGULAR (R): Tạo trong EOM processing
@@ -865,27 +866,26 @@ Ví dụ:
   → Không chờ EOM cuối tháng 4
 ```
 
-  Chị Lan trả 3,000,000 VNĐ, chỉ cần 2,890,000 VNĐ:
-  → Pair tất cả instalments → thừa 110,000 VNĐ
-  → ADDITIONAL Instalment: 110,000 VNĐ → customerCredit
+Kỳ trả nợ loại `ADDITIONAL` xuất hiện khi khách hàng trả thừa. Ví dụ chị Lan trả 3,000,000 VNĐ trong khi chỉ cần 2,890,000 VNĐ: mọi kỳ trả nợ được ghép đủ, phần thừa 110,000 VNĐ được ghi thành một kỳ `ADDITIONAL` và chuyển vào `customerCredit`, để tự động trừ vào khoản nợ cũ nhất trong lần ghép tiếp theo.
 
-### Pairing: Payments Matched to Instalments
+### Pairing: ghép thanh toán vào kỳ trả nợ
 
 ::::story
-Chị Lan trả 2,000,000 VNĐ vào ngày 20/4. Account có các instalments pending:
+Ngày 20/4, chị Lan trả 2,000,000 VNĐ. Tài khoản đang có bốn kỳ trả nợ chưa thanh toán:
 
-Instalment A: REGULAR, 1,200,000 VNĐ (gốc laptop), due 20/4
-Instalment B: REGULAR, 400,000 VNĐ (gốc quần áo), due 20/4
-Instalment C: EXTRA, 200,000 VNĐ (late fee từ 5/4), due 5/4
-Instalment D: REGULAR, 90,000 VNĐ (bảo hiểm), due 20/4
+| Kỳ trả nợ | Loại | Số tiền | Đến hạn |
+|---|---|---:|---|
+| A | REGULAR, gốc laptop | 1,200,000 | 20/4 |
+| B | REGULAR, gốc quần áo | 400,000 | 20/4 |
+| C | EXTRA, phí trả trễ | 200,000 | 5/4 |
+| D | REGULAR, bảo hiểm | 90,000 | 20/4 |
 
-Total pending: 1,890,000 VNĐ
-Payment: 2,000,000 VNĐ → đủ để trả tất cả + thừa 110,000 VNĐ (own funds)
+Tổng cần trả là 1,890,000 VNĐ. Khoản thanh toán 2,000,000 VNĐ đủ trả hết và còn thừa 110,000 VNĐ.
 ::::
 
-**Pairing algorithm:**
+Thuật toán pairing duyệt song song danh sách khoản thanh toán và danh sách kỳ trả nợ đã được sắp xếp, mỗi lần ghép số tiền nhỏ hơn giữa phần thanh toán còn lại và phần kỳ trả nợ chưa trả:
 
-```text
+```java
 // illustrative pseudo-code — signature differs from actual
 // verified: verify-ch8-ch9-code.md
 // Actual signature (EntryInstalmentLinkService.java):
@@ -903,8 +903,6 @@ public List<EntryInstalmentLink> pairInstalments(
         List<Instalment> instalments,
         Date pairedDate,
         Account account) {
-```
-
     List<EntryInstalmentLink> result = new ArrayList<>();
 
     // Step 1: Tính seized amount (nếu account bị phong tỏa):
@@ -958,6 +956,9 @@ public List<EntryInstalmentLink> pairInstalments(
 
     return result;
 }
+```
+
+Sau mỗi lần ghép, kỳ trả nợ được kiểm tra xem đã trả đủ chưa, và header được tính lại. Ở đây tính lại là an toàn, vì mọi kỳ trả nợ con đều đã nằm trong cơ sở dữ liệu:
 
 ```text
 private void checkAndSetInstalmentRepaid(Instalment inst, LocalDate date) {
@@ -970,10 +971,7 @@ private void checkAndSetInstalmentRepaid(Instalment inst, LocalDate date) {
 }
 ```
 
-**Kết quả pairing cho chị Lan:**
-
-REPAYMENT_ALLOCATION_ORDER = PRIORITY_ONLY:
-  Priority order: EXTRA (late fee) > REGULAR principal > REGULAR insurance
+Với chế độ `PRIORITY_ONLY` và biểu phí đặt phí trả trễ ưu tiên cao nhất, thứ tự là: kỳ EXTRA phí trả trễ, rồi gốc, rồi bảo hiểm.
 
 ```text
 Sorted:
@@ -983,7 +981,7 @@ Sorted:
   #4: Instalment D (REGULAR bảo hiểm 90,000)
 ```
 
-Payment: 2,000,000 VNĐ
+Ghép khoản thanh toán 2,000,000 VNĐ:
 
 ```text
 Pairing:
@@ -997,38 +995,21 @@ Pairing:
   Payment remaining: 110,000 → customerCredit (overpayment)
 ```
 
-InstalmentSummary (20/4): amount=1,890,000, paidAmount=1,890,000 → repaid=true
-Account: all instalments for 20/4 paid → account current
-customerCredit: +110,000 VNĐ (credit balance)
+Kết quả: `InstalmentSummary` của ngày 20/4 có số tiền 1,890,000 VNĐ, đã trả 1,890,000 VNĐ, nên được đánh dấu đã trả. Tài khoản trở lại trạng thái đúng hạn, và `customerCredit` tăng 110,000 VNĐ.
 
-### REPAYMENT_ALLOCATION_ORDER: Mechanism Design Revisited
+### REPAYMENT_ALLOCATION_ORDER: nhìn lại bài toán thiết kế cơ chế
 
-**Năm modes và implications:**
+[Chương 2, mục 2.4](/docs/foundations/ch02-mathematics-of-lending#24-thiết-kế-cơ-chế-khi-toán-học-gặp-kinh-tế-học) đã giới thiệu tham số `REPAYMENT_ALLOCATION_ORDER` từ góc độ kinh tế. Ở tầng engine, enum `RepaymentAllocationOrder` có năm giá trị:
 
-RepaymentAllocationOrder enum (5 values):
+| Chế độ | Cách sắp xếp | Khi nào dùng |
+|---|---|---|
+| `PRIORITY_ONLY` | Chỉ theo độ ưu tiên trong biểu phí, bỏ qua ngày đến hạn | Khi thứ tự loại phí quan trọng hơn thứ tự thời gian |
+| `DUE_DATE_AND_PRIORITY` | Theo ngày đến hạn, cùng ngày thì theo độ ưu tiên; khi tài khoản quá hạn, độ ưu tiên DPD thay cho độ ưu tiên thường | Mặc định phổ biến nhất, "nợ cũ trả trước", dễ giải thích với khách hàng |
+| `DUE_DATE_IP_GROUP_PRIORITY` | Theo ngày đến hạn, các kỳ của cùng một kế hoạch trả góp được xử lý như một nhóm | Tài khoản có nhiều kế hoạch trả góp cùng lúc |
+| `IP_INTEREST_RANK` | Kế hoạch trả góp lãi suất cao nhất trả trước | Giảm nhanh khoản nợ đắt nhất, giống phương pháp "avalanche" |
+| `DUE_DATE_AND_PRIORITY_NONZERO_DPD` | Logic riêng khi DPD > 0, còn lại như `DUE_DATE_AND_PRIORITY` | Sản phẩm cần thứ tự riêng cho tài khoản quá hạn |
 
-1. PRIORITY_ONLY:
-   Sort by tariff priority only. DUE DATE ignored entirely.
-   Use when: priority order matters more than chronology.
-   
-2. DUE_DATE_AND_PRIORITY (most common default):
-   Sort by due date first, then by priority within same date.
-   "Oldest debt first" - intuitively fair cho customer.
-   DPD override: khi account overdue, DPD priorities replace regular priorities.
-
-3. DUE_DATE_IP_GROUP_PRIORITY:
-   Sort by due date, nhưng instalment plans được group.
-   Tất cả instalments của một InstalmentPlan treated as unit.
-   Use when: account có multiple concurrent instalment plans.
-
-4. IP_INTEREST_RANK:
-   Sort by InstalmentPlan's interest rank.
-   Higher-interest plans paid first.
-   Economic logic: pay off most expensive debt first (similar to avalanche method).
-
-5. DUE_DATE_AND_PRIORITY_NONZERO_DPD:
-   Special logic applied only when DPD > 0.
-   Otherwise behaves like DUE_DATE_AND_PRIORITY.
+Dù chọn chế độ nào, chuỗi so sánh chung vẫn được áp dụng, với khoản tiền tự có của khách hàng và kỳ EXTRA được ưu tiên trước:
 
 ```text
 Comparator chain (applies to all modes):
@@ -1036,7 +1017,7 @@ Comparator chain (applies to all modes):
   → BILLING_DATE_OLDEST_FIRST → LEDGER_ENTRY_ID_SMALLEST (tiebreaker)
 ```
 
-**Economic analysis - PRIORITY_ONLY vs DUE_DATE:**
+Phân tích kinh tế dưới đây cho thấy vì sao tên chế độ không nói lên kết quả:
 
 ```text
 Scenario: Account DPD 45, có late fee 200,000 VNĐ và gốc overdue 500,000 VNĐ
@@ -1064,27 +1045,20 @@ Real difference: Lãi trên khoản nào được tính sớm hơn
 → Đây là mechanism design choice về revenue timing, không phải cure rate
 ```
 
-:::summary[Instalment Lifecycle]
-Prescribing: REGULAR (EOM) vs EXTRA (immediate)
-→ prescribeImmediately flag on AccountFeeComponent
-InstalmentSummary: aggregate, incremental update
-(không refresh khi prescribing existing header)
-Pairing: match payments to instalments by
-REPAYMENT_ALLOCATION_ORDER
-checkAndSetRepaid: set header repaid khi ALL
-children repaid → refreshHeader safe SAU SAVE
+Với một khoản thanh toán không đủ, cả hai chế độ đều không đưa tài khoản về trạng thái đúng hạn. Khác biệt thật nằm ở chỗ khoản nào được trả trước, nên doanh thu loại nào được ghi nhận sớm hơn và khoản nào tiếp tục bị tính lãi. Đây chính là điểm [Chương 2](/docs/foundations/ch02-mathematics-of-lending) đã nêu: kết quả kinh tế của một chế độ phân bổ nằm ở thứ tự ưu tiên được cấu hình, không ở tên của nó.
+
+:::summary[Mục 8.4]
+Prescribing tạo kỳ trả nợ `REGULAR` ở bước EOM, hoặc kỳ `EXTRA` ngay lập tức khi cờ `prescribeImmediately` bật; header được cộng dồn, không tính lại. Pairing ghép thanh toán vào kỳ trả nợ theo `REPAYMENT_ALLOCATION_ORDER`, và header chỉ được tính lại khi mọi phần tử con đã được lưu. Trả thừa trở thành kỳ `ADDITIONAL` và số dư có của khách hàng. Với khoản thanh toán thiếu, chế độ phân bổ quyết định thời điểm ghi nhận doanh thu, không quyết định việc tài khoản có hết quá hạn hay không.
 :::
 
-### BillingRun và PeriodBalanceSnapshot: Snapshot của mỗi tháng
+### BillingRun và PeriodBalanceSnapshot: ảnh chụp mỗi kỳ
 
 ::::story
-Sau khi EOM chạy xong tháng 3 cho chị Lan, hệ thống cần lưu lại: tháng này account trông như thế nào? Bao nhiêu gốc, bao nhiêu lãi, DPD bao nhiêu? Đây là PeriodBalanceSnapshot.
+Sau khi EOM tháng 3 chạy xong cho chị Lan, hệ thống cần lưu lại tài khoản trông như thế nào vào cuối kỳ: bao nhiêu gốc, bao nhiêu lãi, DPD bao nhiêu. Đó là việc của `PeriodBalanceSnapshot`.
 ::::
 
-**BillingRun (LAS_BILLING_RUN):**
-
-:::key
-**BillingRun** là "session header" cho một EOM run - đại diện cho toàn bộ quá trình EOM của một billing period.
+:::key[BillingRun]
+**BillingRun** (`LAS_BILLING_RUN`) là bản ghi đầu mối của một lần chạy EOM, đại diện cho toàn bộ quá trình EOM của một kỳ billing.
 :::
 
 ```text
@@ -1105,10 +1079,24 @@ Lưu ý: billingPeriod ở đây là NGÀY TRONG THÁNG (day-of-month)
 PeriodBalanceSnapshot có field riêng: billingPeriodNumber (counter 1, 2, 3...)
 ```
 
-**PeriodBalanceSnapshot (LAS_PERIOD_BALANCE_SNAPSHOT):**
+Trạng thái của một lần chạy EOM:
 
-:::key
-**PeriodBalanceSnapshot** là snapshot toàn diện của một account tại cuối một billing period - lưu lại mọi số liệu quan trọng cho audit, reporting, và IFRS 9.
+```mermaid
+stateDiagram-v2
+    [*] --> NEW : getBillingRun
+    NEW --> RUNNING : bắt đầu xử lý
+    RUNNING --> SUCCESS : markBillingRunSuccess
+    RUNNING --> FAILURE : markBillingRunFailed
+    RUNNING --> TERMINATED : dừng có chủ đích
+    SUCCESS --> [*]
+    FAILURE --> [*]
+    TERMINATED --> [*]
+```
+
+*Hình 8.2. Vòng đời của một BillingRun. Trong lúc một BillingRun đang `RUNNING`, không phiên EOM mới nào được bắt đầu.*
+
+:::key[PeriodBalanceSnapshot]
+**PeriodBalanceSnapshot** (`LAS_PERIOD_BALANCE_SNAPSHOT`) là ảnh chụp toàn diện của một tài khoản vào cuối một kỳ billing, lưu mọi con số quan trọng cho kiểm toán, báo cáo và IFRS 9.
 :::
 
 ```text
@@ -1139,7 +1127,7 @@ simulationOnly: true → dry-run (eom-simulation endpoint)
 cancelled: true → on-demand EOM cancelled old balance
 ```
 
-**Ứng dụng thực tế:**
+Các snapshot nối với nhau thành chuỗi qua `previousPeriodBalanceSnapshot`, nên trả lời được câu hỏi "tháng trước tài khoản này thế nào" mà không cần dựng lại lịch sử. Đây là nguồn dữ liệu cho nhiều phân tích ở [Chương 5](/docs/products/ch05-revenue-portfolio):
 
 ```text
 IFRS 9 staging:
@@ -1156,11 +1144,9 @@ Statement generation:
   → Generate monthly statement với đầy đủ breakdown
 ```
 
-### Entity Chain đầy đủ: Từ Transaction đến Instalment
+### Chuỗi thực thể đầy đủ: từ giao dịch đến kỳ trả nợ
 
-**Một câu hỏi thường gặp:** "Payment event tạo ra những entities gì, theo thứ tự nào?"
-
-Khi payment 2,000,000 VNĐ được confirmed:
+Một câu hỏi hay gặp: một khoản thanh toán sinh ra những thực thể nào, theo thứ tự nào? Khi khoản thanh toán 2,000,000 VNĐ được xác nhận:
 
 ```text
 1. EventRecord (LAS_EVENT_RECORD)
@@ -1199,11 +1185,9 @@ Full diagram:
                             └── [CREDIT] EntryInstalmentLink (link to DEBIT instalment)
 ```
 
-## 8.5 EOM Batch Processing: Architecture
+## 8.5 Kiến trúc EOM batch
 
-### Tổng quan EOM: Trigger và Sequence
-
-**EOM được trigger như thế nào:**
+### EOM được kích hoạt thế nào
 
 ```text
 EOM KHÔNG có @Scheduled annotation trong LAS codebase.
@@ -1224,9 +1208,32 @@ Monitoring: BillingRun.status (SUCCESS/FAILURE) + external alerting
   LAS không tự alert — external system query batch status API
 ```
 
-**Các bước phụ thuộc vào nhau - thứ tự không thể đổi:**
+LAS không tự lập lịch EOM. Nó chỉ cung cấp một API; một bộ điều phối bên ngoài quyết định khi nào gọi, và hệ thống giám sát bên ngoài theo dõi trạng thái `BillingRun` để cảnh báo. Tách như vậy giúp LAS đơn giản, và cho phép đội vận hành đổi lịch hoặc chạy lại mà không cần triển khai lại LAS.
 
-**Full EOM sequence:**
+### Trình tự đầy đủ của EOM
+
+Các bước của EOM phụ thuộc vào nhau, nên thứ tự không thể đổi:
+
+```mermaid
+flowchart TD
+    S1["1. getBillingRun<br/>BillingRun: NEW → RUNNING"] --> S2["2. eomServiceFeesJob<br/>phí dịch vụ từ LPS"]
+    S2 --> S3["3. EOM chính theo tài khoản<br/>(chia partition, chạy song song)"]
+    S3 --> S3a["3.2 accountsEOMBase<br/>A. billPostponedEOMEvents<br/>B. preloadStaticData<br/>C. accountEOMStep (chunk)<br/>D. billSuspendedEvents<br/>E. evictStaticData"]
+    S3a --> S3b{"Có lỗi?"}
+    S3b -->|Không| OK["markBillingRunSuccess"]
+    S3b -->|Có| KO["markBillingRunFailed"]
+    OK --> S4["4. preloadAccountClosureStaticData"]
+    KO --> S4
+    S4 --> S5{"5. autoFlexiToFixed<br/>ConversionDecision"}
+    S5 -->|Có tài khoản đủ điều kiện| S5a["autoFlexiToFixedConversionStep"]
+    S5 -->|Không| S6
+    S5a --> S6["6. eomAccountClosureStep"]
+    S6 --> S7["7. eomAccountClosureStepRELPro"]
+```
+
+*Hình 8.3. Các bước cấp cao của regularEOMBatchJob.*
+
+Chi tiết từng bước:
 
 ```text
 STEP 1: getBillingRun
@@ -1325,13 +1332,15 @@ STEP 7: eomAccountClosureStepRELPro (sub-job)
   → Same flow but different eligibility criteria
 ```
 
-### Partitioned Processing: Parallel nhưng không Conflict
+Bước 2 phải xong trước bước 3, vì phí dịch vụ của tháng phải có trong số dư trước khi EOM tính lãi và tạo kỳ trả nợ. Trong bước 3, bốn bộ xử lý P1 đến P4 là bốn delegate của cùng một `CompositeItemProcessor`, không phải bốn step riêng của Spring Batch; sáu bộ ghi W1 đến W6 chạy sau mỗi chunk.
 
-**Vấn đề:**
+Bước 5 tự động chuyển tài khoản hạn mức linh hoạt sang kế hoạch trả góp cố định sau một số tháng nhất định. Lý do vừa là quản trị rủi ro (giới hạn thời gian một khoản nợ quay vòng tồn tại), vừa là lợi ích của khách hàng: lịch trả cố định dễ dự đoán, và lãi suất kế hoạch trả góp thường thấp hơn lãi suất quay vòng.
 
-EOM phải xử lý 1.2 triệu accounts trong 8 giờ. Sequential processing: 1.2M accounts × 50ms/account = 60,000 seconds = 16.7 giờ. Quá chậm.
+### Chia partition: song song mà không xung đột
 
-**Giải pháp: Partitioned Step (Spring Batch)**
+EOM phải xử lý 1.2 triệu tài khoản trong một đêm. Mỗi tài khoản mất khoảng 300 ms tính cả đọc và ghi dữ liệu, nên xử lý tuần tự cần 1,200,000 × 0.3 giây = 360,000 giây, tức 100 giờ. Không thể chấp nhận được.
+
+Giải pháp là partitioned step của Spring Batch: chia tài khoản thành N partition chạy song song. Với 16 partition, mỗi partition 75,000 tài khoản, thời gian còn khoảng 100 / 16 ≈ 6.25 giờ, vừa trong khung một đêm.
 
 ```xml
 <!-- verified: verify-ch8-ch9-code.md -->
@@ -1362,20 +1371,9 @@ EOM phải xử lý 1.2 triệu accounts trong 8 giờ. Sequential processing: 1
 </bean>
 ```
 
-**Account isolation - không conflict:**
+Vì sao chạy song song mà không xung đột? Mỗi tài khoản thuộc đúng một partition, và mỗi partition chạy trên một thread, nên không có hai thread cùng xử lý một tài khoản. Hai tài khoản ở hai partition khác nhau chỉ có thể xung đột nếu dùng chung trạng thái, và LAS được thiết kế có chủ ý để không có trạng thái dùng chung giữa các tài khoản: mỗi tài khoản có `CurrentBalance` riêng, kỳ trả nợ riêng. Thiết kế dữ liệu ở mục 8.1 chính là điều kiện để EOM chạy song song được.
 
-Một account thuộc đúng một partition.
-Partition chạy trên một thread.
-→ Không có concurrent access đến cùng một account.
-
-Nhưng: Hai accounts khác nhau trong hai partitions khác nhau
-có thể interact nếu: account A và B share cùng tài nguyên.
-
-Trong LAS: không có shared state giữa accounts (design intentional).
-Mỗi account có CurrentBalance riêng, Instalment riêng.
-→ Safe to run partitions in parallel.
-
-**Chunk-based processing - tại sao không process từng account:**
+Trong mỗi partition, tài khoản được xử lý theo chunk:
 
 ```text
 // illustrative pseudo-code — actual config in XML (not Java @Bean)
@@ -1391,17 +1389,17 @@ Mỗi account có CurrentBalance riêng, Instalment riêng.
 // </step>
 ```
 
-**Tại sao chunk size = 50:**
+Vì sao chunk 50 tài khoản là điểm cân bằng:
 
 ```text
 chunk size = 1: Commit sau mỗi account
-  → 75,000 transactions cho partition 1
+  → 75,000 transactions cho một partition
   → Overhead cao (transaction begin/commit)
   → Slow
 
 chunk size = 1000: Commit sau mỗi 1000 accounts
-  → Nếu account 999 fails → rollback 999 accounts
-  → Retry 999 accounts
+  → Nếu một account trong chunk fail → rollback cả 1,000 accounts
+  → Phải xử lý lại toàn bộ chunk
   → Wasted work
 
 chunk size = 50: Balance point
@@ -1410,13 +1408,13 @@ chunk size = 50: Balance point
   → Memory: 50 accounts in memory (acceptable)
 ```
 
-### Failure Recovery: On-Demand EOM
+Con số 50 không phải hằng số: kích thước chunk được cấu hình qua property `commit.interval.accountEOMStep`, và giá trị tối ưu phụ thuộc vào kích thước trung bình của tài khoản và tài nguyên của cơ sở dữ liệu (câu hỏi 12).
 
-::::story[Scenario]
-EOM chạy đêm qua. 47 accounts fail (database deadlock, network blip...). BillingRun status = FAILURE. 47 accounts không có PeriodBalanceSnapshot cho tháng này.
+### Khôi phục khi lỗi: EOM theo yêu cầu
+
+::::story
+EOM chạy đêm qua. 47 tài khoản bị lỗi vì deadlock cơ sở dữ liệu và trục trặc mạng. `BillingRun` có trạng thái `FAILURE`, và 47 tài khoản đó không có `PeriodBalanceSnapshot` cho tháng này.
 ::::
-
-**Recovery:**
 
 ```text
 EOM không phải là "restartable" (restartable=false trong Spring Batch).
@@ -1444,9 +1442,11 @@ Idempotent: Running on-demand EOM twice for same account
 ---
 ```
 
-### Billing Period Freeze: Protecting Consistency
+Chạy lại toàn bộ EOM là không thể, vì hơn 1.19 triệu tài khoản kia đã được tính xong. EOM theo yêu cầu cho phép chạy lại chính xác những tài khoản bị lỗi, và nhờ cơ chế hủy snapshot cũ, chạy lại nhiều lần vẫn cho cùng kết quả.
 
-**Tại sao freeze:**
+### Đóng băng kỳ billing: bảo vệ tính nhất quán
+
+Đóng băng ở mục 8.3 được nhìn lại từ góc độ EOM:
 
 ```text
 EOM processing:
@@ -1469,30 +1469,21 @@ Freeze solves this:
   T=4: Payment processed → balance updated correctly
 ```
 
-:::summary[EOM Batch Architecture]
-regularEOMBatchJob: master job, 7 top-level steps
-Step 2: eomServiceFeesJob (LPS fees, partitioned
-by contract service cycles)
-Step 3: baseRegularEOMBatchJob (main per-account
-EOM, partitioned by accounts)
-Step 5-7: closure, flexi-to-fixed conversion
-Partitioned parallel: N partitions × accounts
-Chunk size 50: balance overhead vs retry cost
-restartable=false → on-demand EOM for failures
-Billing freeze → POSTPONED_TILL_EOM for events
+:::summary[Mục 8.5]
+LAS không tự lập lịch EOM; bộ điều phối bên ngoài gọi API và theo dõi trạng thái `BillingRun`. `regularEOMBatchJob` có bảy bước cấp cao; phí dịch vụ phải xong trước EOM chính, rồi mới đến chuyển đổi hạn mức linh hoạt và đóng tài khoản. EOM chính chạy song song theo partition, an toàn vì các tài khoản không dùng chung trạng thái, và commit theo chunk để cân bằng chi phí transaction với chi phí chạy lại. EOM không chạy lại được toàn bộ, nên tài khoản lỗi được xử lý bằng EOM theo yêu cầu. Đóng băng kỳ billing bảo đảm EOM đọc một ảnh chụp số dư nhất quán.
 :::
 
-## 8.6 Balance Integrity và Reconciliation
+## 8.6 Toàn vẹn số dư và đối soát
 
-### Khi nào CurrentBalance bị Sai
+### Khi nào CurrentBalance bị sai
 
 ::::story
-Lúc 3h sáng, monitoring alert: "Account ACC-456789: calculated balance from events = 4,320,000 VNĐ. CurrentBalance.outstandingDebt = 4,520,000 VNĐ. Gap: 200,000 VNĐ."
+3 giờ sáng, hệ thống giám sát cảnh báo: "Tài khoản ACC-456789: dư nợ tính từ bút toán = 4,320,000 VNĐ. CurrentBalance.outstandingDebt = 4,520,000 VNĐ. Chênh lệch: 200,000 VNĐ."
 
-Đây là balance inconsistency - CurrentBalance không phản ánh đúng thực tế.
+`CurrentBalance` đã lệch khỏi lịch sử bút toán.
 ::::
 
-**Nguồn gốc của inconsistency:**
+Độ lệch có thể đến từ bốn nguồn:
 
 ```text
 1. Bug trong update logic:
@@ -1515,7 +1506,9 @@ Lúc 3h sáng, monitoring alert: "Account ACC-456789: calculated balance from ev
    → Some events reprocessed, some not → balance inconsistent
 ```
 
-**Reconciliation job:**
+### Tác vụ đối soát
+
+Tác vụ đối soát tính lại dư nợ từ bút toán và so với `CurrentBalance`:
 
 ```text
 -- Tính balance "đúng" từ event store:
@@ -1546,7 +1539,7 @@ WHERE ABS(rb.outstanding_debt - ebb.calculated_outstanding_debt) > 1;
 -- Gap > 1 VNĐ → inconsistency
 ```
 
-**Khi phát hiện inconsistency:**
+Khi phát hiện chênh lệch, cách xử lý tùy độ lớn:
 
 ```text
 Gap nhỏ (< 100 VNĐ, rounding):
@@ -1564,27 +1557,29 @@ Gap lớn (> 10,000 VNĐ):
   → Investigate và fix before unfreezing
 ```
 
-### Event Sourcing cho Audit: Lịch sử bất biến
+Ngưỡng 200,000 VNĐ trong tình huống đầu mục rơi vào nhóm lớn: tài khoản bị đóng băng ngay, và chỉ được mở lại sau khi tìm ra nguyên nhân. Số tiền 200,000 VNĐ đúng bằng một khoản phí trả trễ là một manh mối tốt để bắt đầu điều tra.
 
-**Bất biến (Immutability) trong practice:**
+### Lịch sử bất biến cho kiểm toán
 
-Mọi thay đổi trong LAS đều là INSERT, không phải UPDATE/DELETE:
+Nguyên tắc trong LAS là dữ liệu tài chính không bao giờ bị xóa hay bị sửa giá trị. Sửa sai bằng cách đánh dấu bản ghi cũ là đã hủy và thêm bản ghi mới, để lịch sử luôn còn nguyên:
 
-LedgerEntry created: INSERT → id=123, amount=2,500,000, cancelled=false
-LedgerEntry cancelled: UPDATE id=123 SET cancelled=true, reason='DISPUTE'
-                       + INSERT id=124 (corrected item) amount=2,300,000
+```text
+LedgerEntry tạo mới:   INSERT id=123, amount=2,500,000, cancelled=false
+LedgerEntry bị hủy:    UPDATE id=123 SET cancelled=true, reason='DISPUTE'
+                       + INSERT id=124 (bút toán đã sửa) amount=2,300,000
 
-CurrentBalance: UPDATE (materialized view) - exception vì performance
-                nhưng mỗi update có timestamp → có thể rebuild history
+Transaction tạo mới:   INSERT id=456
+Transaction bị hủy:    UPDATE id=456 SET cancelled=true
+                       + INSERT id=457 (liên kết với 456 qua source_transaction_id)
 
-AccountParameter: Soft-expire + INSERT new record
-→ Full history of every parameter value at every point in time
+AccountParameter:      hết hiệu lực bản cũ (validTo) + INSERT bản mới
+                       → lịch sử đầy đủ của mọi tham số tại mọi thời điểm
 
-Transaction: INSERT → id=456
-             Nếu cancel: UPDATE id=456 SET cancelled=true
-             + INSERT id=457 (linked to 456 via source_transaction_id)
+CurrentBalance:        UPDATE tại chỗ (materialized view), ngoại lệ vì hiệu năng;
+                       có thể dựng lại từ bút toán bất cứ lúc nào
+```
 
-**Answering "point-in-time" queries:**
+Thao tác `UPDATE` duy nhất trên bút toán là bật cờ hủy, không bao giờ sửa số tiền. Nhờ vậy, hệ thống trả lời được câu hỏi "tại một thời điểm trong quá khứ, dư nợ là bao nhiêu":
 
 ```sql
 -- "Outstanding debt của account X ngày 15/3/2025 lúc 14:30 là bao nhiêu?"
@@ -1610,163 +1605,107 @@ ORDER BY created_at DESC LIMIT 1;
 -- Và cộng thêm events từ 1/3 đến 15/3
 ```
 
-:::summary[Balance Integrity]
-CurrentBalance có thể drift khỏi event store
-→ Reconciliation job daily detect gaps
-Gap nhỏ: log; Gap lớn: freeze + investigate
-Immutability: mọi change là INSERT
-→ Có thể answer point-in-time queries
-PeriodBalanceSnapshot: EOM snapshot → shortcut
-cho historical queries (thay vì replay all events)
+:::summary[Mục 8.6]
+`CurrentBalance` có thể lệch khỏi lịch sử bút toán vì lỗi logic, cập nhật đồng thời, lỗi giữa chừng hoặc xử lý lại dở dang. Tác vụ đối soát hằng ngày phát hiện độ lệch; chênh lệch nhỏ được ghi nhận, chênh lệch lớn khiến tài khoản bị đóng băng để điều tra. Bút toán không bao giờ bị xóa hay sửa số tiền, nên luôn trả lời được câu hỏi về một thời điểm trong quá khứ; `PeriodBalanceSnapshot` là lối tắt cho các câu hỏi đó.
 :::
 
-## Tóm tắt chương 8
+## Tổng kết chương 8
 
-Đêm cuối tháng 3, 8 tiếng EOM:
-
-23:00 - BillingRun created (status: RUNNING)
-        → Global lock: no concurrent EOM
-
-23:01 - eomServiceFeesJob: 1.2M service fees calculated via LPS
-        → Done by 23:45
-
-00:00 - Main EOM starts:
-        16 partitions × 75,000 accounts = parallel
-
-        Per account (50ms average):
-          P1: Clear notifications
-          P2: Load account state
-          P3: Main EOM logic:
-              → DPD check: 34,221 accounts marked overdue
-              → Interest calculation: 2,891,440 AccountItems created
-              → Fee calculation: 1,247,832 fee items
-              → [STEP 7] Prescribing: 2,891,440 instalments created
-              → [STEP 8] Overpayment pairing
-              → [STEP 9] Balance recalculation
-          P4: Queue notifications
-
-        Per chunk (50 accounts):
-          W1: Save PeriodBalanceSnapshot snapshot
-          W2: Publish billing events → STS via RabbitMQ
-          W3: Sync to DRG (Debt Register)
-          W4-6: Closure, MMI, Hibernate flush
+Đêm cuối tháng 3, tám tiếng EOM:
 
 ```text
-06:45 - All 16 partitions complete
-        47 accounts failed → logged to DLQ
-        BillingRun: SUCCESS (with 47 skipped)
+23:00  BillingRun được tạo (RUNNING) → không phiên EOM nào khác được chạy
+23:01  eomServiceFeesJob: phí dịch vụ của 1.2 triệu tài khoản qua LPS, xong lúc 23:45
+00:00  EOM chính: 16 partition × 75,000 tài khoản, chạy song song
+         Mỗi tài khoản (khoảng 300 ms):
+           P1 xóa bộ đệm thông báo
+           P2 nạp trạng thái tài khoản
+           P3 logic EOM chính:
+              kiểm tra DPD: 34,221 tài khoản quá hạn
+              tính lãi và phí: tạo bút toán lãi, phí tháng
+              prescribing: 2,891,440 kỳ trả nợ
+              ghép số dư có, tính lại số dư
+           P4 xếp hàng thông báo
+         Mỗi chunk (50 tài khoản):
+           W1 lưu PeriodBalanceSnapshot
+           W2 phát sự kiện billing sang STS qua RabbitMQ
+           W3 đồng bộ sang DRG
+           W4-W6 đóng tài khoản, MMI, flush Hibernate
+06:45  16 partition hoàn tất; 47 tài khoản lỗi được ghi lại
+06:46  Các bước chuyển đổi và đóng tài khoản
+06:55  EOM hoàn tất, năm phút trước giờ mở cửa chi nhánh
+07:00  Tác vụ đối soát CurrentBalance; EOM theo yêu cầu cho 47 tài khoản lỗi
 ```
 
-06:46 - Closure jobs run
+Mọi bước đều được ghi lại, mọi con số đều kiểm toán được. Một triệu hai trăm nghìn lời hứa, giữ đúng đến từng đồng.
 
-06:55 - EOM complete. 5 minutes before branch opening.
+### Những điểm cần ghi nhớ
 
-07:00 - Reconciliation job scheduled: verify CurrentBalance
-        On-demand EOM queued for 47 failed accounts
-
-Everything logged. Everything auditable.
-1.2 million promises kept - to the penny.
+| Khái niệm | Ý nghĩa | Vì sao quan trọng |
+|---|---|---|
+| `CurrentBalance` | Materialized view của số dư | Nhanh, nhưng phải đối soát với bút toán |
+| `Transaction` và `LedgerEntry` | Sự kiện bên ngoài và hệ quả tài chính | Một giao dịch sinh nhiều bút toán theo thời gian |
+| `InstalmentSummary` | Header gom các kỳ trả nợ cùng ngày | Cộng dồn khi thêm, chỉ tính lại khi mọi phần tử đã lưu |
+| Authorization, confirmation | Giữ chỗ rồi mới ghi nợ | Phù hợp chu kỳ quyết toán của thẻ |
+| Bill-in-past | Chèn sự kiện vào quá khứ và xử lý lại phía sau | Đúng lãi, đúng thứ tự ghép thanh toán |
+| Prescribing, pairing | Tạo kỳ trả nợ, ghép thanh toán | Nơi thứ tự phân bổ thanh toán trở thành hành vi |
+| EOM partition và chunk | Song song theo tài khoản, commit theo lô | Hoàn tất 1.2 triệu tài khoản trong một đêm |
+| Lịch sử bất biến | Không xóa, không sửa số tiền | Kiểm toán và truy vấn theo thời điểm |
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. Sự khác biệt giữa Transaction và LedgerEntry là gì? Một Transaction có thể tạo ra bao nhiêu AccountItems?
-2. InstalmentSummary và Instalment có mối quan hệ gì? Tại sao cần two-level hierarchy?
-3. REGULAR và EXTRA instalment khác nhau ở điểm nào? Trigger của mỗi loại là gì?
-4. Tại sao EOM step 2 (service fees) phải hoàn thành TRƯỚC main EOM (step 3)?
+**Nhớ lại**
 
-**Loại 2 - Hiểu:**
-5. Authorization tạo ra gì trong CurrentBalance? Confirmation tạo ra gì? Tại sao availableBalance không thay đổi khi confirm (chỉ authorization → debt)?
-6. Tại sao `refreshInstalmentSummary()` an toàn trong pairing nhưng KHÔNG an toàn trong prescribing khi header đã có children? Giải thích cơ chế JPA PersistentBag.
-7. Billing period freeze giải quyết vấn đề concurrent update như thế nào? Nếu không có freeze, loại inconsistency nào có thể xảy ra?
-8. Tại sao chunk size 50 thay vì 1 hoặc 1000? Phân tích trade-offs.
+1. `Transaction` và `LedgerEntry` khác nhau thế nào? Một giao dịch có thể sinh ra bao nhiêu bút toán?
+2. `InstalmentSummary` và `Instalment` quan hệ với nhau thế nào? Vì sao cần hai tầng?
+3. Kỳ trả nợ `REGULAR` và `EXTRA` khác nhau ở điểm nào? Điều gì kích hoạt từng loại?
+4. Vì sao bước 2 của EOM (phí dịch vụ) phải hoàn tất trước EOM chính (bước 3)?
 
-**Loại 3 - Áp dụng:**
-9. Account có:
-   - Outstanding debt: 8,000,000 VNĐ
-   - 3 instalments pending tháng này:
-     * I-A: 3,000,000 VNĐ (gốc laptop, priority 1)
-     * I-B: 2,500,000 VNĐ (gốc phone, priority 1)
-     * I-C: 500,000 VNĐ (late fee, priority 0 - highest)
-   - Customer pays 4,000,000 VNĐ
-   - REPAYMENT_ALLOCATION_ORDER = PRIORITY_ONLY
+**Hiểu**
 
-   (a) Trace pairing algorithm step by step
-   (b) Sau pairing: repaid/partial/unpaid status của mỗi instalment
-   (c) InstalmentSummary status sau pairing
-   (d) CurrentBalance changes sau pairing
+5. Authorization thay đổi những gì trong `CurrentBalance`? Confirmation thay đổi những gì? Vì sao `availableBalance` không đổi khi xác nhận?
+6. Vì sao `refreshInstalmentSummary()` an toàn khi pairing nhưng không an toàn khi prescribing vào một header đã có phần tử con? Giải thích cơ chế `PersistentBag` của JPA.
+7. Đóng băng kỳ billing giải quyết cập nhật đồng thời thế nào? Nếu không có nó, loại sai lệch nào có thể xảy ra?
+8. Vì sao chọn chunk 50 thay vì 1 hoặc 1,000? Phân tích đánh đổi.
 
-10. EOM chạy và 3 accounts fail ở step W1 (StoreEOMResults):
-    - ACC-001: fail do deadlock
-    - ACC-002: fail do disk full (resolved sau 5 phút)
-    - ACC-003: fail do bug trong fee calculation
-    
-    (a) Spring Batch behavior: skip hay abort?
-    (b) BillingRun status sau khi 3 accounts fail?
-    (c) Recovery approach cho mỗi account (same hay different)?
-    (d) Làm thế nào detect nếu reconciliation thấy ACC-002 có gap?
+**Áp dụng**
 
-**Loại 4 - Phân tích:**
-11. Tech Lead đề xuất thay Spring Batch bằng custom Java code với ThreadPoolExecutor:
-    "Spring Batch quá phức tạp. Chúng ta chỉ cần: List<Account> → forEach trong thread pool."
+9. Một tài khoản có dư nợ 8,000,000 VNĐ và ba kỳ trả nợ tháng này: I-A 3,000,000 VNĐ (gốc laptop, ưu tiên 1), I-B 2,500,000 VNĐ (gốc điện thoại, ưu tiên 1), I-C 500,000 VNĐ (phí trả trễ, ưu tiên 0, cao nhất). Khách hàng trả 4,000,000 VNĐ, chế độ `PRIORITY_ONLY`.
+   (a) Đi qua thuật toán pairing từng bước.
+   (b) Sau khi ghép, mỗi kỳ trả nợ ở trạng thái đã trả, trả một phần hay chưa trả?
+   (c) Trạng thái `InstalmentSummary` sau khi ghép?
+   (d) `CurrentBalance` thay đổi thế nào?
+10. EOM chạy và ba tài khoản lỗi ở bước W1 (`StoreEOMResults`): ACC-001 vì deadlock, ACC-002 vì đầy đĩa (khắc phục sau 5 phút), ACC-003 vì lỗi trong tính phí.
+    (a) Spring Batch sẽ bỏ qua hay dừng?
+    (b) Trạng thái `BillingRun` sau khi ba tài khoản lỗi?
+    (c) Cách khôi phục cho từng tài khoản có giống nhau không?
+    (d) Nếu đối soát phát hiện ACC-002 có chênh lệch, làm sao biết?
 
-    Phân tích:
-    (a) Features của Spring Batch mà custom code sẽ phải re-implement
-    (b) Failure recovery: làm thế nào implement idempotent retry với custom code?
-    (c) Monitoring và progress tracking
-    (d) Khi nào custom approach là acceptable, khi nào không?
+**Phân tích**
 
-12. Performance analysis: EOM mất 6 giờ 45 phút cho 1.2M accounts. Target là 4 giờ. Đề xuất optimization:
-    (a) Identify bottlenecks (không phải toán học, mà là architectural analysis)
-    (b) Có thể tăng partition count từ 16 lên 64 không? Trade-offs?
-    (c) Database là bottleneck? Evidence nào cần để confirm?
-    (d) Chunk size optimization: tại sao 50 có thể không optimal cho tất cả cases?
+11. Trưởng nhóm kỹ thuật đề xuất bỏ Spring Batch, thay bằng code Java tự viết với `ThreadPoolExecutor`: "Spring Batch quá phức tạp. Chỉ cần List<Account> rồi forEach trong một thread pool." Phân tích (a) những tính năng của Spring Batch mà code tự viết phải làm lại, (b) cách hiện thực chạy lại idempotent khi lỗi, (c) giám sát và theo dõi tiến độ, (d) khi nào cách tự viết chấp nhận được và khi nào không.
+12. EOM mất 6 giờ 45 phút cho 1.2 triệu tài khoản, mục tiêu là 4 giờ. (a) Xác định điểm nghẽn bằng phân tích kiến trúc. (b) Có nên tăng số partition từ 16 lên 64? Đánh đổi là gì? (c) Cơ sở dữ liệu có phải điểm nghẽn không? Cần bằng chứng nào để khẳng định? (d) Vì sao chunk 50 có thể không tối ưu cho mọi trường hợp?
 
 ## Bài tập áp dụng
 
-**Bài 1 - Domain Model Design:**
-Công ty đang plan thêm sản phẩm "Joint Account" - hai người share một credit limit (ví dụ: vợ chồng có thể cùng dùng một thẻ).
+**Bài 1. Thiết kế mô hình miền cho tài khoản chung.** Công ty muốn ra sản phẩm "tài khoản chung": hai người, ví dụ vợ chồng, dùng chung một hạn mức. (a) Máy trạng thái `AccountStatus` cần thay đổi gì? (b) `CurrentBalance` cần thêm trường nào, vì sao? (c) Kiểm tra `ContractService` cần thay đổi gì khi một trong hai người có thể kích hoạt dịch vụ? (d) Khi người A thanh toán, pairing hoạt động thế nào? (e) Khi A thực hiện giao dịch trên tài khoản chung, dấu vết kiểm toán ghi nhận thế nào?
 
-Yêu cầu:
-- (a) Những thay đổi nào cần trong AccountStatus state machine?
-- (b) CurrentBalance cần thêm fields gì? Tại sao?
-- (c) ContractService check cần thay đổi gì (một trong hai owner có thể active service)?
-- (d) EOM processing: nếu owner A thanh toán, instalment pairing hoạt động như thế nào?
-- (e) Audit trail: khi A thực hiện transaction trên joint account, ghi nhận như thế nào?
+**Bài 2. Bill-in-past cho nhiều giao dịch.** Một người bán gửi 15 giao dịch bị chậm 45 ngày vì máy chủ của họ gặp sự cố. EOM tháng 2 đã chạy xong; các giao dịch cần được ghi nhận với `transactionDate` trong tháng 1. (a) Vì sao không thể ghi nhận với ngày hiện tại? (b) Thứ tự thao tác để ghi nhận đúng 15 giao dịch. (c) Tác động lên `PeriodBalanceSnapshot` của tháng 1 và tháng 2. (d) Khách hàng sẽ thấy gì trên sao kê tháng 3? (e) Vì sao `recalculateOverDueDebts` phải dùng ngày hiện tại, không phải ngày trong quá khứ?
 
-**Bài 2 - Bill-in-Past Implementation:**
-Merchant gửi 15 transactions bị delay 45 ngày (server crash của merchant). EOM tháng 2 đã chạy xong. Các transactions này cần được billed với transactionDate trong tháng 1.
-
-Thiết kế recovery:
-- (a) Tại sao không thể bill với current date?
-- (b) Sequence of operations để bill 15 transactions correctly
-- (c) Tác động lên PeriodBalanceSnapshot của tháng 1 và tháng 2
-- (d) Customer sẽ thấy gì trên statement tháng 3?
-- (e) Tại sao `recalculateOverDueDebts` phải dùng currentDate (không phải pastDate)?
-
-**Bài 3 - EOM Optimization:**
-EOM hiện tại mất 7 giờ. Analysis cho thấy:
-- Database queries trong processor: 45% của time
-- Hibernate flush (W6): 20% of time
-- RabbitMQ publishing (W2): 15% of time
-- Actual business logic: 20% of time
-
-Thiết kế optimization plan:
-- (a) Database query optimization: preloading vs lazy loading trade-offs
-- (b) Batch RabbitMQ publishing: thay vì publish per-chunk, có thể batch không?
-- (c) Hibernate flush strategy: thay flush-per-chunk bằng flush-per-partition cuối có được không?
-- (d) Rủi ro của mỗi optimization: nếu thay đổi sai, hậu quả là gì?
-- (e) Sequence để apply optimizations an toàn (không phải tất cả cùng lúc)
+**Bài 3. Tối ưu EOM.** EOM hiện mất 7 giờ. Phân tích cho thấy truy vấn cơ sở dữ liệu trong bộ xử lý chiếm 45% thời gian, flush Hibernate (W6) chiếm 20%, phát sự kiện RabbitMQ (W2) chiếm 15%, còn logic nghiệp vụ thực sự chỉ 20%. (a) Tối ưu truy vấn: đánh đổi giữa nạp trước và nạp lười. (b) Có thể gom việc phát sự kiện RabbitMQ thay vì phát theo từng chunk không? (c) Có thể đổi flush theo chunk thành flush một lần cuối partition không? (d) Nếu mỗi tối ưu được làm sai, hậu quả là gì? (e) Thứ tự áp dụng các tối ưu một cách an toàn, không làm tất cả cùng lúc.
 
 ## Đọc thêm
 
-**Spring Batch:**
-- Minella, M. T. (2011). *The Definitive Guide to Spring Batch.* Apress. - Reference đầy đủ về Spring Batch architecture.
+**Spring Batch**
 
-**Domain-Driven Design trong Financial:**
-- Vernon, V. (2013). *Implementing Domain-Driven Design.* Addison-Wesley. - Chapters 5-7 về aggregate design - cách thiết kế Account, Instalment, CurrentBalance đúng theo DDD.
+- Minella, M. T. (2019). *The Definitive Guide to Spring Batch* (2nd ed.). Apress. Tài liệu đầy đủ về kiến trúc Spring Batch, gồm partitioning và xử lý lỗi.
 
-**JPA và Hibernate:**
-- Mihalcea, V. (2016). *High-Performance Java Persistence.* Vlad Mihalcea. - Available free tại vladmihalcea.com - critical knowledge về PersistentBag, fetch strategies, và N+1 issues trong financial systems.
+**Domain-driven design**
 
-*Chương 9 sẽ kéo tất cả lại với nhau - billing cycle từ perspective của toàn bộ system: từ khi trigger EOM đến khi statement được generate, từ khi payment được nhận đến khi instalment được pair và account được declared current. Đây là chapter về how all the pieces work together.*
+- Vernon, V. (2013). *Implementing Domain-Driven Design.* Addison-Wesley. Chương 10 về thiết kế aggregate, nền tảng để hiểu vì sao `Account`, `Instalment` và `CurrentBalance` được tổ chức như trong LAS.
+
+**JPA và Hibernate**
+
+- Mihalcea, V. (2016). *High-Performance Java Persistence.* Kiến thức then chốt về collection của Hibernate, chiến lược fetch và vấn đề N+1; nhiều chủ đề liên quan có trên blog vladmihalcea.com.
+
+Chương 9 ghép mọi mảnh lại với nhau: chu kỳ billing nhìn từ toàn hệ thống, từ khi EOM được kích hoạt đến khi sao kê được tạo, từ khi nhận thanh toán đến khi kỳ trả nợ được ghép và tài khoản trở lại đúng hạn. [Chương 9. Chu kỳ thanh toán](/docs/system/ch09-billing-cycle).

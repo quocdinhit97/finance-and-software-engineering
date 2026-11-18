@@ -4,50 +4,59 @@ sidebar_label: "9. Chu kỳ thanh toán"
 sidebar_position: 3
 chapter: 9
 subtitle: "The Billing Cycle"
-reading_time: 28
+reading_time: 30
+description: "Một chu kỳ billing hoàn chỉnh của chị Lan: các mốc ngày, giao dịch trong kỳ, từng bước EOM với số liệu cụ thể, sao kê và các nội dung bắt buộc công bố, ghép thanh toán khi trả trước, đúng hạn, trễ hạn và trả thiếu, và đối soát giữa LAS, STS, DRG."
 source_file: "phan-2-chuong-9.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Mỗi tháng một lần, hàng triệu câu hỏi được trả lời cùng lúc: Bao nhiêu tiền? Đến hạn khi nào? Ai nợ ai? Câu trả lời phải chính xác đến từng đồng - và phải có mặt trong hòm thư của khách hàng trước khi họ thức dậy."*
+> *"Mỗi tháng một lần, hàng triệu câu hỏi được trả lời cùng lúc: bao nhiêu tiền, đến hạn khi nào, ai nợ ai. Câu trả lời phải chính xác đến từng đồng, và phải có trong hộp thư của khách hàng trước khi họ thức dậy."*
 
-## Dẫn nhập: Tháng 4 bắt đầu lúc 23h00 ngày 31/3
+## Dẫn nhập: tháng mới bắt đầu lúc 23 giờ
 
 ::::story
-Lúc 23h00 ngày 31/3, không ai ở văn phòng. Nhưng hệ thống bắt đầu công việc quan trọng nhất của tháng.
+23 giờ đêm 19/3, văn phòng không còn ai. Nhưng hệ thống bắt đầu công việc quan trọng nhất của tháng.
 
-Trong 8 giờ tới, VLP sẽ khép lại tháng 3 và mở ra tháng 4 cho 1.2 triệu tài khoản. Mỗi khách hàng sẽ nhận được câu trả lời cho ba câu hỏi:
+Trong tám giờ tới, VLP khép lại kỳ billing cho 1.2 triệu tài khoản. Sáng hôm sau, mỗi khách hàng nhận được câu trả lời cho ba câu hỏi:
 
-1. "Tháng 3, tôi đã dùng bao nhiêu, nợ bao nhiêu?"
-2. "Tháng 4, tôi cần trả bao nhiêu, và đến ngày nào?"
+1. "Kỳ vừa rồi tôi đã dùng bao nhiêu, đang nợ bao nhiêu?"
+2. "Kỳ này tôi phải trả bao nhiêu, trước ngày nào?"
 3. "Nếu tôi không trả đúng hạn, chuyện gì sẽ xảy ra?"
 ::::
 
-Chương này theo dõi một chu kỳ billing hoàn chỉnh - từ moment EOM trigger đến khi statement được deliver đến điện thoại của chị Lan. Không chỉ là flowchart - mà là hiểu sâu tại sao từng bước tồn tại, tại sao thứ tự quan trọng, và tại sao một lỗi nhỏ ở bất kỳ đâu có thể gây ra statement sai cho hàng nghìn người.
+[Chương 8](/docs/system/ch08-account-management) mô tả từng thành phần của LAS. Chương này ghép chúng lại, đi theo một chu kỳ billing hoàn chỉnh trên tài khoản của chị Lan, từ giao dịch đầu kỳ đến lúc sao kê hiện trên điện thoại của chị. Mục tiêu không chỉ là biết các bước, mà là hiểu vì sao từng bước tồn tại, vì sao thứ tự của chúng quan trọng, và vì sao một lỗi nhỏ ở bất kỳ đâu có thể làm sai sao kê của hàng nghìn người.
 
-## 9.1 Tổng quan Chu kỳ Billing
+Ví dụ xuyên suốt chương là tài khoản hạn mức linh hoạt của chị Lan: hạn mức 18,500,000 VNĐ, lãi suất 18%/năm tính theo quy ước 30/360, phí quản lý tài khoản 50,000 VNĐ/tháng và phí bảo hiểm 90,000 VNĐ/tháng.
 
-### Anatomy của một Billing Period
+## 9.1 Tổng quan chu kỳ billing
+
+### Giải phẫu một kỳ billing
 
 ::::story
-Chị Lan vay ngày 10/2. Account được activate, billing day được set là ngày 20. Điều này có nghĩa là:
+Tài khoản của chị Lan được kích hoạt ngày 10/1, với ngày billing là ngày 20 hằng tháng và khoảng cách đến hạn là 16 ngày.
 ::::
 
 ```text
-Billing Period 1:
-  Start: 10/2 (activation date)
-  End: 19/3 (ngày trước billing day tháng kế tiếp)
-  Statement date: 20/3 (billing day)
-  Due date: 5/4 (billing day + due day offset 16 ngày)
+Kỳ billing 1:
+  Bắt đầu: 10/1 (ngày kích hoạt)
+  Kết thúc: 19/1 (ngày trước ngày billing)
+  Ngày sao kê: 20/1
+  Ngày đến hạn: 5/2 (ngày sao kê + 16 ngày)
 
-Billing Period 2:
-  Start: 20/3
-  End: 19/4
-  Statement date: 20/4
-  Due date: 5/5
+Kỳ billing 2:
+  Bắt đầu: 20/1, kết thúc: 19/2
+  Ngày sao kê: 20/2
+  Ngày đến hạn: 8/3
+
+Kỳ billing 3:
+  Bắt đầu: 20/2, kết thúc: 19/3
+  Ngày sao kê: 20/3
+  Ngày đến hạn: 5/4
 ```
 
-**Ba ngày quan trọng:**
+Kỳ đầu tiên ngắn hơn một tháng vì nó bắt đầu từ ngày kích hoạt. Ngày đến hạn của kỳ 2 là 8/3 chứ không phải 5/3, vì tháng 2 chỉ có 28 ngày: khoảng cách đến hạn được đếm theo ngày, không theo ngày cố định trong tháng.
+
+Ba mốc thời gian quan trọng của mỗi kỳ:
 
 ```text
 ┌───────────────────────────────────────────────────────────────┐
@@ -67,7 +76,7 @@ Billing Period 2:
 └───────────────────────────────────────────────────────────────┘
 ```
 
-**Tại sao due day offset tồn tại:**
+Vì sao cần khoảng cách giữa ngày sao kê và ngày đến hạn:
 
 ```text
 Billing day = 20 → Statement ready ngày 20
@@ -84,9 +93,9 @@ Due day offset = 16: khách hàng có 16 ngày để:
           và convenience khách hàng (muốn nhiều thời gian)
 ```
 
-### Real-Time Events vs EOM Events
+### Sự kiện trong kỳ và sự kiện cuối kỳ
 
-**Trong một billing period, hai loại events xảy ra:**
+Trong một kỳ billing có hai loại sự kiện:
 
 ```text
 REAL-TIME EVENTS (xảy ra liên tục, được process ngay):
@@ -106,150 +115,125 @@ EOM EVENTS (chỉ xảy ra một lần vào cuối kỳ):
   - Statement generation trigger
 ```
 
-**Tại sao không tính lãi daily (real-time):**
+Vì sao không ghi nhận lãi mỗi ngày? Có ba cách làm:
 
 ```text
 Option A: Tính lãi hàng ngày, post ngay
-  Pro: Accurate, khách hàng thấy lãi tích lũy real-time
-  Con: 1.2M accounts × 30 ngày = 36M interest calculations/tháng
-       Hàng ngày: 1.2M mini-transactions
+  Pro: Khách hàng thấy lãi tích lũy real-time
+  Con: 1.2M accounts × 30 ngày = 36M bút toán lãi/tháng
        → Performance overhead đáng kể
-       → Statement phức tạp (30 dòng interest thay vì 1 dòng)
-       → Banking standard: monthly billing
+       → Sao kê phức tạp (30 dòng lãi thay vì 1 dòng)
 
-Option B: Tính lãi hàng ngày, post vào EOM (daily accrual, monthly post)
-  Pro: Accurate + simpler statement (1 dòng interest)
-  Con: Không thể thấy daily accrual realtime
+Option B: Tính lãi hàng ngày (daily accrual), ghi nhận một lần cuối kỳ
+  Pro: Chính xác + sao kê đơn giản (1 dòng lãi)
+  Con: Không thấy lãi tích lũy theo thời gian thực
 
-Option C: Tính lãi vào EOM dựa trên balance history (VLP)
-  Approach: Daily balance × daily rate → sum for month
-  → Một lần tính cuối tháng → simple
-  → Cần balance history để tính đúng
-  → Trade-off: accuracy vs simplicity
+Option C: Tính lãi một lần vào EOM từ lịch sử số dư trong kỳ (VLP)
+  Lãi = Σ (số dư từng đoạn × số ngày của đoạn × lãi suất ngày)
+  → Một lần tính cuối kỳ, kết quả như cộng dồn hằng ngày
+  → Cần lịch sử số dư trong kỳ để tính đúng
 
-Với revolving account, daily balance thay đổi liên tục:
-  Day 1: balance = 10,000,000 VNĐ
-  Day 5: trả 3,000,000 → balance = 7,000,000 VNĐ
-  Day 20: mua 1,500,000 → balance = 8,500,000 VNĐ
+Ví dụ với số dư thay đổi trong kỳ 30 ngày:
+  Ngày 1-5:   số dư 10,000,000 VNĐ  (5 ngày)
+  Ngày 6-20:  trả 3,000,000  → số dư 7,000,000 VNĐ  (15 ngày)
+  Ngày 21-30: mua 1,500,000  → số dư 8,500,000 VNĐ  (10 ngày)
 
-  Day-count convention: VLP dùng 30/360 (D30_360)
-  Daily rate = annual rate / 360 (không phải /365)
-
-  Interest = Sum(daily_balance × daily_rate)
-  daily_rate = 18% / 360 = 0.05%/ngày
-
-           = (5 days × 10M × 18%/360) + (15 days × 7M × 18%/360)
-             + (10 days × 8.5M × 18%/360)
-           = 25,000 + 52,500 + 42,500
-           = 120,000 VNĐ
-
-  Note: 30/360 vs Actual/365 cho kết quả khác nhau, đặc biệt trong tháng
-  dài (31 ngày) và năm nhuận. VLP dùng 30/360 cho consistency.
-  Khác với simple calculation: 30 days × average_balance × rate
-  → Daily accrual với 30/360 chính xác hơn, khớp với tariff config
+  Quy ước 30/360 (D30_360): lãi suất ngày = 18% / 360 = 0.05%
+  Lãi = (5 × 10,000,000 + 15 × 7,000,000 + 10 × 8,500,000) × 0.05%
+      = 25,000 + 52,500 + 42,500
+      = 120,000 VNĐ
 ```
 
-:::summary[Anatomy Của Billing Period]
-3 key dates: billing date, due date, grace period
-Due day offset: time for customer to review +
-arrange payment
-Real-time events: transactions, immediate fees
-EOM events: interest, fees, instalments, snapshot
-Daily accrual: chính xác hơn simple monthly calc
+Với quy ước 30/360, mọi tháng được coi là 30 ngày và năm là 360 ngày, nên kỳ từ 20/2 đến 19/3 (28 ngày theo lịch) vẫn được tính 30 ngày. Quy ước Actual/365 cho kết quả khác, nhất là ở tháng 2 và tháng có 31 ngày. Điều quan trọng là quy ước phải nhất quán giữa biểu phí, engine tính lãi và công cụ đối soát.
+
+:::summary[Mục 9.1]
+Mỗi kỳ có ba mốc: ngày sao kê, ngày đến hạn và khoảng ân hạn giữa hai ngày đó; khoảng cách đến hạn được đếm theo ngày. Sự kiện trong kỳ (giao dịch, thanh toán, phí ngay lập tức) được xử lý ngay; lãi, phí tháng, kỳ trả nợ và snapshot được tạo ở EOM. VLP tính lãi một lần vào EOM từ lịch sử số dư trong kỳ, theo quy ước 30/360, cho kết quả như cộng dồn từng ngày.
 :::
 
-## 9.2 Trong tháng: Real-Time Billing
+## 9.2 Trong kỳ: billing theo thời gian thực
 
-### Tháng 3 của chị Lan: Day By Day
+### Kỳ billing thứ 3 của chị Lan, từng ngày
 
-Hãy theo dõi tháng 3 của chị Lan để hiểu billing hoạt động trong một tháng thực tế.
+Hãy theo dõi kỳ 20/2 đến 19/3 của chị Lan.
 
-**Account state đầu tháng 3 (sau khi trả xong tháng 2):**
+**Trạng thái tài khoản đầu kỳ, sau EOM ngày 20/2:**
 
 ```text
 AccountNumber: ACC-2025-789456
 Status: ACTIVE
 CreditLimit: 18,500,000 VNĐ
-OutstandingDebt: 13,494,800 VNĐ (số dư sau 2 tháng theo amortization)
-AvailableBalance: 5,005,200 VNĐ
+OutstandingDebt: 13,500,000 VNĐ
+  (gốc 13,300,000 + lãi và phí kỳ 2 là 200,000)
+AvailableBalance: 5,000,000 VNĐ
+Kỳ trả nợ đang chờ: REGULAR 1,800,000 VNĐ, đến hạn 8/3
+  (gồm lãi và phí kỳ 2 là 200,000 + gốc 1,600,000)
 BillingDay: 20
-DPD: 0 (current)
+DPD: 0
 ```
 
-**Ngày 5/3 - Giao Dịch Mua Hàng:**
-
-Chị Lan dùng thẻ mua quần áo 2,500,000 VNĐ tại trung tâm thương mại.
+**Ngày 5/3: mua hàng.** Chị Lan dùng thẻ mua quần áo 2,500,000 VNĐ.
 
 ```text
 10:23:15 — POS Authorization:
   Auth request: amount=2,500,000, merchantCode="FASHION_STORE_001"
   LAS processes:
     holdBalance += 2,500,000 → holdBalance = 2,500,000
-    availableBalance -= 2,500,000 → availableBalance = 2,505,200
+    availableBalance -= 2,500,000 → availableBalance = 2,500,000
   Auth response: APPROVED
 
-10:23:16 — Account state:
-  holdBalance: 2,500,000
-  outstandingDebt: 13,494,800 (unchanged)
-  availableBalance: 2,505,200
-
-10:25:30 — Merchant settlement (same day, same batch):
+10:25:30 — Merchant settlement (cùng ngày):
   Confirmation: amount=2,500,000, sourceTxCode="POS-TXN-20250305-789"
   LAS processes:
-    1. Check idempotency: sourceTxCode not found → proceed
+    1. Check idempotency: sourceTxCode chưa tồn tại → xử lý tiếp
     2. Create Transaction record (CONFIRMED)
     3. Create LedgerEntry: DEBIT 2,500,000, FeeComponentType: PRINCIPAL
     4. Create PostingUnit: baseAmount=2,500,000, applyIr=true
     5. Update CurrentBalance:
        holdBalance -= 2,500,000 → holdBalance = 0
-       outstandingDebt += 2,500,000 → outstandingDebt = 15,994,800
-       availableBalance = 18,500,000 - 0 - 15,994,800 = 2,505,200 (unchanged)
+       outstandingDebt += 2,500,000 → outstandingDebt = 16,000,000
+       availableBalance = 18,500,000 - 0 - 16,000,000 = 2,500,000 (không đổi)
     6. Bill event: EventType = IMMEDIATE_RESPECT_FREEZE
-       → Not in freeze period → bill now
-       → No EXTRA instalment (prescribeImmediately=false for PRINCIPAL)
-       → Event processed, marked PROCESSED
-    7. Publish TransactionConfirmedEvent → RabbitMQ
-    8. STS notified → real-time balance update in statement preview
+       → Không trong thời gian đóng băng → bill ngay
+       → Không tạo kỳ EXTRA (prescribeImmediately=false cho PRINCIPAL)
+    7. Publish TransactionConfirmedEvent
 ```
 
-**Ngày 15/3 - Tiền Lương Về, Khách Hàng Trả Nợ:**
+**Ngày 7/3: trả kỳ đến hạn.** Chị Lan chuyển khoản 1,800,000 VNĐ, đúng số tiền của kỳ đến hạn 8/3.
 
 ```text
-09:15:22 — Payment: 5,000,000 VNĐ (bank transfer)
-  LAS processes:
-    1. Create Transaction: CREDIT 5,000,000, type=PAYIN (Payment)
-    2. Create LedgerEntry: CREDIT 5,000,000
-    3. Update CurrentBalance:
-       customerCredit += 5,000,000 (credit → customerCredit trước, pairing sau)
-       availableBalance += 5,000,000 → availableBalance = 7,505,200
-
-    4. Pairing (MatchingService runs immediately):
-       Check for unpaired DEBIT instalments on this account:
-       [REGULAR instalments cho tháng 3 chưa có — EOM chưa chạy]
-       [EXTRA instalments? Không có]
-       → Không có instalment nào để pair
-       → Payment stays as customerCredit (unpaired credit)
-
-    5. Khi EOM tháng 3 chạy:
-       → EOM tạo REGULAR instalments (prescribing step)
-       → EOM runs pairing (Sub-step 3.8): customerCredit paired với new instalments
-       
-       Lưu ý quan trọng: Nếu tại thời điểm payment đến đã có pending
-       instalments (ví dụ EXTRA late fee chưa paid), pairing xảy ra NGAY —
-       không chờ EOM.
-
-    6. Publish PaymentReceivedEvent → DRG, STS
+09:15:22 — Payment: 1,800,000 VNĐ (bank transfer)
+  1. Create Transaction: CREDIT 1,800,000, type=PAYIN
+  2. Create LedgerEntry: CREDIT 1,800,000
+  3. Pairing chạy ngay (đã có kỳ trả nợ đang chờ):
+     → Kỳ REGULAR đến hạn 8/3 (1,800,000): FULLY PAIRED, repaid=true
+  4. Update CurrentBalance:
+     outstandingDebt -= 1,800,000 → outstandingDebt = 14,200,000 (toàn bộ là gốc)
+     availableBalance = 18,500,000 - 14,200,000 = 4,300,000
+  5. Publish PaymentReceivedEvent → DRG, STS
 ```
 
-**Ngày 19/3 23:00 - EOM Trigger:**
+**Ngày 18/3: trả thêm khi chưa có kỳ trả nợ.** Lương về, chị Lan chuyển thêm 3,000,000 VNĐ.
 
-EOM cho billing period kết thúc ngày 19/3 bắt đầu. Chị Lan là một trong 1.2 triệu accounts được xử lý.
+```text
+08:40:05 — Payment: 3,000,000 VNĐ
+  1. Create Transaction: CREDIT 3,000,000, type=PAYIN
+  2. Create LedgerEntry: CREDIT 3,000,000
+  3. Pairing: không có kỳ trả nợ nào đang chờ
+     (kỳ 8/3 đã trả, kỳ tiếp theo chỉ được tạo ở EOM 19/3)
+     → Khoản tiền nằm trong customerCredit, chờ ghép ở EOM
+  4. Update CurrentBalance:
+     customerCredit = 3,000,000
+     outstandingDebt = 14,200,000 (chưa giảm — chưa được ghép)
+     availableBalance = 18,500,000 - 14,200,000 + 3,000,000 = 7,300,000
+```
 
-### Fee Events: IMMEDIATE vs EOM
+Hai khoản thanh toán được xử lý khác nhau. Khoản ngày 7/3 có kỳ trả nợ để ghép nên được ghép ngay và giảm dư nợ ngay. Khoản ngày 18/3 đến khi chưa có kỳ trả nợ nào, nên nằm trong số dư có của khách hàng: số dư khả dụng tăng ngay, nhưng dư nợ chịu lãi chỉ giảm khi khoản tiền được ghép ở EOM. Đây là một lựa chọn thiết kế, có hệ quả nhỏ nhưng có thật: hai ngày lãi trên 3 triệu đồng, khoảng 3,000 VNĐ. Một số hệ thống khác trừ khoản trả thêm vào dư nợ gốc ngay lập tức.
 
-**Ví dụ - Late Fee (IMMEDIATE):**
+**Đêm 19/3, 23 giờ:** EOM của kỳ kết thúc ngày 19/3 bắt đầu. Tài khoản của chị Lan là một trong 1.2 triệu tài khoản được xử lý.
 
-Giả sử chị Lan trả trễ tháng 2 (DPD = 5 ngày). Khi phát hiện late payment:
+### Phí ngay lập tức và phí cuối kỳ
+
+Phí trả trễ là ví dụ của phí ngay lập tức. Giả sử chị Lan đã trả trễ kỳ đến hạn 8/3:
 
 ```text
 Late fee calculation (AccountFeeComponentType: LATEFEE1):
@@ -268,9 +252,7 @@ Processing:
   5. Push notification: "Phí trả trễ 200,000 VNĐ đã được ghi vào tài khoản"
 ```
 
-**Ví dụ - Monthly Service Fee (EOM):**
-
-ACCMAINT (Maintenance Account) service fee - phí duy trì tài khoản hàng tháng:
+Phí quản lý tài khoản là phí cuối kỳ:
 
 ```text
 Tariff item types cho ACCMAINT: SVCFEE, CORUA, CURUA (variants)
@@ -287,31 +269,33 @@ Processing tại eomServiceFeesJob (STEP 2 — trước main EOM):
   → Nếu fee chạy sau interest: interest sẽ thiếu (không tính trên fee amount)
 ```
 
-## 9.3 EOM: Closing The Month
+Như đã nói ở [Chương 3](/docs/products/ch03-product-design) và [Chương 8](/docs/system/ch08-account-management), `SVCFEE` là tariff item của dịch vụ `ACCMAINT`. Bước phí dịch vụ chạy trước EOM chính để phí có mặt trong số dư khi các bước sau tính toán.
 
-### Step-by-Step Walkthrough cho Account của chị Lan
+## 9.3 EOM: khép lại kỳ billing
 
-**Account state trước EOM (đêm 19/3):**
+### Từng bước EOM trên tài khoản của chị Lan
+
+**Trạng thái tài khoản trước EOM, đêm 19/3:**
 
 ```text
 Account: ACC-2025-789456
-OutstandingDebt: 15,994,800 VNĐ (sau giao dịch 5/3)
-CustomerCredit: 5,000,000 VNĐ (payment 15/3, chưa paired)
-AvailableBalance: 7,505,200 VNĐ
-Account.billingPeriod: BP_20 (EOM chạy vào ngày 20 mỗi tháng — fixed)
-PeriodBalanceSnapshot.billingPeriodNumber: 2 (sequential counter: kỳ thứ 2)
+OutstandingDebt: 14,200,000 VNĐ (toàn bộ là gốc)
+CustomerCredit: 3,000,000 VNĐ (thanh toán 18/3, chưa ghép)
+AvailableBalance: 7,300,000 VNĐ
+Account.billingPeriod: BP_20 (EOM chạy cho kỳ kết thúc trước ngày 20)
+PeriodBalanceSnapshot.billingPeriodNumber: 2 (kỳ trước)
 DPD: 0
 LastEOMDate: 2025-02-19
 ```
 
-**EOM Step P1: ClearAccountingNotifications**
+**Bước P1: ClearAccountingNotifications**
 
 ```text
 Clear notification buffer từ session trước.
 → Technical prep, không visible cho user
 ```
 
-**EOM Step P2: PrepareContextForEOM**
+**Bước P2: PrepareContextForEOM**
 
 ```text
 Load vào memory:
@@ -324,200 +308,158 @@ Load vào memory:
   - PeriodBalanceSnapshot từ tháng 2 (previous period snapshot)
 ```
 
-**EOM Step P3: Main EOM Logic**
+**Bước P3: logic EOM chính**
 
 ```text
 billingBatchProcessingService.processEOMForRevolvingAccount(account, context)
 
-─── Sub-step 3.1: Delinquency Check ─────────────────────────────
+─── 3.1 Kiểm tra quá hạn ─────────────────────────────────────────
 
-Tính DPD cuối kỳ:
-  Previous instalment due date: 20/2 → chị Lan đã trả đúng hạn
-  DPD = 0 (no overdue instalments)
-  → DpDDaysCount vẫn là 0
+  Kỳ trả nợ đến hạn 8/3: đã trả ngày 7/3
+  DPD = 0 (không có kỳ trả nợ quá hạn)
 
-─── Sub-step 3.2: Debt Calculation ──────────────────────────────
+─── 3.2 Tổng hợp dư nợ ───────────────────────────────────────────
 
-Calculate outstanding debt breakdown:
-  Principal items: 15,994,800 VNĐ (gốc laptop + quần áo)
-  Interest items: 0 (chưa có interest posting tháng này)
-  Fee items: 0 (chưa có fee tháng này)
-  Total outstanding: 15,994,800 VNĐ
+  Gốc: 14,200,000 VNĐ
+  Lãi chưa trả: 0 (lãi kỳ 2 đã trả trong kỳ trả nợ 8/3)
+  Phí chưa trả: 0
+  Tổng dư nợ: 14,200,000 VNĐ
 
-─── Sub-step 3.3: Interest Calculation ──────────────────────────
+─── 3.3 Tính lãi ─────────────────────────────────────────────────
 
-Daily interest accrual cho billing period 20/2 - 19/3:
+  Lãi suất 18%/năm, quy ước 30/360 → lãi suất ngày = 18% / 360 = 0.05%
+  Số ngày theo 30/360 trong kỳ 20/2 - 19/3: 30 ngày
 
-  Account giao dịch trong tháng:
-    20/2 - 4/3: balance = 13,494,800 VNĐ (13 ngày — sau EOM tháng 2)
-    5/3 - 14/3: balance = 15,994,800 VNĐ (10 ngày — sau mua quần áo)
-    15/3 - 19/3: balance = 10,994,800 VNĐ (5 ngày — sau payment 5M)
-    [customerCredit 5M không reduce outstanding debt ngay — paired sau EOM]
+  Gốc chịu lãi theo từng đoạn:
+    20/2 - 4/3:   13,300,000 VNĐ  (15 ngày)
+    5/3 - 6/3:    15,800,000 VNĐ  (2 ngày, sau khi mua 2,500,000)
+    7/3 - 19/3:   14,200,000 VNĐ  (13 ngày, sau khi trả 1,800,000;
+                                   khoản 3,000,000 ngày 18/3 chưa ghép)
 
-  Interest rate: 15%/năm
-  Day-count: 30/360 (D30_360) → daily rate = 15% / 360 = 0.041667%/ngày
+  Lãi = (15 × 13,300,000 + 2 × 15,800,000 + 13 × 14,200,000) × 0.05%
+      = 415,700,000 × 0.05%
+      = 207,850 VNĐ
 
-  Interest calculation:
-    13 days × 13,494,800 × 0.041667% = 73,026 VNĐ
-    10 days × 15,994,800 × 0.041667% = 66,645 VNĐ
-    5 days  × 10,994,800 × 0.041667% = 22,906 VNĐ
-    ───────────────────────────────────────────────
-    Total interest: 162,577 VNĐ (rounded)
-    
-  (Note: sách ban đầu dùng 0.041096% = 15%/365 — đã sửa thành 15%/360)
-
-  Create LedgerEntry: DEBIT 162,577, FeeComponentType=INTEREST_CASHLESS
+  Create LedgerEntry: DEBIT 207,850, FeeComponentType=INTEREST_CASHLESS
   Create PostingUnit: applyIr=false (không tính lãi trên lãi)
+  outstandingDebt = 14,200,000 + 207,850 = 14,407,850 VNĐ
+
+─── 3.4 Phí ──────────────────────────────────────────────────────
+
+  Phí quản lý tài khoản (đã ghi bởi eomServiceFeesJob):
+    LedgerEntry: DEBIT 50,000, FeeComponentType=SVCFEE
+  Phí bảo hiểm:
+    LedgerEntry: DEBIT 90,000, FeeComponentType=LIFEINS
+
+  Tổng phí kỳ này: 140,000 VNĐ
+  outstandingDebt = 14,407,850 + 140,000 = 14,547,850 VNĐ
+
+─── 3.5 Khoản trả tối thiểu (MMI) ────────────────────────────────
+
+  Tham số hợp đồng: MMI_LIMIT = 1,800,000 VNĐ
+  5% dư nợ: 5% × 14,547,850 = 727,393 VNĐ
+  MMI = MAX(1,800,000, 727,393) = 1,800,000 VNĐ
+
+─── 3.6 Cập nhật kỳ billing ──────────────────────────────────────
+
+  Account.billingPeriod: BP_20 (không đổi, là ngày cố định trong tháng)
+  PeriodBalanceSnapshot.billingPeriodNumber: 2 → 3
+  LastEOMDate = 2025-03-19
+
+─── 3.7 Tạo kỳ trả nợ (prescribing) ──────────────────────────────
+
+  PostingUnit chưa được tạo kỳ trả nợ:
+    Phí quản lý tài khoản:  50,000
+    Phí bảo hiểm:            90,000
+    Lãi kỳ 3:               207,850
+    Gốc:                 14,200,000
+
+  Thứ tự ưu tiên theo biểu phí (PRIORITY_ONLY): phí → lãi → gốc
+  Ngày đến hạn: 20/3 + 16 ngày = 5/4
+
+  Tạo kỳ trả nợ REGULAR cho đến khi đủ MMI 1,800,000:
+    R-001: phí            140,000
+    R-002: lãi            207,850
+    R-003: gốc          1,452,150  → tổng đạt 1,800,000, dừng
+  Phần gốc còn lại 12,747,850 được tạo kỳ trả nợ ở các kỳ sau.
+
+  InstalmentSummary:
+    DueDate: 5/4, Type: REGULAR, Amount: 1,800,000 VNĐ
+
+─── 3.8 Ghép số dư có (overpayment pairing) ──────────────────────
+
+  CustomerCredit: 3,000,000 VNĐ (thanh toán 18/3)
+  Kỳ trả nợ đang chờ: 1,800,000 VNĐ (vừa tạo)
+
+  Ghép:
+    R-001 (140,000)   → FULLY PAIRED, credit còn 2,860,000
+    R-002 (207,850)   → FULLY PAIRED, credit còn 2,652,150
+    R-003 (1,452,150) → FULLY PAIRED, credit còn 1,200,000
+  InstalmentSummary 5/4: repaid=true
 
   Update CurrentBalance:
-    outstandingDebt += 162,577 → outstandingDebt = 16,157,377 VNĐ
+    outstandingDebt = 14,547,850 - 1,800,000 = 12,747,850 VNĐ
+    customerCredit = 1,200,000 VNĐ
+    availableBalance = 18,500,000 - 12,747,850 + 1,200,000 = 6,952,150 VNĐ
 
-─── Sub-step 3.4: Fee Calculation ───────────────────────────────
+─── 3.9 Kiểm tra số dư ───────────────────────────────────────────
 
-ACCMAINT service fee (đã được tính bởi eomServiceFeesJob):
-  LedgerEntry đã có: DEBIT 50,000, FeeComponentType=ACCMAINT
-
-LIFEINS insurance premium:
-  LedgerEntry: DEBIT 90,000, FeeComponentType=LIFEINS
-
-Total fees this period: 140,000 VNĐ
-outstandingDebt += 140,000 → outstandingDebt = 16,295,324 VNĐ
-
-─── Sub-step 3.5: MMI Calculation ───────────────────────────────
-
-Minimum Monthly Instalment:
-  Account Parameter: MMI_LIMIT = 1,800,000 VNĐ (từ contract)
-  Hoặc: 5% outstanding = 5% × 16,295,324 = 814,766 VNĐ
-  MMI = MAX(1,800,000, 814,766) = 1,800,000 VNĐ
-
-Đây là số tiền tối thiểu chị Lan phải trả tháng này.
-
-─── Sub-step 3.6: Billing Period bookkeeping ─────────────────────
-
-Account.billingPeriod: BP_20 (không thay đổi — là day-of-month cố định)
-PeriodBalanceSnapshot.billingPeriodNumber: 2 → 3 (sequential counter tăng)
-Account.currentPeriodEndDate updated → next EOM date
-LastEOMDate = 2025-03-19
-
-─── Sub-step 3.7: INSTALMENT GENERATION (Prescribing) ───────────
-
-Tất cả TechnicalAccountItems chưa prescribed:
-  TAI-001: Principal laptop (từ khi mua) — unprescribed portion
-  TAI-002: Principal quần áo — unprescribed: 2,500,000
-  TAI-003: Interest tháng 3 — unprescribed: 160,524
-  TAI-004: ACCMAINT fee — unprescribed: 50,000
-  TAI-005: Insurance — unprescribed: 90,000
-
-Sorting by priority (PRIORITY_ONLY):
-  [Ưu tiên theo tariff config — simplified here]
-  Priority 1: Principal items (TAI-001, TAI-002)
-  Priority 2: Interest (TAI-003)
-  Priority 3: Fees (TAI-004, TAI-005)
-
-Due date: 20/3 + 16 = 5/4
-
-Generate REGULAR instalments:
-  Instalment R-001: amount=1,400,000 (portion of laptop principal), due=5/4
-  Instalment R-002: amount=400,000 (remaining MMI from MMI_LIMIT)
-    → Wait: total so far 1,800,000 = MMI_LIMIT → stop!
-    
-    Remaining unprescribed: interest + fees + more principal
-    → Carried over to NEXT period (next EOM will prescribe more)
-
-InstalmentSummary created:
-  DueDate: 5/4
-  Type: REGULAR
-  Amount: 1,800,000 VNĐ
-  Children: [R-001: 1,400,000, R-002: 400,000]
-
-─── Sub-step 3.8: Overpayment Pairing ───────────────────────────
-
-CustomerCredit: 5,000,000 VNĐ (payment từ 15/3)
-Pending instalments: 1,800,000 VNĐ (just created above)
-
-Pairing:
-  CustomerCredit 5,000,000 → Instalment R-001 (1,400,000): FULLY PAIRED
-  CustomerCredit remaining: 3,600,000 → Instalment R-002 (400,000): FULLY PAIRED
-  CustomerCredit remaining: 3,200,000 → No more pending instalments
-  → CustomerCredit: 3,200,000 (credit balance — chị Lan trả dư)
-
-After pairing:
-  InstalmentSummary 5/4: repaid=true (all children repaid)
-  → Chị Lan không cần trả gì vào 5/4! Đã trả trước rồi.
-  
-  Update CurrentBalance:
-    outstandingDebt -= 1,800,000 → outstandingDebt = 14,495,324 VNĐ
-    customerCredit = 3,200,000 VNĐ
-    availableBalance = 18,500,000 - 14,495,324 + 3,200,000 = 7,204,676 VNĐ
-
-─── Sub-step 3.9: Balance Recalculation ─────────────────────────
-
-Verify CurrentBalance consistency:
-  Calculated from events: matches CurrentBalance → OK
-  No reconciliation needed
+  Dư nợ tính lại từ bút toán khớp CurrentBalance → OK
 ```
 
-### PeriodBalanceSnapshot: Snapshot tháng 3
+Hai điểm cần chú ý trong ví dụ này. Thứ nhất, kỳ trả nợ chỉ lấy đủ MMI: phần lớn gốc vẫn còn đó và được tạo kỳ trả nợ dần ở các kỳ sau, đúng bản chất của tín dụng quay vòng. Thứ hai, nhờ khoản trả thêm ngày 18/3, kỳ trả nợ đến hạn 5/4 đã được trả ngay khi vừa được tạo. Chị Lan không phải trả gì trước ngày 5/4.
+
+### PeriodBalanceSnapshot của kỳ 3
 
 ```text
 W1 Writer: StoreEOMResultsItemWriter
 
 CREATE LAS_PERIOD_BALANCE_SNAPSHOT:
   account_id: [ID of ACC-2025-789456]
-  billing_period_number: 3  ← sequential counter (kỳ thứ 3)
+  billing_period_number: 3
   period_start: 2025-02-20, period_end: 2025-03-19
   due_date: 2025-04-05
-  start_balance: 13,494,800 (đầu kỳ)
-  end_balance: 14,495,324 (cuối kỳ, sau EOM)
-  per_credit_interest: 160,524  (lãi kỳ này)
-  per_fee: 140,000              (phí kỳ này: ACCMAINT + insurance)
-  per_payments: 5,000,000       (payments received this period)
-  own_funds: 3,200,000
+  start_balance: 13,500,000   (dư nợ đầu kỳ)
+  end_balance: 12,747,850     (dư nợ cuối kỳ, sau EOM)
+  per_interest: 207,850       (lãi kỳ này)
+  per_fee: 140,000            (phí kỳ này: quản lý tài khoản + bảo hiểm)
+  per_payments: 4,800,000     (thanh toán trong kỳ: 1,800,000 + 3,000,000)
+  own_funds: 1,200,000        (số dư có của khách hàng)
   prescribed_instalment: 1,800,000
   day_past_due: 0
   billing_run → link đến BillingRun
-  previous_period_balance_snapshot → link về kỳ trước
+  previous_period_balance_snapshot → link về kỳ 2
   cancelled: false
-
-Đây là snapshot bất biến của tháng 3.
-Dùng cho: statement generation, regulatory reporting, audit, historical queries.
 ```
 
-:::summary[EOM Walkthrough]
-9 sub-steps trong đúng thứ tự:
-Delinquency → Debt → Interest → Fees →
-MMI → BillingPeriod → Prescribing →
-Pairing → Balance
-Daily interest accrual: chính xác hơn monthly
-MMI limits prescribing: excess → next period
-CustomerCredit pair với EOM instalments → can pre-pay
-PeriodBalanceSnapshot: immutable snapshot
+Đây là ảnh chụp bất biến của kỳ 3, dùng để tạo sao kê, báo cáo cho cơ quan quản lý, kiểm toán và trả lời các câu hỏi về lịch sử. Có thể kiểm tra các con số: dư nợ đầu kỳ 13,500,000 cộng giao dịch mua 2,500,000, lãi 207,850 và phí 140,000, trừ khoản 1,800,000 đã ghép ngày 7/3 và khoản 1,800,000 ghép ở EOM, ra đúng 12,747,850.
+
+:::summary[Mục 9.3]
+EOM xử lý mỗi tài khoản qua chín bước theo đúng thứ tự: quá hạn, dư nợ, lãi, phí, MMI, cập nhật kỳ, tạo kỳ trả nợ, ghép số dư có, kiểm tra số dư. Lãi được tính trên từng đoạn số dư trong kỳ. MMI giới hạn số tiền được tạo kỳ trả nợ; phần còn lại chuyển sang kỳ sau. Khoản khách hàng trả trước được ghép ngay vào kỳ trả nợ vừa tạo. `PeriodBalanceSnapshot` là ảnh chụp bất biến của kỳ.
 :::
 
-## 9.4 Statement Generation: Từ Numbers đến Document
+## 9.4 Tạo sao kê: từ con số đến tài liệu
 
-### STS Module: Statement Management
+### Module STS
 
 ::::story
-Lúc 4h30 sáng, EOM hoàn thành xử lý account của chị Lan. LAS publish event → RabbitMQ → STS subscriber nhận được.
-
-STS bắt đầu tạo statement tháng 3 cho chị Lan.
+4 giờ 30 sáng, EOM xử lý xong tài khoản của chị Lan. LAS phát sự kiện qua RabbitMQ, STS nhận được và bắt đầu tạo sao kê kỳ 3 cho chị.
 ::::
 
-**STS nhận gì từ LAS:**
+STS nhận từ LAS:
 
 ```text
 AMQPEvent từ LAS:
   accountId: [ID]
   accountNumber: "ACC-2025-789456"
-  billingPeriodNumber: 3  (sequential counter, period 3)
+  billingPeriodNumber: 3
   billingDate: "2025-03-20"
   periodBalanceSnapshotId: [ID of snapshot just created]
   dueDate: "2025-04-05"
   mmiAmount: 1,800,000
 ```
 
-**STS assembles statement từ:**
+Rồi tổng hợp sao kê từ nhiều nguồn:
 
 ```text
 1. PeriodBalanceSnapshot (snapshot từ LAS):
@@ -536,75 +478,60 @@ AMQPEvent từ LAS:
    → Interest rate, APR, payment terms for disclosure
 ```
 
-### Regulatory Disclosure Requirements: Bắt buộc phải có
+### Nội dung bắt buộc của sao kê
 
-**Statement phải include (theo regulatory):**
-
-```text
-1. OPENING BALANCE
-   Số dư đầu kỳ: 13,494,800 VNĐ
-
-2. TRANSACTIONS
-   Liệt kê từng giao dịch:
-   05/03  Fashion Store          PURCHASE      2,500,000 VNĐ
-   15/03  Bank Transfer          PAYMENT      -5,000,000 VNĐ
-
-3. CHARGES (PHẢI hiện rõ từng loại)
-   Lãi suất tháng 3:                          160,524 VNĐ
-   Phí duy trì tài khoản (ACCMAINT):            50,000 VNĐ
-   Phí bảo hiểm:                              90,000 VNĐ
-
-4. CLOSING BALANCE
-   Số dư cuối kỳ: 14,495,324 VNĐ
-   (= opening + purchases + charges - payments)
-
-5. MINIMUM PAYMENT (REQUIRED BY LAW)
-   Số tiền tối thiểu phải trả: 1,800,000 VNĐ
-   Hạn thanh toán: 05/04/2025
-
-6. INTEREST RATE DISCLOSURE
-   Lãi suất: 15%/năm
-   APR: 16.8%/năm (bao gồm tất cả phí)
-
-7. TOTAL COST IF MINIMUM PAYMENT ONLY (MỚI REQUIRED)
-   Nếu chỉ trả tối thiểu hàng tháng:
-   Thời gian tất toán: 11 tháng còn lại
-   Tổng lãi thêm: 820,000 VNĐ
-   [Đây là anti-minimum-payment disclosure — counter-act behavioral bias]
-
-8. FULL PAYMENT AMOUNT
-   Để trả hết toàn bộ: 14,495,324 VNĐ
-   (Không có thêm lãi nếu trả đủ trước ngày 05/04)
-
-9. DISPUTE RESOLUTION
-   Nếu có tranh chấp: hotline, email, deadline để dispute
-
-10. NEXT BILLING DATE
-    Ngày sao kê tiếp theo: 20/04/2025
-```
-
-**Item 7 - Behavioral Economics in Regulation:**
+Sao kê là một tài liệu pháp lý. Quy định về công bố thông tin ở nhiều thị trường yêu cầu sao kê tín dụng quay vòng có các mục sau; dưới đây là sao kê kỳ 3 của chị Lan:
 
 ```text
-Disclosure "nếu chỉ trả tối thiểu" là regulatory requirement
-ở EU (Consumer Credit Directive), UK, và ngày càng nhiều thị trường.
+1. DƯ NỢ ĐẦU KỲ
+   13,500,000 VNĐ
 
-Mục đích: counter-act present bias và anchoring
-→ Khi thấy "820,000 VNĐ thêm nếu chỉ trả tối thiểu",
-  khách hàng có context để ra quyết định tốt hơn
+2. GIAO DỊCH
+   05/03  Fashion Store          MUA HÀNG       2,500,000 VNĐ
+   07/03  Chuyển khoản           THANH TOÁN    -1,800,000 VNĐ
+   18/03  Chuyển khoản           THANH TOÁN    -3,000,000 VNĐ
 
-Trong VLP: STS phải calculate và include trong statement
-Calculation:
-  Using amortization schedule từ current balance:
-  current balance: 14,495,324 VNĐ
-  Rate: 15%/năm, MMI = 1,800,000/tháng
-  Calculate months to payoff: 11 months
-  Total interest during payoff: SUM(interest portion of each payment)
+3. LÃI VÀ PHÍ (phải hiện rõ từng loại)
+   Lãi kỳ 20/02 - 19/03:                        207,850 VNĐ
+   Phí quản lý tài khoản:                        50,000 VNĐ
+   Phí bảo hiểm:                                 90,000 VNĐ
+
+4. SỐ DƯ CUỐI KỲ
+   11,547,850 VNĐ
+   (= đầu kỳ + mua hàng + lãi và phí - thanh toán)
+   Gồm dư nợ 12,747,850 VNĐ trừ số dư có 1,200,000 VNĐ
+
+5. KHOẢN TRẢ TỐI THIỂU
+   Khoản trả tối thiểu kỳ này: 1,800,000 VNĐ
+   Đã thanh toán trước bằng số dư có
+   Số tiền còn phải trả trước 05/04/2025: 0 VNĐ
+
+6. LÃI SUẤT VÀ CHI PHÍ TÍN DỤNG
+   Lãi suất: 18%/năm (0.05%/ngày theo quy ước 30/360)
+   APR: theo công thức của cơ quan quản lý, gồm mọi phí bắt buộc
+
+7. NẾU CHỈ TRẢ TỐI THIỂU
+   Nếu từ kỳ sau chỉ trả mức tối thiểu và không chi tiêu thêm:
+   Thời gian trả hết: khoảng 8 tháng
+   Tổng lãi phải trả thêm: khoảng 742,000 VNĐ
+   Tổng phí phải trả thêm: khoảng 1,120,000 VNĐ
+
+8. SỐ TIỀN ĐỂ TRẢ HẾT
+   11,547,850 VNĐ
+   (cộng lãi phát sinh từ 20/03 đến ngày thanh toán)
+
+9. KHIẾU NẠI
+   Đường dây nóng, email và thời hạn khiếu nại
+
+10. NGÀY SAO KÊ TIẾP THEO
+    20/04/2025
 ```
 
-### Statement Delivery: Channels và Timing
+Mục 7 được tính bằng cách mô phỏng lịch trả nợ từ số dư cuối kỳ: mỗi tháng cộng lãi 1.5% trên dư nợ và 140,000 VNĐ phí, trừ khoản trả tối thiểu bằng MAX(1,800,000, 5% dư nợ).
 
-**Multiple delivery channels:**
+Mục 7 là kinh tế học hành vi đi vào quy định. Thông tin "nếu chỉ trả tối thiểu" là yêu cầu bắt buộc ở Anh và nhiều thị trường khác, nhằm hóa giải thiên kiến hiện tại và hiệu ứng mỏ neo đã phân tích ở [Chương 4](/docs/products/ch04-customer-journey): khi thấy rõ thời gian và chi phí của việc chỉ trả tối thiểu, khách hàng có thêm cơ sở để quyết định. Với khoản nợ lớn và MMI thấp, con số này có thể gây giật mình, như ví dụ 85 tháng ở [Chương 3](/docs/products/ch03-product-design). Trong VLP, STS tính mục này từ số dư cuối kỳ, lãi suất và quy tắc MMI, rồi đưa vào sao kê.
+
+### Kênh và thời điểm gửi sao kê
 
 ```text
 Channel 1: In-App (highest priority)
@@ -628,7 +555,7 @@ Channel 4: Paper (opt-in)
   → Phổ biến ít hơn nhưng vẫn required cho một số segments
 ```
 
-**Timing logic:**
+Logic lập lịch gửi:
 
 ```java
 // illustrative pseudo-code — STS delivery internals not verified
@@ -647,7 +574,9 @@ public void scheduleDelivery(Statement statement) {
 }
 ```
 
-**Statement là immutable document:**
+Gửi email vào 6 giờ chứ không phải 3 giờ sáng là một quyết định về trải nghiệm: thư đến lúc khách hàng bắt đầu ngày mới, và ít bị bộ lọc thư rác đánh dấu hơn. Tin nhắn SMS chỉ chứa số tiền và ngày đến hạn, không chứa toàn bộ sao kê, vì lý do bảo mật.
+
+### Sao kê là tài liệu bất biến
 
 ```text
 Sau khi statement được deliver, không thể sửa.
@@ -666,61 +595,53 @@ Tại sao immutable:
   3. Audit trail: statement at time T là gì?
 ```
 
-:::summary[Statement Generation]
-STS assembles từ nhiều sources:
-PeriodBalanceSnapshot + transactions + schedule
-Regulatory disclosures bắt buộc: 10 items
-bao gồm minimum-payment consequence
-Delivery: in-app (immediate) → email (6h) →
-SMS (7h) → paper (T+2)
-Statement là immutable - revision nếu cần sửa
+:::summary[Mục 9.4]
+STS tổng hợp sao kê từ `PeriodBalanceSnapshot`, lịch sử giao dịch, lịch trả nợ và thông tin sản phẩm. Sao kê có mười nội dung bắt buộc, trong đó có hậu quả của việc chỉ trả tối thiểu. Sao kê được gửi qua ứng dụng ngay khi sẵn sàng, email lúc 6 giờ, SMS lúc 7 giờ và bản giấy nếu khách hàng chọn. Sao kê đã gửi không bao giờ bị sửa; nếu có sai, công ty phát hành sao kê điều chỉnh.
 :::
 
-## 9.5 Due Date và Payment Matching
+## 9.5 Ngày đến hạn và ghép thanh toán
 
-### Grace Period Mechanics
+### Khi khoản thanh toán đến trước
 
 ::::story
-Chị Lan nhận statement lúc 6h30 sáng ngày 20/3. Số tiền tối thiểu: 1,800,000 VNĐ, hạn 5/4. Nhưng chị đã trả 5,000,000 VNĐ ngày 15/3 - trước EOM.
-
-Điều gì xảy ra?
+6 giờ 30 sáng ngày 20/3, chị Lan nhận sao kê. Khoản trả tối thiểu là 1,800,000 VNĐ, hạn 5/4. Nhưng chị đã chuyển thêm 3,000,000 VNĐ hôm 18/3, trước EOM. Chuyện gì đã xảy ra?
 ::::
 
-**Payment matching sau EOM:**
-
 ```text
-Chị Lan đã trả 5,000,000 VNĐ (15/3) trước khi instalments được tạo (EOM 19/3)
+Chị Lan trả 3,000,000 VNĐ (18/3) trước khi kỳ trả nợ được tạo (EOM 19/3)
 
-Sau EOM:
-  CustomerCredit = 5,000,000 VNĐ (payment chờ matching)
-  REGULAR instalments created: 1,800,000 VNĐ (due 5/4)
+Sau khi tạo kỳ trả nợ ở EOM:
+  CustomerCredit = 3,000,000 VNĐ (chờ ghép)
+  Kỳ trả nợ REGULAR: 1,800,000 VNĐ (đến hạn 5/4)
 
-Overpayment pairing (trong EOM sub-step 3.8):
-  5,000,000 → 1,800,000 (fully paid)
-  Remaining: 3,200,000 → customerCredit
+Ghép số dư có (bước 3.8 của EOM):
+  3,000,000 → 1,800,000 (trả đủ)
+  Còn lại: 1,200,000 → customerCredit
 
-Result:
-  InstalmentSummary 5/4: repaid=true (before due date even arrives!)
-  Account status: CURRENT (không có upcoming due obligations)
-  CustomerCredit: 3,200,000 VNĐ
+Kết quả:
+  InstalmentSummary 5/4: repaid=true (trước cả ngày đến hạn)
+  Tài khoản: đúng hạn, không còn khoản phải trả sắp đến hạn
+  CustomerCredit: 1,200,000 VNĐ
 
-Chị Lan không cần làm gì vào 5/4 — đã trả trước rồi.
-Statement sẽ show: "Đã trả 5,000,000 VNĐ ngày 15/3. Số tiền cần trả: 0 VNĐ."
+Chị Lan không cần làm gì vào 5/4.
+Sao kê ghi: "Khoản trả tối thiểu đã được thanh toán. Số tiền còn phải trả: 0 VNĐ."
 ```
 
-### On-Time vs Late Payment Flow
+Số dư có 1,200,000 VNĐ còn lại sẽ được ghép vào kỳ trả nợ của kỳ sau, khi EOM ngày 20/4 tạo ra nó.
 
-**Kịch bản A - Chị Minh (khác với chị Lan) trả đúng hạn:**
+### Trả đúng hạn và trả trễ
+
+**Kịch bản A: chị Thu trả đúng hạn.** Chị Thu là một khách hàng khác, có kỳ trả nợ 1,800,000 VNĐ đến hạn 5/4.
 
 ```text
-Account sau EOM: instalment due 5/4: 1,800,000 VNĐ unpaid
+Account sau EOM: kỳ trả nợ đến hạn 5/4: 1,800,000 VNĐ, chưa trả
 
 4/4, 14:30 — Payment 2,000,000 VNĐ (nhiều hơn MMI):
   1. Create Transaction: CREDIT 2,000,000
   2. Create LedgerEntry: CREDIT 2,000,000
   3. CustomerCredit += 2,000,000
 
-  Immediate pairing trigger (payment event):
+  Pairing chạy ngay (sự kiện thanh toán):
     CustomerCredit 2,000,000 → Instalment I-001 (1,800,000): FULLY PAIRED
     → I-001: repaid=true, repaidDate=4/4
     InstalmentSummary: all children repaid → repaid=true
@@ -729,15 +650,14 @@ Account sau EOM: instalment due 5/4: 1,800,000 VNĐ unpaid
   Update CurrentBalance:
     outstandingDebt -= 1,800,000
     customerCredit = 200,000
-    availableBalance += 1,800,000 - 200,000 = 1,600,000 net increase
+    availableBalance tăng 2,000,000 (1,800,000 dư nợ giảm + 200,000 số dư có)
 
-5/4 — Due date arrives:
-  System check: InstalmentSummary due 5/4 → repaid=true → NO ACTION
-  DPD counter: remains 0
-  No late fee generated
+5/4 — Ngày đến hạn:
+  Kiểm tra: InstalmentSummary đến hạn 5/4 → repaid=true → không làm gì
+  DPD: vẫn 0, không phát sinh phí trả trễ
 ```
 
-**Kịch bản B - Chị Hoa trả trễ:**
+**Kịch bản B: chị Hoa trả trễ.**
 
 ```text
 Account sau EOM: instalment due 5/4: 1,800,000 VNĐ unpaid
@@ -766,10 +686,12 @@ Account sau EOM: instalment due 5/4: 1,800,000 VNĐ unpaid
   → Future credit decisions có thể bị ảnh hưởng
 ```
 
-### Partial Payment: Không đủ để trả toàn bộ
+Hai ngày trễ hạn của chị Hoa đã được ghi nhận. Dù chị trả đủ ngay sau đó, thông tin này có thể được báo cáo lên trung tâm thông tin tín dụng và ảnh hưởng tới các quyết định tín dụng sau này.
+
+### Trả thiếu
 
 ::::story
-Chị Hoa chỉ có 1,000,000 VNĐ. Cô trả nhưng không đủ để clear tất cả.
+Chị Hoa chỉ có 1,000,000 VNĐ. Chị trả, nhưng không đủ để trả hết các kỳ đang nợ.
 ::::
 
 ```text
@@ -805,7 +727,7 @@ Collections trigger:
   DPD = 90 → Stage 3 migration, write-off consideration
 ```
 
-**Tại sao không distribute 1,000,000 VNĐ proportionally:**
+Vì sao không chia khoản 1,000,000 VNĐ theo tỷ lệ cho các kỳ?
 
 ```text
 Option A: Distribute proportionally
@@ -824,26 +746,23 @@ Tại sao B tốt hơn A:
   Collections: cleaner state (one obligation, not two partials)
 ```
 
-:::summary[Due Date & Payment Matching]
-Pre-payment (trả trước EOM): stored in customerCredit,
-paired khi EOM creates instalments
-On-time payment: immediate pairing, DPD stays 0
-Late payment: DPD++ mỗi ngày, late fee EXTRA inst
-Partial payment: PRIORITY_ONLY → high priority
-items paid first → cleaner state
+Lập luận "dễ quản lý hơn" ở trên có giá trị, nhưng cần nhớ phân tích ở [Chương 8, mục 8.4](/docs/system/ch08-account-management): với một khoản thanh toán thiếu, thứ tự phân bổ không quyết định việc tài khoản có hết quá hạn hay không. Nó quyết định khoản nào được trả trước, nên doanh thu loại nào được ghi nhận sớm hơn và khoản nào còn bị tính lãi. Trả phí phạt trước có lợi cho doanh thu của bên cho vay; khoản gốc 1,000,000 VNĐ vẫn quá hạn như thường.
+
+:::summary[Mục 9.5]
+Khoản trả trước EOM nằm trong số dư có và được ghép ngay khi EOM tạo kỳ trả nợ. Khoản trả đúng hạn được ghép ngay, DPD giữ ở 0. Trả trễ làm DPD tăng mỗi ngày và sinh kỳ trả nợ EXTRA cho phí trả trễ. Với khoản trả thiếu, thứ tự phân bổ quyết định khoản nào được trả trước, không quyết định việc tài khoản có hết quá hạn.
 :::
 
-## 9.6 Cycle Integrity: Khi mọi thứ phải khớp nhau
+## 9.6 Toàn vẹn của chu kỳ: khi mọi thứ phải khớp nhau
 
-### Three-Way Reconciliation
+### Đối soát ba bên
 
 ::::story
-Lúc 7h00 sáng ngày 20/3, EOM hoàn thành. Reconciliation job bắt đầu.
+7 giờ sáng ngày 20/3, EOM hoàn tất và tác vụ đối soát bắt đầu.
 
-Reconciliation không chỉ là "kiểm tra balance đúng không?" - đó là đảm bảo ba hệ thống nhất quán với nhau.
+Đối soát không chỉ là "số dư có đúng không?", mà là bảo đảm ba hệ thống nhất quán với nhau.
 ::::
 
-**Ba nguồn dữ liệu cần khớp:**
+Ba nguồn dữ liệu phải khớp:
 
 ```text
 Source 1: LAS Database (Source of Truth)
@@ -861,7 +780,7 @@ Source 3: DRG (Debt Register)
   → Provision bucket (IFRS 9 stage)
 ```
 
-**Reconciliation checks:**
+Các phép kiểm tra:
 
 ```text
 Check 1: LAS ↔ PeriodBalanceSnapshot
@@ -896,7 +815,7 @@ Check 5: Interest formula verification
   Allowed gap: ±1 VNĐ (rounding, sau rounding standardization)
 ```
 
-**Khi reconciliation fails:**
+Khi đối soát phát hiện chênh lệch:
 
 ```text
 Gap < 1 VNĐ (rounding):
@@ -920,9 +839,11 @@ Gap at scale (> 1% of accounts have gaps):
   → Regulatory notification may be required
 ```
 
-### Common Inconsistencies và Root Causes
+Ngưỡng ở đây chặt hơn ngưỡng của tác vụ đối soát số dư hằng ngày ở [Chương 8](/docs/system/ch08-account-management), vì đây là đối soát ngay sau EOM: sai lệch lúc này có thể đi thẳng vào sao kê của khách hàng, nên chặn việc gửi sao kê quan trọng hơn chặn giao dịch.
 
-**Inconsistency Type 1: Balance drift over time**
+### Những sai lệch thường gặp và nguyên nhân
+
+**Loại 1: số dư trôi dần theo thời gian.**
 
 ```text
 Symptom: Account balance correct at EOM, but drifts slowly over months
@@ -938,7 +859,7 @@ Fix: Ensure Kafka consumer processes with correct temporal semantics
      (event time, not processing time)
 ```
 
-**Inconsistency Type 2: Duplicate installment**
+**Loại 2: kỳ trả nợ bị tạo trùng.**
 
 ```text
 Symptom: Two identical instalments for same amount and due date
@@ -957,7 +878,7 @@ Fix: BillingRun check before EOM:
   → Idempotent EOM design
 ```
 
-**Inconsistency Type 3: STS/LAS mismatch**
+**Loại 3: STS và LAS không khớp.**
 
 ```text
 Symptom: Statement shows different amount than LAS
@@ -977,13 +898,11 @@ Fix:
   RabbitMQ DLQ for failed events → manual review
 ```
 
-### Idempotent Billing: Running EOM Twice Safely
+### Billing idempotent: chạy EOM hai lần mà vẫn an toàn
 
-**Tại sao quan trọng:**
+EOM là thao tác then chốt, và có những lúc phải chạy lại: chuyển máy chủ dự phòng, sửa lỗi, điều chỉnh dữ liệu. Nếu EOM không idempotent, chạy lại nghĩa là tính phí hai lần.
 
-EOM là critical operation. Có những trường hợp phải run lại (failover, bug fix, data correction). Nếu EOM không idempotent → chạy lại → duplicate charges → financial error.
-
-**Idempotency through state checks:**
+Idempotency ở cấp `BillingRun`:
 
 ```java
 @Transactional
@@ -1017,7 +936,7 @@ public EOMResult processEOMForAccount(Account account, LocalDate billingDate) {
 }
 ```
 
-**Instalment prescribing idempotency:**
+Idempotency ở bước tạo kỳ trả nợ:
 
 ```java
 // illustrative pseudo-code — method names differ from actual
@@ -1044,190 +963,102 @@ if (!existing.isEmpty()) {
 }
 ```
 
-:::summary[Cycle Integrity]
-3-way reconciliation: LAS ↔ STS ↔ DRG
-Gap > 1,000 VNĐ = P1 incident, freeze account
-Common causes: event delivery failure, duplicate
-processing, temporal semantic issues
-Idempotent EOM: BillingRun.status check trước
-→ Skip nếu đã SUCCESS, cancel nếu FAILED
+Nguyên tắc chung: trước khi tạo một thứ, kiểm tra xem nó đã tồn tại chưa. Nếu đã tồn tại và khớp kỳ vọng thì bỏ qua; nếu tồn tại nhưng không khớp thì dừng lại và báo lỗi, không tự đoán cách sửa.
+
+:::summary[Mục 9.6]
+Sau EOM, đối soát ba bên kiểm tra LAS, STS và DRG khớp nhau; chênh lệch trên 1,000 VNĐ là sự cố nghiêm trọng, tài khoản bị chặn và sao kê bị giữ lại. Nguyên nhân thường gặp là sự kiện bị giao trùng hoặc thất lạc, xử lý trùng, và dùng sai thời gian xử lý thay cho thời gian sự kiện. EOM idempotent nhờ kiểm tra trạng thái `BillingRun` trước khi chạy và kiểm tra kỳ trả nợ đã tồn tại trước khi tạo.
 :::
 
-## Tóm tắt chương 9
+## Tổng kết chương 9
+
+Một kỳ billing của chị Lan:
 
 ```text
-30 ngày của chị Lan — từ billing perspective:
+KỲ 3 (20/2 - 19/3):
+  20/2:  Đầu kỳ: dư nợ 13,500,000; kỳ trả nợ 1,800,000 đến hạn 8/3
 
-THÁNG 3:
   5/3:   Mua quần áo 2,500,000 VNĐ
-         → Authorization (hold) → Confirmation (debt)
-         → LedgerEntry created, balance updated
+         → Authorization (giữ chỗ) → Confirmation (ghi nợ)
 
-  15/3:  Trả 5,000,000 VNĐ
-         → CustomerCredit += 5,000,000 (chờ pairing sau EOM)
+  7/3:   Trả 1,800,000 VNĐ → ghép ngay vào kỳ đến hạn 8/3
 
-  19/3 23:00:  EOM starts
-    Interest calculated: 160,524 VNĐ (daily accrual × 28 days)
-    Fees: 140,000 VNĐ (ACCMAINT + insurance)
-    REGULAR instalments created: 1,800,000 VNĐ (due 5/4)
-    CustomerCredit paired: 1,800,000 → repaid
-    CustomerCredit remaining: 3,200,000 VNĐ
+  18/3:  Trả thêm 3,000,000 VNĐ → số dư có, chờ ghép ở EOM
 
-  20/3 06:30:  Statement delivered (in-app)
-    Shows: 2,500,000 purchase, 5,000,000 payment,
-           160,524 interest, 140,000 fees
-    Status: "Đã trả đủ — không cần trả gì trước 5/4"
-    (Vì CustomerCredit > MMI)
+  19/3 23:00:  EOM
+    Lãi: 207,850 VNĐ (30 ngày theo 30/360)
+    Phí: 140,000 VNĐ (quản lý tài khoản + bảo hiểm)
+    Kỳ trả nợ REGULAR: 1,800,000 VNĐ (đến hạn 5/4)
+    Ghép số dư có: 1,800,000 → đã trả
+    Số dư có còn lại: 1,200,000 VNĐ
 
-  5/4:   Due date arrives
-    → System check: all instalments repaid → CURRENT
-    → DPD: 0
+  20/3 06:30:  Sao kê gửi qua ứng dụng
+    Số dư cuối kỳ: 11,547,850 VNĐ
+    "Khoản trả tối thiểu đã được thanh toán, còn phải trả 0 VNĐ"
 
-THÁNG 4: Billing period 4 starts with:
-  Outstanding: 14,495,324 VNĐ
-  CustomerCredit: 3,200,000 VNĐ
-  Available: 7,204,676 VNĐ
-  Next statement date: 20/4
-  Next due date: 5/5
+  5/4:   Ngày đến hạn → mọi kỳ trả nợ đã trả, DPD 0
 
-Mỗi bước có một lý do:
-  Daily interest accrual → fairness và accuracy
-  Prescribing tại EOM → clean separation of concerns
-  CustomerCredit pairing → reward early payment
-  Immutable statement → trust và audit
-  3-way reconciliation → correctness guarantee
+KỲ 4 bắt đầu với:
+  Dư nợ: 12,747,850 VNĐ
+  Số dư có: 1,200,000 VNĐ
+  Số dư khả dụng: 6,952,150 VNĐ
+  Ngày sao kê tiếp theo: 20/4, đến hạn 6/5
 ```
+
+Ngày đến hạn của kỳ 4 là 6/5, vì tháng 4 có 30 ngày: 20/4 cộng 16 ngày.
+
+Mỗi bước có lý do của nó. Tính lãi trên từng đoạn số dư bảo đảm công bằng và chính xác. Tạo kỳ trả nợ ở EOM tách rõ việc ghi nhận trong kỳ với việc chốt kỳ. Ghép số dư có ngay khi có kỳ trả nợ thưởng cho khách hàng trả sớm. Sao kê bất biến giữ niềm tin và dấu vết kiểm toán. Đối soát ba bên bảo đảm cả hệ thống nói cùng một con số.
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. Ba key dates của một billing cycle là gì? Due day offset dùng để làm gì?
-2. Tại sao lãi được tính theo daily accrual method thay vì tính một lần vào cuối tháng?
-3. Khi payment đến trước EOM, tiền được xử lý như thế nào? Tại sao không pair ngay với instalments?
-4. Statement là immutable. Nếu phát hiện lỗi sau khi deliver, phải làm gì?
+**Nhớ lại**
 
-**Loại 2 - Hiểu:**
-5. Giải thích tại sao "billing period freeze" cần thiết khi EOM đang chạy. Cho một ví dụ cụ thể về race condition nếu không có freeze.
-6. Tại sao DPD tính theo calendar days, không phải business days? Có hệ quả gì về mặt customer experience và regulatory?
-7. Three-way reconciliation (LAS ↔ STS ↔ DRG) là gì? Nếu LAS và STS khớp nhau nhưng DRG không khớp, vấn đề có thể là gì?
-8. Tại sao statement disclosure cần bao gồm "thời gian tất toán nếu chỉ trả tối thiểu"? Đây là behavioral economics hay regulatory requirement (hay cả hai)?
+1. Ba mốc thời gian của một kỳ billing là gì? Khoảng cách đến hạn dùng để làm gì?
+2. Vì sao lãi được tính trên từng đoạn số dư trong kỳ thay vì trên số dư cuối kỳ?
+3. Khi thanh toán đến trước EOM và chưa có kỳ trả nợ nào, tiền được xử lý thế nào? Vì sao không ghép ngay?
+4. Sao kê là tài liệu bất biến. Nếu phát hiện sai sau khi đã gửi, phải làm gì?
 
-**Loại 3 - Áp dụng:**
-9. Account có:
-   - Billing day: 15
-   - Due day offset: 14
-   - Outstanding (đầu tháng): 25,000,000 VNĐ
-   - Rate: 18%/năm
-   - ACCMAINT fee: 60,000 VNĐ/tháng
-   - Insurance: 100,000 VNĐ/tháng
-   - MMI: 2,500,000 VNĐ
-   
-   Trong tháng có các transactions:
-   Day 3: Purchase 3,000,000 VNĐ
-   Day 10: Purchase 1,500,000 VNĐ
-   Day 12: Payment 4,000,000 VNĐ
-   
-   (a) Tính interest cho billing period (30 ngày)
-   (b) Total fees
-   (c) Closing balance sau EOM
-   (d) REGULAR instalments được tạo
-   (e) Net amount customer needs to pay (sau khi pair payment)
+**Hiểu**
 
-10. Chị An trả đúng hạn tháng 1, trễ tháng 2 (DPD=8), trả đủ tháng 3. Ảnh hưởng lên:
-    (a) IFRS 9 staging: stages nào ở cuối mỗi tháng?
-    (b) Credit bureau: được report như thế nào?
-    (c) Provision requirement: tính toán cho mỗi tháng
-    (d) Future pricing: rate của chị An có thể bị adjust không?
+5. Vì sao cần đóng băng kỳ billing khi EOM đang chạy? Cho một ví dụ cụ thể về xung đột nếu không có cơ chế này.
+6. Vì sao DPD được tính theo ngày lịch chứ không theo ngày làm việc? Điều đó có hệ quả gì về trải nghiệm khách hàng và quy định?
+7. Đối soát ba bên giữa LAS, STS và DRG là gì? Nếu LAS và STS khớp nhau nhưng DRG không khớp, vấn đề có thể nằm ở đâu?
+8. Vì sao sao kê phải có mục "nếu chỉ trả tối thiểu"? Đây là yêu cầu của kinh tế học hành vi, của quy định, hay cả hai?
 
-**Loại 4 - Phân tích:**
-11. Một fintech đề xuất: "Real-time billing - mỗi giao dịch triggers immediate interest calculation và instalment creation. Không cần EOM batch processing. Simpler, faster."
+**Áp dụng**
 
-    Phân tích: (a) Technical feasibility, (b) Business implications (customer experience, revenue recognition), (c) Regulatory considerations, (d) Khi nào approach này makes sense?
+9. Một tài khoản có ngày billing 15, khoảng cách đến hạn 14 ngày, dư nợ gốc đầu kỳ 25,000,000 VNĐ, lãi suất 18%/năm theo quy ước 30/360, phí quản lý tài khoản 60,000 VNĐ/tháng, phí bảo hiểm 100,000 VNĐ/tháng, MMI 2,500,000 VNĐ. Trong kỳ có: ngày 3 mua 3,000,000 VNĐ, ngày 10 mua 1,500,000 VNĐ, ngày 12 trả 4,000,000 VNĐ (không có kỳ trả nợ nào đang chờ). Giả sử khoản trả ngày 12 chỉ giảm dư nợ khi được ghép ở EOM.
+   (a) Tính lãi của kỳ (30 ngày).
+   (b) Tổng phí.
+   (c) Dư nợ sau EOM.
+   (d) Các kỳ trả nợ REGULAR được tạo.
+   (e) Số tiền khách hàng còn phải trả sau khi ghép số dư có.
+10. Chị An trả đúng hạn tháng 1, trễ tháng 2 (DPD 8), trả đủ tháng 3. Ảnh hưởng thế nào tới (a) phân loại stage theo IFRS 9 cuối mỗi tháng, (b) báo cáo lên trung tâm thông tin tín dụng, (c) dự phòng mỗi tháng, (d) lãi suất của chị An trong tương lai?
 
-12. Sau một incident, phát hiện rằng EOM đã chạy 2 lần cho 500 accounts (lần đầu failed, ops chạy lại, nhưng lần đầu thực ra đã partially succeed). Result: 500 accounts có duplicate instalments.
+**Phân tích**
 
-    Thiết kế recovery:
-    (a) Detection: SQL/query để identify duplicated instalments
-    (b) Impact assessment: customers đã nhận statement chưa?
-    (c) Fix approach: cancel duplicate hay merge?
-    (d) Communication: có cần notify customers không?
-    (e) Prevention: thay đổi kiến trúc nào để prevent tái diễn?
+11. Một fintech đề xuất: "Billing theo thời gian thực: mỗi giao dịch kích hoạt ngay việc tính lãi và tạo kỳ trả nợ. Không cần EOM batch. Đơn giản hơn, nhanh hơn." Phân tích (a) tính khả thi kỹ thuật, (b) hệ quả kinh doanh về trải nghiệm khách hàng và ghi nhận doanh thu, (c) các cân nhắc về quy định, (d) khi nào cách làm này hợp lý.
+12. Sau một sự cố, phát hiện EOM đã chạy hai lần cho 500 tài khoản: lần đầu bị coi là lỗi nên đội vận hành chạy lại, nhưng thực ra lần đầu đã thành công một phần. Kết quả là 500 tài khoản có kỳ trả nợ trùng. Thiết kế phương án khôi phục: (a) truy vấn để phát hiện kỳ trả nợ trùng, (b) đánh giá tác động: khách hàng đã nhận sao kê chưa, (c) hủy bản trùng hay gộp, (d) có cần thông báo cho khách hàng không, (e) thay đổi kiến trúc nào để không tái diễn.
 
 ## Bài tập áp dụng
 
-**Bài 1 - Full Billing Cycle Simulation:**
+**Bài 1. Mô phỏng ba kỳ billing.** Một tài khoản tín dụng quay vòng có hạn mức 30,000,000 VNĐ, lãi suất 18%/năm, ngày billing 25, khoảng cách đến hạn 15 ngày, phí quản lý tài khoản 70,000 VNĐ/tháng. Tháng 1: ngày 1 kích hoạt và giải ngân 20,000,000 VNĐ, ngày 5 mua 3,000,000 VNĐ, ngày 20 trả 5,000,000 VNĐ. Tháng 2: ngày 10 mua 2,000,000 VNĐ, ngày 22 trả 2,500,000 VNĐ. Tháng 3: ngày 5 mua 5,000,000 VNĐ, ngày 20 trả 1,500,000 VNĐ, ít hơn MMI. (a) Tính lãi, phí và kỳ trả nợ ở mỗi EOM. (b) Dư nợ sau mỗi EOM. (c) Mỗi tháng khách hàng trả đủ hay thiếu? (d) DPD và phí trả trễ, nếu có. (e) Tóm tắt sao kê mỗi tháng. (f) Diễn biến stage theo IFRS 9.
 
-Thiết kế complete billing cycle cho một revolving credit account với 3 tháng hoạt động:
+**Bài 2. Thiết kế tác vụ đối soát.** Thiết kế tác vụ đối soát chạy hằng ngày sau EOM, kiểm tra LAS, STS và DRG cho mọi tài khoản vừa chạy EOM, hoàn tất trong 2 giờ trước giờ mở cửa chi nhánh, có báo cáo tổng hợp cho đội vận hành và cảnh báo theo ba mức độ nghiêm trọng. (a) Truy vấn SQL cho từng phép kiểm tra, với lược đồ đơn giản hóa. (b) Logic phân loại mức độ nghiêm trọng. (c) Cây quyết định: khi nào tự sửa, khi nào cần người xem xét. (d) Làm sao kiểm tra 1.2 triệu tài khoản trong 2 giờ? (e) Báo cáo cho đội vận hành cần những gì?
 
-Account setup:
-- Credit limit: 30,000,000 VNĐ
-- Rate: 18%/năm
-- Billing day: 25
-- Due day offset: 15
-- ACCMAINT: 70,000 VNĐ/tháng
-
-Month 1 transactions:
-- Day 1 (activation): disbursement 20,000,000
-- Day 5: purchase 3,000,000
-- Day 20: payment 5,000,000
-
-Month 2 transactions:
-- Day 10: purchase 2,000,000
-- Day 22: payment 2,500,000
-
-Month 3 transactions:
-- Day 5: purchase 5,000,000
-- Day 20: payment 1,500,000 (insufficient - trả ít hơn MMI)
-
-Yêu cầu:
-(a) EOM calculation cho mỗi tháng (interest, fees, instalments)
-(b) Closing balance sau mỗi EOM
-(c) Payment matching: đủ hay thiếu mỗi tháng?
-(d) DPD và late fees nếu có
-(e) Statement summary cho mỗi tháng
-(f) IFRS 9 staging progression
-
-**Bài 2 - Reconciliation Job Design:**
-
-Thiết kế reconciliation job chạy daily sau EOM:
-
-Yêu cầu:
-- Check LAS ↔ STS ↔ DRG cho tất cả accounts có EOM đêm qua
-- Performance: phải hoàn thành trong 2 giờ (trước khi branch mở)
-- Reporting: summary report cho operations team
-- Alerting: P1/P2/P3 theo gap size
-
-Deliverables:
-(a) SQL queries cho mỗi check (simplified schema)
-(b) Gap classification: logic phân loại severity
-(c) Auto-fix vs human review: decision tree
-(d) Performance: làm thế nào check 1.2M accounts trong 2 giờ?
-(e) Report format: operations team cần thấy gì?
-
-**Bài 3 - Statement System Design:**
-
-Công ty đang redesign statement system. Requirements:
-- Deliver to 1.2M customers trong 3 giờ sau EOM
-- Multiple channels: app push, email, SMS, paper (5%)
-- Compliance: include tất cả 10 regulatory disclosures
-- Performance: statement generation < 500ms per account
-
-Thiết kế:
-(a) Template system: làm thế nào personalize 1.2M statements hiệu quả?
-(b) Parallel processing: design cho throughput 400K statements/hour
-(c) Delivery orchestration: sequencing channels để không overwhelm systems
-(d) Failure handling: nếu email server down, fallback strategy?
-(e) Audit: làm thế nào prove "customer đã nhận statement" cho dispute resolution?
+**Bài 3. Thiết kế hệ thống sao kê.** Công ty thiết kế lại hệ thống sao kê với yêu cầu: gửi tới 1.2 triệu khách hàng trong 3 giờ sau EOM, qua thông báo ứng dụng, email, SMS và bản giấy (5% khách hàng), có đủ mười nội dung bắt buộc, mỗi sao kê tạo trong dưới 500 ms. (a) Hệ thống mẫu sao kê: làm sao cá nhân hóa 1.2 triệu sao kê hiệu quả? (b) Xử lý song song cho thông lượng 400 nghìn sao kê mỗi giờ. (c) Điều phối các kênh gửi để không làm quá tải hệ thống. (d) Nếu máy chủ email ngừng hoạt động, phương án dự phòng là gì? (e) Làm sao chứng minh khách hàng đã nhận sao kê khi có tranh chấp?
 
 ## Đọc thêm
 
-**Financial Accounting:**
-- Weygandt, J., Kimmel, P., & Kieso, D. (2018). *Financial Accounting.* Wiley. - Chapters 8-10 về accounts receivable, revenue recognition, và statement presentation - business foundation cho billing system design.
+**Kế toán tài chính**
 
-**Statement Design:**
-- CFPB. (2012). *Know Before You Owe: Mortgage.* Consumer Financial Protection Bureau. - Ví dụ về regulatory disclosure design cho financial products, available tại consumerfinance.gov. Áp dụng được nguyên tắc cho statement design.
+- Weygandt, J., Kimmel, P. & Kieso, D. (2018). *Financial Accounting.* Wiley. Các chương về khoản phải thu và ghi nhận doanh thu, nền tảng nghiệp vụ cho thiết kế hệ thống billing.
 
-**Batch Processing:**
-- Minella, M. T. (2019). *The Definitive Guide to Spring Batch* (2nd ed.). Apress. - Chapters 10-12 về error handling, skip logic, và retry trong batch processing - critical knowledge cho EOM implementation.
+**Thiết kế thông tin công bố**
 
-*Chương 10 sẽ khép lại Phần II với chủ đề không ai muốn nghĩ đến nhưng không thể bỏ qua: Collections và quản lý nợ. Khi khách hàng không trả được, hệ thống phải làm gì? Không phải chỉ là "đòi tiền" - mà là một pipeline phức tạp balancing giữa lợi ích lender, khả năng phục hồi của khách hàng, và những ràng buộc pháp lý về cách thu hồi nợ.*
+- Consumer Financial Protection Bureau. *Know Before You Owe.* Các mẫu công bố thông tin tín dụng và nghiên cứu thử nghiệm với người dùng, tại consumerfinance.gov. Nguyên tắc thiết kế áp dụng được cho sao kê.
+
+**Xử lý theo lô**
+
+- Minella, M. T. (2019). *The Definitive Guide to Spring Batch* (2nd ed.). Apress. Các chương về xử lý lỗi, bỏ qua và thử lại, kiến thức cần thiết khi hiện thực EOM.
+
+Chương 10 khép lại Phần III với chủ đề không ai muốn nghĩ tới nhưng không thể bỏ qua: thu hồi nợ. Khi khách hàng không trả được, hệ thống phải làm gì? Không chỉ là "đòi tiền", mà là một quy trình phải cân bằng lợi ích của bên cho vay, khả năng phục hồi của khách hàng và các ràng buộc pháp lý về cách thu hồi nợ. [Chương 10. Quản lý nợ và thu hồi](/docs/system/ch10-collections).
