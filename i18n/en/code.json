@@ -675,5 +675,59 @@
   "theme.SearchPage.noResultsText": {
     "message": "No documents were found",
     "description": "The paragraph for empty search result"
+  },
+  "settle.paid": {
+    "message": "Instalments already paid"
+  },
+  "settle.days": {
+    "message": "Days since the last paid instalment (0-30)"
+  },
+  "settle.fee": {
+    "message": "Prepayment fee (% of outstanding principal)"
+  },
+  "settle.invalid": {
+    "message": "Check the inputs: term 2 to 120 months, instalments paid smaller than the term, days 0 to 30, prepayment fee 0 to 20%."
+  },
+  "settle.outstanding": {
+    "message": "Outstanding principal"
+  },
+  "settle.accrued": {
+    "message": "Interest accrued since the last instalment"
+  },
+  "settle.feeAmount": {
+    "message": "Prepayment fee"
+  },
+  "settle.amount": {
+    "message": "Settlement amount"
+  },
+  "settle.colSchedule": {
+    "message": "Keep paying on schedule"
+  },
+  "settle.colSettle": {
+    "message": "Settle now"
+  },
+  "settle.rowStillPay": {
+    "message": "Still to pay"
+  },
+  "settle.rowInterest": {
+    "message": "Interest still to pay"
+  },
+  "settle.rowTotal": {
+    "message": "Total paid and to be paid on the loan"
+  },
+  "settle.saving": {
+    "message": "Settling now saves the borrower {amount} VND compared with keeping to the schedule. This is also the interest income the lender gives up, before re-lending the money it receives."
+  },
+  "settle.loss": {
+    "message": "With this fee, settling now costs the borrower {amount} VND more than keeping to the schedule."
+  },
+  "settle.a1": {
+    "message": "The schedule is an ordinary annuity rounded like the repayment-schedule calculator. Outstanding principal is the closing balance of the last paid instalment."
+  },
+  "settle.a2": {
+    "message": "Accrued interest uses the 30/360 convention: outstanding principal × annual rate / 360 × days, rounded HALF_UP to whole VND."
+  },
+  "settle.a3": {
+    "message": "The prepayment fee is a percentage of outstanding principal. The actual fee and method are set by the contract and by each market's regulations."
   }
 }

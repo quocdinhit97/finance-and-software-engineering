@@ -136,6 +136,65 @@ export function costOfCredit(
   };
 }
 
+export interface EarlySettlement {
+  /** Instalments already paid before settling (0 = settle before the first instalment). */
+  paidInstalments: number;
+  /** Total of the instalments already paid. */
+  paidSoFar: number;
+  /** Outstanding principal right after the last paid instalment. */
+  outstandingPrincipal: number;
+  /** Interest accrued since the last due date, 30/360: balance × rate / 360 × days. */
+  accruedInterest: number;
+  /** Prepayment fee: feePct % of the outstanding principal. */
+  prepaymentFee: number;
+  /** Amount to pay today to close the loan. */
+  settlementAmount: number;
+  /** Instalments that would still be paid if the schedule were followed. */
+  remainingScheduled: number;
+  /** Interest still in the schedule after the last paid instalment. */
+  remainingScheduledInterest: number;
+  /** remainingScheduled - settlementAmount: what the borrower saves by settling now. */
+  borrowerSaving: number;
+}
+
+/**
+ * Early settlement of an instalment loan (Chương 2, Bài 1; Chương 5, mục 5.3).
+ * The borrower has paid `paidInstalments` instalments and settles `days` days
+ * (0-30, 30/360 convention) after the last due date. Interest accrued over those
+ * days and the prepayment fee are rounded HALF_UP to whole VND.
+ */
+export function earlySettlement(
+  principal: number,
+  annualRatePct: number,
+  months: number,
+  paidInstalments: number,
+  days: number,
+  feePct: number,
+): EarlySettlement {
+  const s = amortizationSchedule(principal, annualRatePct, months);
+  const k = Math.max(0, Math.min(paidInstalments, s.rows.length - 1));
+  const paid = s.rows.slice(0, k);
+  const rest = s.rows.slice(k);
+  const outstanding = k === 0 ? principal : paid[k - 1].closingBalance;
+  const cp = toCentiPercent(annualRatePct);
+  // outstanding * (cp / 10000) / 360 * days = outstanding * cp * days / 3_600_000
+  const accrued = Number(roundHalfUp(BigInt(outstanding) * cp * BigInt(Math.round(days)), 3_600_000n));
+  const fee = Number(roundHalfUp(BigInt(outstanding) * BigInt(Math.round(feePct * 100)), 10_000n));
+  const settlementAmount = outstanding + accrued + fee;
+  const remainingScheduled = rest.reduce((t, r) => t + r.payment, 0);
+  return {
+    paidInstalments: k,
+    paidSoFar: paid.reduce((t, r) => t + r.payment, 0),
+    outstandingPrincipal: outstanding,
+    accruedInterest: accrued,
+    prepaymentFee: fee,
+    settlementAmount,
+    remainingScheduled,
+    remainingScheduledInterest: rest.reduce((t, r) => t + r.interest, 0),
+    borrowerSaving: remainingScheduled - settlementAmount,
+  };
+}
+
 const vnd = new Intl.NumberFormat('en-US', {maximumFractionDigits: 0});
 export const formatVnd = (n: number): string => vnd.format(n);
 export const formatPct = (x: number, digits = 2): string =>

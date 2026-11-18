@@ -733,7 +733,7 @@ Tư duy CLV thay đổi nhiều quyết định kỹ thuật.
 
 **Chiến lược thu hồi nợ.** Thay vì "thu tối đa từ tài khoản này", mục tiêu trở thành "giúp khách hàng vượt qua khó khăn để họ tiếp tục là khách hàng". Điều này ảnh hưởng tới thiết kế quy trình thu hồi nợ và chương trình hỗ trợ khách hàng gặp khó khăn ([Chương 10](/docs/system/ch10-collections)).
 
-**Phí trả trước.** Thay vì "thu phí trả trước để bù thu nhập lãi bị mất", có thể chọn "phí thấp hoặc không thu, để khách hàng sớm vay lại". Quyết định này nằm trong cấu hình biểu phí.
+**Phí trả trước.** Thay vì "thu phí trả trước để bù thu nhập lãi bị mất", có thể chọn "phí thấp hoặc không thu, để khách hàng sớm vay lại". Quyết định này nằm trong cấu hình biểu phí; [công cụ tất toán trước hạn](/docs/tools#early-settlement) cho thấy phí trả trước làm thay đổi số tiền tất toán ra sao.
 
 **Đóng tài khoản.** Thay vì đóng tài khoản ngay khi tất toán, có thể giữ tài khoản hoạt động kèm một đề nghị vay lại. Điều này ảnh hưởng tới máy trạng thái `AccountStatus` và quy trình sau tất toán.
 
