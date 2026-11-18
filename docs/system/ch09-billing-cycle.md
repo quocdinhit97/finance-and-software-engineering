@@ -527,6 +527,8 @@ Sao kê là một tài liệu pháp lý. Quy định về công bố thông tin 
     20/04/2025
 ```
 
+Mục 8 khác với tất toán một khoản vay trả góp: với tín dụng quay vòng, số tiền để trả hết là số dư hiện tại cộng lãi phát sinh đến ngày thanh toán, không có lịch trả nợ cố định để so sánh. Với khoản vay trả góp, số tiền tất toán gồm dư nợ gốc còn lại, lãi phát sinh từ kỳ gần nhất và phí trả trước hạn nếu có; có thể tính bằng [công cụ tất toán trước hạn](/docs/tools#early-settlement).
+
 Mục 7 được tính bằng cách mô phỏng lịch trả nợ từ số dư cuối kỳ: mỗi tháng cộng lãi 1.5% trên dư nợ và 140,000 VNĐ phí, trừ khoản trả tối thiểu bằng MAX(1,800,000, 5% dư nợ).
 
 Mục 7 là kinh tế học hành vi đi vào quy định. Thông tin "nếu chỉ trả tối thiểu" là yêu cầu bắt buộc ở Anh và nhiều thị trường khác, nhằm hóa giải thiên kiến hiện tại và hiệu ứng mỏ neo đã phân tích ở [Chương 4](/docs/products/ch04-customer-journey): khi thấy rõ thời gian và chi phí của việc chỉ trả tối thiểu, khách hàng có thêm cơ sở để quyết định. Với khoản nợ lớn và MMI thấp, con số này có thể gây giật mình, như ví dụ 85 tháng ở [Chương 3](/docs/products/ch03-product-design). Trong VLP, STS tính mục này từ số dư cuối kỳ, lãi suất và quy tắc MMI, rồi đưa vào sao kê.

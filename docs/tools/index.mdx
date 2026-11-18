@@ -5,11 +5,11 @@ description: "Tính lịch trả nợ, so sánh kỳ hạn và chi phí tín d�
 lang: vi
 ---
 
-import {LoanCalculator, TermComparison, CostOfCreditCalculator} from '@site/src/components/Loan';
+import {LoanCalculator, TermComparison, CostOfCreditCalculator, EarlySettlementCalculator} from '@site/src/components/Loan';
 
 Các công cụ dưới đây dùng đúng phương pháp tính được trình bày ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending) và [Phụ lục C](/docs/appendices/c-math-reference). Giá trị mặc định là khoản vay của chị Lan: 18,500,000 VNĐ, 18%/năm, 12 tháng. Đây là công cụ học tập, không phải báo giá của bất kỳ tổ chức tín dụng nào.
 
-## Lịch trả nợ
+## Lịch trả nợ {/* #schedule */}
 
 Nhập số tiền, lãi suất danh nghĩa và kỳ hạn để xem số tiền trả mỗi tháng, phần gốc và phần lãi của từng kỳ, và dư nợ còn lại theo thời gian.
 
@@ -26,3 +26,9 @@ Kỳ hạn dài hơn làm khoản trả hằng tháng nhỏ hơn nhưng tổng l
 Lãi suất danh nghĩa không bao gồm phí. Khi có phí trả trước (trừ vào số tiền giải ngân) và phí cố định hằng tháng, chi phí thực tế của khoản vay được đo bằng IRR của dòng tiền mà người vay thực nhận và thực trả, rồi quy về năm dưới dạng APR hoặc EIR.
 
 <CostOfCreditCalculator />
+
+## Tất toán trước hạn {/* #early-settlement */}
+
+Khi trả hết khoản vay trước kỳ hạn, người vay trả dư nợ gốc còn lại, lãi phát sinh từ kỳ đã trả gần nhất đến ngày tất toán, và phí trả trước hạn nếu hợp đồng có quy định. Công cụ này tính số tiền tất toán và so sánh với việc tiếp tục trả theo lịch, như phân tích ở [Chương 5, mục 5.3](/docs/products/ch05-revenue-portfolio#rủi-ro-trả-nợ-trước-hạn).
+
+<EarlySettlementCalculator />

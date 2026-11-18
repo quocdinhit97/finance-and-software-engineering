@@ -530,6 +530,8 @@ Khách hàng tất toán sau kỳ thứ 12
   Thu nhập lãi bị mất ròng:           ≈ 247,382 VNĐ
 ```
 
+Có thể thử các kịch bản khác bằng [công cụ tất toán trước hạn](/docs/tools#early-settlement): với 20 triệu đồng, 18%/năm, 24 tháng và 12 kỳ đã trả, phần người vay tiết kiệm được đúng bằng 1,090,836 VNĐ tiền lãi còn lại trong lịch.
+
 Phí tất toán trước hạn tồn tại để bù một phần rủi ro này. Nhưng nhiều nước giới hạn hoặc cấm phí trả trước, tạo ra mâu thuẫn giữa bảo vệ bên cho vay và bảo vệ người tiêu dùng. Như [Chương 3](/docs/products/ch03-product-design) đã phân tích, đây cũng là một quyết định về CLV: phí thấp có thể khiến khách hàng sẵn sàng vay lại.
 
 **Trả trước trong VLP.** LAS phải theo dõi hành vi trả trước. Khi tỷ lệ trả trước tăng bất thường, hệ thống cảnh báo bộ phận tài chính và ngân quỹ, dự báo lại dòng tiền, để ngân quỹ điều chỉnh kế hoạch huy động vốn, và để đội sản phẩm xem xét có cần thêm ưu đãi giữ chân khách hàng hay không.

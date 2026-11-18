@@ -110,7 +110,7 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 
 1. ~~Biên tập Ch.3, Ch.4, Ch.5~~ (xong ở phiên 4).
 2. ~~Biên tập Ch.8 và Ch.9~~ (xong ở phiên 5). Ghi chú: ví dụ Ch.9 giả định khoản trả khi chưa có kỳ trả nợ chỉ giảm dư nợ chịu lãi khi được ghép ở EOM (theo mô tả bản thảo); nếu cấu hình thật khác, sửa mục 9.2 và bước 3.3.
-3. Thêm công cụ "số tiền tất toán / trả trước hạn" cho Ch.2 Bài 1 và Ch.9.
+3. ~~Thêm công cụ "số tiền tất toán / trả trước hạn"~~ (xong ở phiên 5): `src/components/Loan/EarlySettlementCalculator.tsx`, hàm `earlySettlement()` trong `src/lib/loan.ts` (lãi phát sinh 30/360, phí % dư nợ gốc, so sánh với trả theo lịch), mục `#early-settlement` ở trang Công cụ (vi, en), liên kết từ Ch.2 Bài 1, Ch.3, Ch.5 mục 5.3, Ch.9. Heading id trong file `.mdx` dùng cú pháp `{/* #id */}`.
 4. Tiếp tục Ch.6, 7, 10, rồi 11-16, rồi Phụ lục A, D, Thuật ngữ, Lời mở đầu.
 5. Sau mỗi chương: chạy `docs-internal/quality-checklist.md`, cập nhật bảng trên.
 6. Dịch tiếng Anh các chương đã biên tập (Ch.1, Ch.2), đặt `lang: en`.

@@ -5,11 +5,11 @@ description: "Repayment schedule, term comparison and the true cost of credit (A
 lang: en
 ---
 
-import {LoanCalculator, TermComparison, CostOfCreditCalculator} from '@site/src/components/Loan';
+import {LoanCalculator, TermComparison, CostOfCreditCalculator, EarlySettlementCalculator} from '@site/src/components/Loan';
 
 These tools use the same methods as Chapter 2 and Appendix C. The defaults are Ms. Lan's loan: 18,500,000 VND, 18% per year, 12 months. They are learning tools, not a quote from any lender.
 
-## Repayment schedule
+## Repayment schedule {/* #schedule */}
 
 Enter the amount, nominal rate and term to see the monthly payment, the principal and interest in each period, and the remaining balance over time.
 
@@ -26,3 +26,9 @@ A longer term lowers the monthly payment but raises total interest. The table sh
 The nominal rate excludes fees. With an up-front fee (deducted from the disbursement) and a fixed monthly fee, the true cost is measured by the IRR of the cash the borrower actually receives and pays, annualized as APR or EIR.
 
 <CostOfCreditCalculator />
+
+## Early settlement {/* #early-settlement */}
+
+To repay a loan before its term, the borrower pays the outstanding principal, the interest accrued since the last paid instalment, and a prepayment fee if the contract has one. This calculator gives the settlement amount and compares it with keeping to the schedule, as discussed in [Chapter 5, section 5.3](/docs/products/ch05-revenue-portfolio#rủi-ro-trả-nợ-trước-hạn).
+
+<EarlySettlementCalculator />
