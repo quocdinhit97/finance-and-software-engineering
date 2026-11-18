@@ -76,6 +76,7 @@ Bản tiếng Anh: giao diện, trang chủ, Cách đọc, Về cuốn sách, 5 
 20. Tìm kiếm offline bằng `@easyops-cn/docusaurus-search-local` (vi, en), chỉ hoạt động trên bản build (`npm run build && npm run serve`), không hoạt động ở `npm start`.
 21. Logo và favicon lấy từ ảnh chủ sở hữu gửi: `static/img/logo.png`, `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `social-card.png`. Các file `.svg` cũ còn trên máy không còn được dùng.
 22. `package.json` có `overrides` để vá lỗ hổng trong công cụ build: `serialize-javascript ^7.1.4`, `tinypool ^2.2.0`, `uuid ^11.1.1`, `katex ^0.19.1` (đã build và chạy thử dev, Mermaid, KaTeX đều ổn). `npm audit` còn báo picomatch (ReDoS) qua chuỗi phụ thuộc của Docusaurus; chưa có bản vá, chỉ ảnh hưởng lúc build với pattern do dự án tự định nghĩa, không ảnh hưởng website tĩnh. Không chạy `npm audit fix --force` (sẽ hạ/đổi phiên bản Docusaurus).
+23. Giọng văn (chỉ áp dụng cho lời văn, không sửa code minh họa): sách nói về VLP như một hệ thống đang vận hành. Trong lời văn không viết "đã ẩn danh hóa", "thông tin độc quyền", "hư cấu", "không phải dữ liệu production", "(verified: x.md)", "bản thảo gốc", "biên tập viên". Được phép nói "dữ liệu mô phỏng". Mọi thứ trong khối code (comment `// verified`, `illustrative`...) giữ nguyên. Với chương sinh tự động, `narrative_cleanup()` trong `scripts/transform.py` chỉ xử lý phần ngoài code fence; chương sửa tay phải tự tuân theo.
 
 ## Ánh xạ ẩn danh (tóm tắt)
 
@@ -100,8 +101,8 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 1. **Deploy**: cần repository GitHub và bật Pages với source = GitHub Actions. Chưa thể xác minh deployment.
 2. **Nghĩa của mã phí `SVCFEE`**: bản thảo Ch.3 và Ch.12 mô tả khác nhau.
 3. **Ghi tên tác giả**: `TOC.md` ghi tên tác giả bản thảo; website hiện không ghi tên. Cần chủ sở hữu quyết định.
-4. **Mức ẩn danh còn lại**: tên method/field (`sourceTxCode`, `pairInstalments`...) và tên file tài liệu nội bộ trong comment vẫn giữ nguyên.
-5. **`PRIORITY_ONLY`**: Ch.2 và Ch.8 bản thảo mâu thuẫn; cần người có quyền truy cập cấu hình thật xác nhận.
+4. **Mức ẩn danh còn lại**: tên method/field (`sourceTxCode`, `pairInstalments`...) vẫn giữ nguyên. Tên file tài liệu nội bộ trong comment (`verified: ...`) đã được lọc bỏ.
+5. **`PRIORITY_ONLY`**: Ch.2 và Ch.8 bản thảo mâu thuẫn; Ch.2 hiện viết theo mô tả của Ch.8 (trừ phí phạt trước). Nếu cấu hình thật khác, sửa khung `:::key` trong Ch.2 mục 2.4.
 6. Bản thảo không có lời giải bài tập.
 
 ## Bước tiếp theo (theo thứ tự)

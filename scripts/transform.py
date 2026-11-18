@@ -503,6 +503,7 @@ def transform(src_name, text):
     out = book_callouts(out)
     body = '\n'.join(out)
     body = re.sub(r'\[([^\]]+)\]\(([^)\s]+\.md(?:#[^)]*)?)\)', link_target, body)
+    body = narrative_cleanup(body)
     body = re.sub(r'\n{3,}', '\n\n', body).strip() + '\n'
 
     # 5. front matter
@@ -561,6 +562,63 @@ def glossary_body(body):
             out += f'*{vn}*\n\n'
         return out + rest.strip() + refs + '\n'
     return re.sub(r'^\*\*([^*\n]+)\*\*\n((?:(?!\*\*|##).+\n?)+)', repl, body, flags=re.M)
+
+# Narrative voice. Only prose is touched: text inside fenced code blocks
+# (code samples, ASCII diagrams, mermaid) is left exactly as written.
+# In prose, notes about where a statement was checked ("verified: x.md"),
+# references to the manuscript and remarks about anonymization are removed or
+# rewritten as plain statements about VLP.
+NARRATIVE_REWRITES = [
+    # preface
+    ('Hệ sinh thái được sử dụng làm nền tảng xuyên suốt cuốn sách này - được gọi là **VLP** - là',
+     'Hệ sinh thái xuyên suốt cuốn sách này, **VLP**, là'),
+    ('Đây không phải là hệ thống giả định hay ví dụ đơn giản hóa - đây là một hệ thống production thực tế với tất cả sự phức tạp mà thực tế đòi hỏi.',
+     'VLP không phải một ví dụ đơn giản hóa: hệ thống đang vận hành hằng ngày, với đầy đủ sự phức tạp mà nghiệp vụ tín dụng đòi hỏi.'),
+    ('Tên, chi tiết định danh và thông tin độc quyền đã được ẩn danh hóa. Nhưng các vấn đề, quyết định thiết kế, và bài học - tất cả đều là thật.',
+     'Dữ liệu là mô phỏng. Nhưng các vấn đề, quyết định thiết kế và bài học, tất cả đều là thật.'),
+    # ch08
+    ('**Actual ChargingGateway interface:**', '**Interface ChargingGateway:**'),
+    ('Lưu ý: sách trước đây mô tả 5 channels (TARIFF_RESOLVED, FEE_CALCULATED, ITEM_CREATED, BALANCE_UPDATED) - đây là **sai**. Thực tế chỉ có 2 gateway channels chính.',
+     'Toàn bộ chuỗi billing chỉ đi qua **2 gateway channel**. Các bước resolve tariff, tính phí, tạo item và cập nhật số dư diễn ra bên trong chuỗi xử lý nội bộ, không phải mỗi bước một channel riêng.'),
+    # ch07
+    ('**Infinispan cache - cách dùng thực tế:**', '**Infinispan cache trong LOS:**'),
+]
+_DROP_PROSE = re.compile(r'^\s*\*\(verified:[^)]*\)\*\s*$')
+_INLINE_PROSE = [(re.compile(r'\s*\(verified:[^)]*\)'), '')]
+_FENCE = re.compile(r'^\s*(```|~~~)')
+
+
+def _clean_prose(text):
+    for a, b in NARRATIVE_REWRITES:
+        text = text.replace(a, b)
+    out, skip_quote = [], False
+    for l in text.split('\n'):
+        if l.startswith('> Lưu ý: **Lưu ý về code examples:**'):
+            skip_quote = True; continue
+        if skip_quote:
+            if l.startswith('>'): continue
+            skip_quote = False
+        if _DROP_PROSE.match(l): continue
+        for rx, rep in _INLINE_PROSE:
+            l = rx.sub(rep, l)
+        out.append(l)
+    return '\n'.join(out)
+
+
+def narrative_cleanup(body):
+    """Apply _clean_prose to everything outside fenced code blocks."""
+    parts, buf, in_code = [], [], False
+    for l in body.split('\n'):
+        if _FENCE.match(l):
+            if not in_code:
+                parts.append(_clean_prose('\n'.join(buf))); buf = [l]; in_code = True
+            else:
+                buf.append(l); parts.append('\n'.join(buf)); buf = []; in_code = False
+            continue
+        buf.append(l)
+    parts.append('\n'.join(buf) if in_code else _clean_prose('\n'.join(buf)))
+    return '\n'.join(p for p in parts)
+
 
 def main():
     done = []

@@ -11,8 +11,6 @@ editorial_status: "mechanical"
 
 > *"Mỗi tháng một lần, hàng triệu câu hỏi được trả lời cùng lúc: Bao nhiêu tiền? Đến hạn khi nào? Ai nợ ai? Câu trả lời phải chính xác đến từng đồng - và phải có mặt trong hòm thư của khách hàng trước khi họ thức dậy."*
 
-> Lưu ý: **Lưu ý về code examples:** Các đoạn Java code là illustrative pseudo-code - minh họa logic, tên class/method có thể không chính xác hoàn toàn với production code. Luôn verify với source code khi implement.
-
 ## Dẫn nhập: Tháng 4 bắt đầu lúc 23h00 ngày 31/3
 
 ::::story

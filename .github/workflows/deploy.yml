@@ -31,13 +31,23 @@ jobs:
       # Project site: https://<owner>.github.io/<repo>/  ->  BASE_URL=/<repo>/
       # User site (repo named <owner>.github.io): https://<owner>.github.io/  ->  BASE_URL=/
       - name: Compute site URL
+        # Custom domain: set the repository variable CUSTOM_DOMAIN (Settings >
+        # Secrets and variables > Actions > Variables), e.g. book.quocdinh.dev.
+        # With it the site is built for https://<domain>/ and the github.io
+        # address redirects there. Without it the github.io project URL is used.
+        env:
+          CUSTOM_DOMAIN: ${{ vars.CUSTOM_DOMAIN }}
         run: |
           OWNER='${{ github.repository_owner }}'
           REPO='${{ github.event.repository.name }}'
-          echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
-          if [ "$REPO" = "${OWNER}.github.io" ]; then
+          if [ -n "$CUSTOM_DOMAIN" ]; then
+            echo "SITE_URL=https://${CUSTOM_DOMAIN}" >> "$GITHUB_ENV"
+            echo "BASE_URL=/" >> "$GITHUB_ENV"
+          elif [ "$REPO" = "${OWNER}.github.io" ]; then
+            echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
             echo "BASE_URL=/" >> "$GITHUB_ENV"
           else
+            echo "SITE_URL=https://${OWNER}.github.io" >> "$GITHUB_ENV"
             echo "BASE_URL=/${REPO}/" >> "$GITHUB_ENV"
           fi
           echo "GITHUB_OWNER=${OWNER}" >> "$GITHUB_ENV"

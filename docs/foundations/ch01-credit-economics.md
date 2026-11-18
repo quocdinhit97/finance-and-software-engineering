@@ -143,7 +143,7 @@ flowchart LR
 
 *Hình 1.1. Vòng xoáy lựa chọn bất lợi. Mỗi lần tăng lãi suất lại đẩy thêm người vay tốt ra khỏi danh mục.*
 
-Bản thảo gốc nhận định đây là điều đã xảy ra với một số công ty tài chính tiêu dùng tại Việt Nam giai đoạn 2015-2018, khi tăng trưởng nhanh hơn năng lực chấm điểm tín dụng. Nhận định này chưa được đối chiếu với nguồn công khai và được giữ ở dạng nhận định của tác giả.
+Theo quan sát của tác giả, một số công ty tài chính tiêu dùng tại Việt Nam đã rơi vào vòng xoáy này trong giai đoạn 2015-2018, khi tốc độ tăng trưởng vượt quá năng lực chấm điểm tín dụng.
 
 **Trong VLP**, để phá vỡ vòng xoáy, hệ thống phải **phân biệt** được người vay tốt và xấu. Vì vậy module khởi tạo khoản vay LOS (Loan Origination Service) không đơn giản là "nhận hồ sơ, phê duyệt", mà điều phối một quy trình sàng lọc nhiều bước. Mỗi bước trả lời một câu hỏi kinh tế:
 
@@ -306,7 +306,7 @@ Nếu mọi khách hàng phải trả cùng một mức lãi suất, mức đó 
 | Standard | 5% | 60% | 3.0% | 8.5% | 4.0% | khoảng 20% |
 | Sub-prime | 12% | 65% | 7.8% | 8.5% | 5.0% | khoảng 27% |
 
-Cột cuối cao hơn tổng ba cột chi phí (12.0%, 15.5% và 21.3%) vì còn gồm phần bù không tài sản đảm bảo và biên lợi nhuận. Bản thảo không tách riêng hai phần này cho từng phân khúc; phần chênh lệch ngầm định lần lượt là khoảng 3.0, 4.5 và 5.7 điểm phần trăm.
+Cột cuối cao hơn tổng ba cột chi phí (12.0%, 15.5% và 21.3%) vì còn gồm phần bù không tài sản đảm bảo và biên lợi nhuận. Hai phần này cộng lại lần lượt khoảng 3.0, 4.5 và 5.7 điểm phần trăm.
 
 Nếu áp một lãi suất chung 20%, phân khúc Prime trả thừa khoảng 5 điểm phần trăm và sẽ dần chuyển sang ngân hàng; phân khúc Sub-prime được trợ cấp khoảng 7 điểm và công ty lỗ trên từng khoản vay của nhóm này. Đây chính là cơ chế của vòng xoáy lựa chọn bất lợi ở mục 1.2.
 
@@ -381,7 +381,7 @@ flowchart TD
     F --> G[18%/năm ≈ vốn 8% + EL 3% + vận hành 4%<br/>+ không TSĐB 2% + lợi nhuận 1%]
 ```
 
-*Hình 1.3. Từ nhu cầu vay đến cấu trúc lãi suất. Phân tách 18% ở đây là minh họa của bản thảo; mục 1.1 đưa ra một cách phân tách khác theo lãi suất thực, lạm phát và rủi ro.*
+*Hình 1.3. Từ nhu cầu vay đến cấu trúc lãi suất. Hình này phân tách 18% theo chi phí của bên cho vay; mục 1.1 phân tách cùng con số theo lãi suất thực, lạm phát và rủi ro.*
 
 ### Những điểm cần ghi nhớ
 
