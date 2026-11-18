@@ -34,8 +34,8 @@ Cập nhật lần cuối: 2026-11-18, phiên 4 (logo mới, giao diện kiểu 
 | Ch.5 | **edited** | Phiên 4. Dựng lại báo cáo lãi lỗ cho nhất quán (lợi suất 28%, chi phí vốn khớp nguồn vốn ALM, NIM 20.2%, ROA 3.95%, ROE 19.75%), đối chiếu chi phí dự phòng với số dư dự phòng, sửa số liệu vintage và roll rate (tổng 10,530 tài khoản, hàng 91+), duration 11.9 tháng, kỳ hạn nguồn vốn 17.8 tháng, ví dụ trả trước. Hình 5.1 (SeriesLineChart) thay biểu đồ ASCII |
 | Ch.6 | mechanical | Số cụm PostgreSQL cần đối chiếu |
 | Ch.7 | mechanical | |
-| Ch.8 | mechanical | Lỗi fence đã sửa tự động; còn 1 đoạn nhỏ chưa vào khối code (mục Balance integrity) |
-| Ch.9 | mechanical | |
+| Ch.8 | **edited** | Phiên 5. Sửa fence của thuật toán prescribing và pairing (code giữ nguyên, chỉ gộp vào một khối `java`), đưa đoạn lịch sử bất biến vào khối `text` và sửa mâu thuẫn "mọi thay đổi là INSERT", số dư ví dụ theo lịch trả nợ thật (gốc còn 14,180,104 sau 3 kỳ), thời gian EOM nhất quán (300 ms/tài khoản, 16 partition, khoảng 6.25 giờ), sơ đồ Mermaid cho BillingRun (Hình 8.2) và các bước EOM (Hình 8.3), nhãn write-off trong máy trạng thái theo tín hiệu DRG, sửa tài liệu đọc thêm (Minella 2019, Vernon chương 10) |
+| Ch.9 | **edited** | Phiên 5. Dựng lại toàn bộ ví dụ chu kỳ billing cho nhất quán: kỳ 3 (20/2-19/3) của tài khoản hạn mức 18%/năm, 30/360, lãi 207,850, phí 140,000, MMI 1,800,000 (phí → lãi → gốc), số dư có 1,200,000, sao kê và mục "chỉ trả tối thiểu" (8 tháng, lãi 742,000) tính bằng script; bỏ ghi chú sửa 15%/365; sửa số dư khả dụng ở kịch bản trả đúng hạn; đổi tên "chị Minh" thành chị Thu |
 | Ch.10 | mechanical | Lỗi fence đã sửa tự động |
 | Ch.11 | mechanical | |
 | Ch.12 | mechanical | Lỗi fence đã sửa tự động |
@@ -109,7 +109,7 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 ## Bước tiếp theo (theo thứ tự)
 
 1. ~~Biên tập Ch.3, Ch.4, Ch.5~~ (xong ở phiên 4).
-2. Biên tập Ch.8 và Ch.9 (lõi billing): sửa đoạn chưa vào khối code ở Ch.8, chuyển sơ đồ ASCII sang Mermaid (state machine AccountStatus, BillingRun, luồng EOM), đối chiếu `PRIORITY_ONLY`.
+2. ~~Biên tập Ch.8 và Ch.9~~ (xong ở phiên 5). Ghi chú: ví dụ Ch.9 giả định khoản trả khi chưa có kỳ trả nợ chỉ giảm dư nợ chịu lãi khi được ghép ở EOM (theo mô tả bản thảo); nếu cấu hình thật khác, sửa mục 9.2 và bước 3.3.
 3. Thêm công cụ "số tiền tất toán / trả trước hạn" cho Ch.2 Bài 1 và Ch.9.
 4. Tiếp tục Ch.6, 7, 10, rồi 11-16, rồi Phụ lục A, D, Thuật ngữ, Lời mở đầu.
 5. Sau mỗi chương: chạy `docs-internal/quality-checklist.md`, cập nhật bảng trên.

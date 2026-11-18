@@ -4,3 +4,5 @@ foundations/ch01-credit-economics.md
 products/ch03-product-design.md
 products/ch04-customer-journey.md
 products/ch05-revenue-portfolio.md
+system/ch08-account-management.md
+system/ch09-billing-cycle.md
