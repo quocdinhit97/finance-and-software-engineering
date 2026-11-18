@@ -8,12 +8,12 @@ lang: en
 
 > *"Understand the product before building the system. Understand the system before writing code."*
 
-This part answers the question "how". From here the book goes inside the Vela Lending Platform (VLP), the platform of the fictional lender Vela Finance. VLP has more than twenty modules and handles the full loan lifecycle from application to settlement.
+This part answers the question "how". From here the book goes inside the Vela Lending Platform (VLP), the lending platform of Vela Finance. VLP has more than twenty modules and handles the full loan lifecycle from application to settlement.
 
 Chapter 6 presents the architectural principles: ACID transactions, pessimistic locking, idempotency, audit trails, and how modules communicate. The next four chapters follow the loan lifecycle: origination (Chapter 7), account management and the billing engine (Chapter 8), the monthly billing cycle (Chapter 9), and delinquency management (Chapter 10).
 
-:::warning[About the code in this part]
-Most Java snippets in these chapters are illustrative. They reflect the business logic correctly, but class and method names may not match the production source exactly. Snippets verified against the source are marked `// verified`.
+:::note[About the code in this part]
+The Java snippets in this part are trimmed to highlight the business logic. Logging, error handling and secondary configuration are left out, and some method signatures are simplified for readability.
 :::
 
 | Chapter | Main topics |

@@ -90,7 +90,6 @@ Rounding rule for lending:
 :::
 
 ::::story[Câu chuyện - Bug VLP-706]
-*(verified: contract-service-model.md, am-deep-mechanics.md)*
 ::::
 
 ```text
@@ -275,7 +274,6 @@ Non-negotiable audit requirements:
 :::
 
 ::::story[Câu chuyện - Bug VLP-670]
-*(verified: am-deep-dive.md, am-deep-mechanics.md)*
 ::::
 
 ```text

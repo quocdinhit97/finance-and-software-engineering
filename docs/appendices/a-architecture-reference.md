@@ -267,8 +267,6 @@ Implementation: BigDecimal with HALF_UP rounding, scale 0 (VNĐ unit)
 
 ## A.5 Messaging Architecture
 
-*(verified: messaging-schemas.md, integration-architecture.md, supplement-lifecycle.md)*
-
 ### RabbitMQ Exchanges (Key)
 
 | Exchange | Type | Producer | Consumers | Purpose |

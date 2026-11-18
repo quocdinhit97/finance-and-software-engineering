@@ -202,8 +202,6 @@ TransactionType `BNPL_ECOM` trong VLP xử lý giao dịch BNPL e-commerce. `BNP
 - Merchant subsidy flow (xem section 3.2)
 - Khác POS loan ở flow: POS loan có dedicated origination; BNPL_ECOM đi qua transaction path
 
-*(verified: miscellaneous-claims.md)*
-
 :::summary[Taxonomy Sản Phẩm]
 Revolving: hạn mức quay vòng, lãi trên daily
 balance, MMI, rủi ro behavioral cao

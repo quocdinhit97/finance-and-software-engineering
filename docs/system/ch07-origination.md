@@ -11,8 +11,6 @@ editorial_status: "mechanical"
 
 > *"Origination là nơi mà business strategy, risk management, và user experience va chạm nhau trong vài phút. Thiết kế đúng: khách hàng được phục vụ tốt, rủi ro được kiểm soát. Thiết kế sai: cả ba đều fail cùng lúc."*
 
-> Lưu ý: **Lưu ý về code examples:** Các đoạn Java code là illustrative pseudo-code - minh họa logic, tên class/method có thể không chính xác hoàn toàn với production code. Luôn verify với source code khi implement.
-
 ## Dẫn nhập: Năm phút quyết định Ba năm
 
 ::::story
@@ -82,7 +80,6 @@ sequenceDiagram
     LOS->>LAS: origination.completed (RabbitMQ)
     LOS-->>User: Account activated
 ```
-*(verified: origination-flow-complete.md, supplement-lifecycle.md)*
 *(Account CREATED at generateAgreement step; ACTIVATED at signAgreement via RabbitMQ chain)*
 
 Trên đây là flow happy path. Trong thực tế, mỗi bước có thể fail, timeout, hoặc cần retry - và toàn bộ system phải handle gracefully.
@@ -139,7 +136,7 @@ Step order:
   7. signAgreement → waits for document acceptance
 ```
 
-**Infinispan cache - cách dùng thực tế (verified: verify-code-examples.md):**
+**Infinispan cache - cách dùng thực tế:**
 
 LOS dùng **per-step typed Infinispan caches** - không có generic `WorkflowContext` class. Mỗi workflow step có cache riêng:
 

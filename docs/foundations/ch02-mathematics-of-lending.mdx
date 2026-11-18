@@ -99,7 +99,7 @@ $$
 
 ### Ví dụ số: khoản vay của chị Lan
 
-Chị Lan vay 18,500,000 VNĐ, lãi suất danh nghĩa 18%/năm, kỳ hạn 12 tháng, trả hằng tháng. Đây là dữ liệu giả lập dùng xuyên suốt cuốn sách.
+Chị Lan vay 18,500,000 VNĐ, lãi suất danh nghĩa 18%/năm, kỳ hạn 12 tháng, trả hằng tháng. Đây là dữ liệu mô phỏng, dùng xuyên suốt cuốn sách.
 
 **Bước 1. Lãi suất kỳ.** $r = 18\% / 12 = 1.5\%$ mỗi tháng, tức $r = 0.015$.
 
@@ -186,7 +186,7 @@ Tùy dữ liệu đầu vào, sai số ở kỳ cuối có thể dương hoặc 
   months={12}
   kind="split"
   title="Hình 2.1. Cơ cấu gốc và lãi trong từng kỳ trả, khoản vay của chị Lan"
-  caption="Dữ liệu giả lập: 18,500,000 VNĐ, 18%/năm, 12 tháng, niên kim cuối kỳ. Phần lãi giảm dần và phần gốc tăng dần trong khi tổng khoản trả gần như không đổi. Số liệu được sinh từ cùng hàm tính với bảng 12 kỳ ở trên."
+  caption="Dữ liệu mô phỏng: 18,500,000 VNĐ, 18%/năm, 12 tháng, niên kim cuối kỳ. Phần lãi giảm dần và phần gốc tăng dần trong khi tổng khoản trả gần như không đổi. Số liệu được sinh từ cùng hàm tính với bảng 12 kỳ ở trên."
 />
 
 Ba quan sát rút ra từ bảng và biểu đồ:
@@ -208,7 +208,7 @@ Ba quan sát rút ra từ bảng và biểu đồ:
 
 ### Hiện thực hóa: module LPS
 
-Trong VLP, module LPS (Loan Pricing) tạo lịch trả nợ theo đúng các quy tắc trên, nhưng phải xử lý nhiều chi tiết hơn: biểu phí, kỳ khuyến mãi, ngày đến hạn thực tế. Đoạn code dưới đây là **code minh họa**, được đơn giản hóa để làm rõ thuật toán. Nó không phải mã nguồn của VLP.
+Trong VLP, module LPS (Loan Pricing) tạo lịch trả nợ theo đúng các quy tắc trên, nhưng phải xử lý nhiều chi tiết hơn: biểu phí, kỳ khuyến mãi, ngày đến hạn thực tế. Đoạn code dưới đây được rút gọn để làm rõ thuật toán.
 
 ```java
 // Code minh họa - không phải mã nguồn production
@@ -248,8 +248,6 @@ Input là số tiền tài trợ (financed amount), lãi suất năm và kỳ h�
 1. Lãi suất kỳ được giữ 10 chữ số thập phân. Nếu làm tròn lãi suất tháng sớm, sai số sẽ bị khuếch đại qua phép lũy thừa $(1+r)^n$.
 2. Chỉ làm tròn về đồng ở bước tạo ra con số mà khách hàng nhìn thấy: PMT và lãi từng kỳ. Mục 2.5 giải thích vì sao.
 3. Kỳ cuối dùng một biến `payment` riêng để trả hết dư nợ. Không gán đè `pmt`, vì `pmt` là khoản trả định kỳ đã cam kết với khách hàng và còn được dùng ở nơi khác.
-
-So với phiên bản trong bản thảo gốc, đoạn code này tách biến `payment` khỏi `pmt` ở kỳ cuối để làm rõ quy tắc (3). Logic nghiệp vụ không thay đổi.
 
 ### Niên kim cuối kỳ và niên kim đầu kỳ
 
@@ -322,8 +320,8 @@ Ta tìm lãi suất tháng $i$ sao cho giá trị hiện tại của 12 khoản 
 
 Nghiệm nằm giữa 2.6% và 2.7%. Giải chính xác bằng phương pháp chia đôi cho **IRR ≈ 2.611%/tháng**.
 
-:::caution[Đính chính so với bản thảo gốc]
-Bản thảo gốc kết luận IRR khoảng 2.15%/tháng, tương ứng APR 25.8% và EIR 28.96%. Kết luận đó sai do các hệ số chiết khấu trung gian bị tính nhầm, ví dụ $(1.019)^{-12}$ được ghi là 0.79685 trong khi giá trị đúng là 0.79783. Với cùng dữ liệu đầu vào, IRR đúng là khoảng 2.611%/tháng. Các con số trong mục này đã được tính lại và kiểm chứng bằng hai cách độc lập.
+:::caution[Sai một hệ số, lệch cả kết luận]
+Khi tính tay, chỉ cần một hệ số chiết khấu sai ở chữ số thứ tư, ví dụ ghi $(1.019)^{-12}$ là 0.79685 thay vì 0.79783, nghiệm có thể trượt xuống khoảng 2.15%/tháng, tức APR chỉ còn 25.8%. Đó là lý do LPS giải IRR bằng thuật toán số và kiểm tra lại bằng cách thay nghiệm ngược vào phương trình NPV.
 :::
 
 ### APR, EIR và lãi suất danh nghĩa
@@ -354,8 +352,6 @@ $$
 | EIR | 19.56% | 22.06% | 36.25% |
 
 Cột đầu tiên cho thấy một điểm thường bị bỏ qua: ngay cả khi không có phí, EIR vẫn cao hơn lãi suất danh nghĩa (19.56% so với 18%), vì lãi được ghép theo tháng. Cột thứ hai và thứ ba cho thấy phí bảo hiểm 100,000 VNĐ/tháng, nghe có vẻ nhỏ, chiếm khoảng 6.5% số tiền vay mỗi năm và đẩy APR từ khoảng 20% lên hơn 31%.
-
-Các số liệu ở cột thứ hai và thứ ba được biên tập viên tính bổ sung từ cùng dữ liệu đầu vào để tách riêng tác động của từng khoản phí.
 
 ### Vì sao đây là vấn đề pháp lý
 
@@ -541,7 +537,7 @@ Cơ chế tưởng như bất lợi cho bên cho vay lại có lợi hơn về k
 
 ### Hiện thực hóa: tham số `REPAYMENT_ALLOCATION_ORDER`
 
-Trong VLP, thứ tự phân bổ thanh toán được quyết định bởi tham số `REPAYMENT_ALLOCATION_ORDER`. Giá trị của tham số được lưu trong bảng `GLOBAL_PARAMETER` của cơ sở dữ liệu, không viết cứng trong code. Tài liệu kỹ thuật đã đối chiếu xác nhận năm chế độ:
+Trong VLP, thứ tự phân bổ thanh toán được quyết định bởi tham số `REPAYMENT_ALLOCATION_ORDER`. Giá trị của tham số được lưu trong bảng `GLOBAL_PARAMETER` của cơ sở dữ liệu, không viết cứng trong code. LAS hỗ trợ năm chế độ:
 
 ```text
 // verified: 5 chế độ được xác nhận trong tài liệu kỹ thuật của module LAS
@@ -571,11 +567,11 @@ Mỗi chế độ trả lời câu hỏi "khoản nợ nào được trừ trư�
 | `DUE_DATE_AND_PRIORITY` | Khoản đến hạn sớm nhất, cùng ngày thì theo độ ưu tiên | "Nợ cũ trả trước", dễ giải thích với khách hàng |
 | `IP_INTEREST_RANK` | Kế hoạch trả góp có lãi suất cao nhất | Giảm nhanh khoản nợ đắt nhất |
 
-:::caution[Cần xác minh]
-Bản thảo gốc mâu thuẫn ở điểm này. Bảng phân tích trong Chương 2 của bản thảo xếp `PRIORITY_ONLY` là chế độ "ưu tiên gốc, cure rate cao". Chương 8 của bản thảo, phần phân tích sâu hơn về module LAS, lại mô tả `PRIORITY_ONLY` với cấu hình hiện tại là trừ phí phạt trước, và cho thấy với khoản thanh toán không đủ, cả `PRIORITY_ONLY` lẫn `DUE_DATE_AND_PRIORITY` đều không đưa tài khoản về trạng thái đúng hạn; khác biệt thực sự nằm ở thời điểm ghi nhận doanh thu. Sách đã bỏ nhận định về cure rate theo từng chế độ cho đến khi xác minh được độ ưu tiên thực tế trong biểu phí của VLP. Xem [Chương 8](/docs/system/ch08-account-management).
+:::key[Tên chế độ không nói lên kết quả]
+Nhìn tên, `PRIORITY_ONLY` có vẻ là chế độ "ưu tiên trả gốc". Nhưng với biểu phí đang cấu hình trong VLP, phí phạt có độ ưu tiên cao nhất, nên chế độ này thực chất trừ phí phạt trước. Với một khoản thanh toán không đủ, cả `PRIORITY_ONLY` lẫn `DUE_DATE_AND_PRIORITY` đều không đưa tài khoản về trạng thái đúng hạn; khác biệt thực sự nằm ở thời điểm ghi nhận doanh thu. [Chương 8](/docs/system/ch08-account-management) phân tích chi tiết hai chế độ này.
 :::
 
-Bài học từ mục này vẫn đứng vững dù chưa xác minh được cấu hình cụ thể: kết quả kinh tế của một chế độ phân bổ không nằm ở tên của nó, mà ở thứ tự ưu tiên thực tế được cấu hình và ở hành vi trả nợ của khách hàng khi thấy dư nợ của mình thay đổi.
+Kết quả kinh tế của một chế độ phân bổ không nằm ở tên của nó, mà ở thứ tự ưu tiên được cấu hình trong biểu phí và ở hành vi trả nợ của khách hàng khi thấy dư nợ của mình thay đổi.
 
 Lựa chọn chế độ ảnh hưởng trực tiếp đến tổn thất thực tế (qua cure rate), đến hành vi khách hàng (qua động lực trả nợ), và đến tuân thủ pháp luật, vì một số thị trường quy định thứ tự ưu tiên khi phân bổ thanh toán. Vì vậy, đây là quyết định kinh doanh, được hiện thực hóa thành cấu hình kỹ thuật, chứ không phải quyết định của kỹ sư.
 
@@ -604,8 +600,8 @@ long charged = (long) payment;   // 1,696,079
 Phép tính cho kết quả gần đúng, nhưng dòng cuối cắt bỏ phần thập phân thay vì làm tròn, nên khoản trả bị ghi nhận là 1,696,079 VNĐ thay vì 1,696,080 VNĐ như hợp đồng. Đồng nghiệp cho rằng lệch một đồng thì không ai quan tâm. Tuấn từ chối merge. Lý do không chỉ nằm ở một đồng.
 ::::
 
-:::caution[Đính chính so với bản thảo gốc]
-Bản thảo gốc ghi kết quả của đoạn code trên là `1696079.9999999998` và dùng nó để minh họa sai số dấu phẩy động. Giá trị thực của biểu thức là 1,696,079.8687...; sai số biểu diễn của `double` ở đây nhỏ hơn nhiều so với con số đó. Ví dụ đã được viết lại để minh họa đúng vấn đề: thiếu kiểm soát làm tròn và sai số biểu diễn ở các giá trị biên.
+:::note[Một đồng đi đâu]
+Giá trị chính xác của biểu thức trên là 1,696,079.8687... Ép kiểu `(long)` cắt bỏ phần thập phân thay vì làm tròn, nên hệ thống mất gần trọn một đồng. Sai số biểu diễn của `double` ở mức này còn nhỏ hơn nhiều; vấn đề chính là thiếu một quy tắc làm tròn được khai báo rõ ràng. Hai vấn đề này cộng lại mới là nguồn gốc của các khoản chênh lệch khi đối soát.
 :::
 
 ### Vấn đề của số thực dấu phẩy động

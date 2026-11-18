@@ -11,13 +11,6 @@ editorial_status: "mechanical"
 
 > *"Billing không phải là việc tính toán. Billing là việc thực hiện đúng một lời hứa - với từng đồng tiền, với từng khách hàng, lúc 3 giờ sáng khi không ai thức."*
 
-> Lưu ý: **Lưu ý về code examples:** Các đoạn Java code trong chương này có hai loại:
->
-> - **Verified**: Class/method names được xác nhận từ codebase VLP (được chú thích `// verified`)
-> - **Illustrative pseudo-code**: Minh họa logic, tên class/method có thể đơn giản hóa hoặc không chính xác hoàn toàn với production code
-> 
-> Đây là sách giải thích khái niệm, không phải API documentation. Luôn verify với source code thực tế khi implement.
-
 ## Dẫn nhập: Một đêm của một triệu khoản vay
 
 ::::story
@@ -690,7 +683,7 @@ EventRecord
    ▼ BillingContext (result)
 ```
 
-**Actual ChargingGateway interface (verified: ChargingGateway.java):**
+**Actual ChargingGateway interface:**
 
 ```java
 // verified: billing-flow.md / ChargingGateway.java
@@ -704,7 +697,7 @@ public interface ChargingGateway {
 }
 ```
 
-Lưu ý: sách trước đây mô tả 5 channels (TARIFF_RESOLVED, FEE_CALCULATED, ITEM_CREATED, BALANCE_UPDATED) - đây là **sai**. Thực tế chỉ có 2 gateway channels chính.
+Toàn bộ chuỗi billing chỉ đi qua **2 gateway channel**. Các bước resolve tariff, tính phí, tạo item và cập nhật số dư diễn ra bên trong chuỗi xử lý nội bộ, không phải mỗi bước một channel riêng.
 
 **Tại sao pipeline architecture tốt hơn one giant method:**
 

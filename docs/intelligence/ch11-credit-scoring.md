@@ -1055,8 +1055,6 @@ Continuous learning (advanced):
 
 **Scoring trong VLP - Zeebe-based flow:**
 
-*(verified: scoring-pipeline-spec.md)*
-
 ```mermaid
 sequenceDiagram
     participant LOS as LOS (chooseOffer)

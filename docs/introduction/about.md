@@ -2,15 +2,13 @@
 title: "Về cuốn sách này"
 sidebar_label: "Về cuốn sách này"
 sidebar_position: 3
-description: "Hệ sinh thái tài chính hư cấu được dùng xuyên suốt sách, các nhân vật và nguyên tắc biên tập."
+description: "Hệ sinh thái tài chính xuyên suốt cuốn sách, các nhân vật và cách đọc các đoạn mô tả hệ thống."
 lang: vi
 ---
 
-## Một hệ sinh thái hư cấu
+## Hệ sinh thái của cuốn sách
 
-Mọi tổ chức, hệ thống và nhân vật trong sách đều là hư cấu. Các vấn đề nghiệp vụ, quyết định thiết kế và bài học kỹ thuật được rút ra từ kinh nghiệm thực tế với một nền tảng tài chính tiêu dùng đang vận hành, nhưng tên, chi tiết định danh và thông tin độc quyền đã được thay thế.
-
-Để người đọc luôn theo dõi cùng một câu chuyện, các chương dùng chung một hệ sinh thái:
+Cuốn sách đi theo hoạt động của Vela Finance và nền tảng cho vay VLP. Các vấn đề nghiệp vụ, quyết định thiết kế và sự cố được thảo luận đều gắn với hệ thống này. Để người đọc luôn theo dõi cùng một câu chuyện, các chương dùng chung một hệ sinh thái:
 
 | Thực thể | Vai trò trong sách |
 |---|---|
@@ -22,7 +20,7 @@ Mọi tổ chức, hệ thống và nhân vật trong sách đều là hư cấu
 | **Ví Mây** | Ví điện tử có sản phẩm tín dụng nhỏ (Ví Mây Credit) |
 | **Bình Minh Finance, Phương Nam Finance** | Các công ty tài chính tiêu dùng khác trên thị trường, dùng trong ví dụ cạnh tranh |
 
-Tên module, tên bảng, tên class và mã phí của hệ thống gốc cũng đã được đổi sang tên khác cùng nghĩa; ví dụ module quản lý tài khoản trong sách là LAS (Loan Account Service), module khởi tạo khoản vay là LOS (Loan Origination Service). Các tên công nghệ như Java, Spring Boot, PostgreSQL, Kafka, RabbitMQ, Kubernetes hay Zeebe được giữ nguyên. Các cơ quan quản lý, văn bản pháp luật và chuẩn mực công khai như Ngân hàng Nhà nước Việt Nam, Trung tâm Thông tin Tín dụng Quốc gia (CIC), IFRS 9 hay Basel cũng được giữ nguyên.
+VLP được xây dựng trên Java, Spring Boot, PostgreSQL, Kafka, RabbitMQ, Kubernetes và Zeebe. Các module được gọi bằng tên viết tắt, ví dụ LAS (Loan Account Service) quản lý tài khoản và LOS (Loan Origination Service) khởi tạo khoản vay; [Phụ lục A](/docs/appendices/a-architecture-reference) liệt kê đầy đủ. Các cơ quan quản lý, văn bản pháp luật và chuẩn mực như Ngân hàng Nhà nước Việt Nam, Trung tâm Thông tin Tín dụng Quốc gia (CIC), IFRS 9 hay Basel được nhắc đến theo đúng tên gọi.
 
 ## Các nhân vật
 
@@ -33,8 +31,6 @@ Tên module, tên bảng, tên class và mã phí của hệ thống gốc cũng
 | Kỹ sư Tuấn | Kỹ sư phần mềm, người hiện thực hóa nghiệp vụ thành code |
 | Bà Hương | Giám đốc tài chính (CFO), người nhìn khoản vay từ góc độ danh mục, vốn và lợi nhuận |
 
-## Nội dung nguồn và nội dung bổ sung
+## VLP đang làm gì và ngành thường làm gì
 
-Sách phân biệt ba loại nội dung. Nội dung mô tả hành vi của VLP dựa trên tài liệu và mã nguồn đã được đối chiếu. Nội dung "best practice" mô tả cách ngành thường làm, nhưng VLP chưa hiện thực hóa; những chỗ này được ghi chú rõ. Kiến thức nền tảng do biên tập viên bổ sung để giải thích khái niệm được viết như kiến thức chung, không được trình bày như hành vi của hệ thống.
-
-Khi một chi tiết chưa thể xác minh, sách nói rõ điều đó thay vì suy đoán.
+Sách phân biệt hai điều. Khi mô tả VLP, sách nói về cách hệ thống đang vận hành. Khi một cách làm là "best practice" của ngành mà VLP chưa có, sách nói rõ VLP đang ở đâu và trình bày thiết kế đề xuất, để người đọc thấy khoảng cách giữa hai bên và lý do của nó.

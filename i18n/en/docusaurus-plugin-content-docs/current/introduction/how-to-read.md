@@ -26,7 +26,7 @@ Readers who do not program can skip the implementation layer and still follow th
 
 Ms. Lan, 28, an accountant in Hanoi, needs a laptop that costs 18,500,000 VND. She takes a consumer loan at a nominal rate of 18% per year for 12 months, repaid monthly. The loan first appears in Chapter 1 and is reused throughout: to compute the repayment schedule in Chapter 2, to analyze fees and the true cost of credit, to trace each processing step through the system in Part III, and to illustrate late payment, early repayment and settlement.
 
-All figures for this loan are simulated data created for illustration. They are not production data.
+All figures for this loan are simulated.
 
 ## Conventions
 
@@ -34,7 +34,7 @@ Numbers use international notation: a comma as thousands separator and a point a
 
 Interest rates always state their period: "18% per year" is a nominal annual rate, "1.5% per month" is a periodic rate. When a figure is an APR or an EIR, the book names it explicitly, because the three concepts differ (see Chapter 2, section 2.2).
 
-Code samples are clearly marked as illustrative code or as code verified against the source. Pseudocode is always labelled as pseudocode.
+Code samples are trimmed to highlight the business logic; logging, error handling and secondary configuration are left out. Pseudocode is always labelled as pseudocode.
 
 :::note[Translation status]
 The English edition is in progress. The front matter, part introductions and calculators are available in English; chapters that have not yet been translated are shown in the original Vietnamese.

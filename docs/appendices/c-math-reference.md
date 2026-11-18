@@ -130,8 +130,8 @@ trong 12 tháng chỉ khoảng 10.3 triệu đồng. Lãi suất của khoản v
 là 18%/năm danh nghĩa; con số 10% không phải là một "lãi suất".
 ```
 
-:::caution[Đính chính so với bản thảo gốc]
-Bản thảo gốc dùng ví dụ 18,500,000 VNĐ, 18 tháng, 15.5%/năm, khác với ví dụ trung tâm ở Chương 2, và có sai số tính toán: $(1.012917)^{18}$ đúng là 1.25987 (không phải 1.25837), nên PMT đúng là 1,158,477 VNĐ (không phải 1,164,205 VNĐ). Ví dụ đã được thay bằng khoản vay trung tâm để thống nhất số liệu toàn sách.
+:::note[Ví dụ khác: 18 tháng, 15.5%/năm]
+Với cùng số tiền 18,500,000 VNĐ nhưng kỳ hạn 18 tháng và lãi suất 15.5%/năm: $r = 0.012917$, $(1+r)^{18} = 1.25987$, nên PMT = 1,158,477 VNĐ. Kỳ hạn dài hơn làm khoản trả hằng tháng giảm khoảng 538,000 VNĐ, nhưng tổng lãi tăng lên.
 :::
 
 ### Balloon Payment
@@ -542,4 +542,4 @@ Time value:
     At 24%/year: double in 72/24 = 3 years
 ```
 
-*Phụ lục C - Math Reference. Tất cả công thức đã được verified với worked examples trong text chính.*
+*Phụ lục C - Math Reference. Mỗi công thức đều có ví dụ tính toán tương ứng trong các chương chính.*

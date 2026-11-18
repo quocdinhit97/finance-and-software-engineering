@@ -6,8 +6,6 @@ description: "Cấu trúc năm phần, ba lớp nội dung và các quy ước t
 lang: vi
 ---
 
-![Kiến Thức Tài Chính và Công Nghệ Tài Chính](/img/howtoread.png)
-
 Cuốn sách được tổ chức thành năm phần, đi từ nền tảng đến ứng dụng. Mỗi phần trả lời một câu hỏi.
 
 | Phần | Câu hỏi | Chương |
@@ -28,7 +26,7 @@ Người đọc không lập trình có thể bỏ qua lớp hiện thực hóa 
 
 Chị Lan, 28 tuổi, nhân viên kế toán ở Hà Nội, cần mua một chiếc laptop giá 18,500,000 VNĐ. Chị vay tiêu dùng với lãi suất danh nghĩa 18%/năm, kỳ hạn 12 tháng, trả góp hằng tháng. Khoản vay này xuất hiện lần đầu ở Chương 1 và được dùng lại trong suốt cuốn sách: để tính lịch trả nợ ở Chương 2, để phân tích phí và chi phí tín dụng thực tế, để mô tả từng bước xử lý trong hệ thống ở Phần III, và để minh họa các tình huống trả trễ, trả trước hạn và tất toán.
 
-Mọi số liệu về khoản vay này đều là dữ liệu giả lập, được tạo ra để minh họa. Chúng không phải dữ liệu production.
+Mọi số liệu về khoản vay này là dữ liệu mô phỏng.
 
 ## Quy ước trình bày
 
@@ -38,7 +36,7 @@ Lãi suất luôn ghi rõ kỳ tính: "18%/năm" là lãi suất danh nghĩa nă
 
 Thuật ngữ tiếng Anh được giữ trong ngoặc đơn ở lần xuất hiện đầu tiên, hoặc giữ nguyên khi không có bản dịch tiếng Việt tương đương được dùng phổ biến trong ngành. Toàn bộ thuật ngữ có trong trang [Thuật ngữ](/docs/glossary).
 
-Các đoạn code được đánh dấu rõ là code minh họa hay code đã được đối chiếu với mã nguồn. Pseudocode luôn được ghi chú là pseudocode.
+Các đoạn code được rút gọn để làm nổi bật logic nghiệp vụ; phần logging, xử lý lỗi và cấu hình phụ được lược bớt. Pseudocode luôn được ghi chú là pseudocode.
 
 ## Hai cách dùng sách
 

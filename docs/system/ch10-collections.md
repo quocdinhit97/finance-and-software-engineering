@@ -11,8 +11,6 @@ editorial_status: "mechanical"
 
 > *"Collections không phải là chiến tranh giữa lender và borrower. Đó là cuộc đàm phán giữa một người có tiền cần trả và một người muốn được trả - trong bối cảnh mà cả hai đều muốn vấn đề kết thúc tốt đẹp nhất có thể."*
 
-> Lưu ý: **Lưu ý về code examples:** Các đoạn Java code là illustrative pseudo-code - minh họa logic, tên class/method có thể không chính xác hoàn toàn với production code. Luôn verify với source code khi implement.
-
 ## Dẫn nhập: Hai cuộc điện thoại
 
 ::::story

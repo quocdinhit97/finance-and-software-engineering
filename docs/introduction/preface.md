@@ -21,9 +21,9 @@ Cuốn sách này được viết để lấp đầy khoảng trống đó.
 
 Trong suốt quá trình nghiên cứu và làm việc trong lĩnh vực tài chính tiêu dùng *(consumer finance)*, tôi nhận ra rằng không có gì giải thích domain này tốt hơn một hệ thống thực tế đang chạy trong production. Lý thuyết là cần thiết, nhưng lý thuyết không cho bạn thấy tại sao một lỗi nhỏ trong cách xử lý ngày tháng có thể khiến hàng nghìn giao dịch bị từ chối sai, hay tại sao việc quyết định sắp xếp thứ tự trả nợ của khách hàng không chỉ là bài toán kỹ thuật mà còn là bài toán thiết kế cơ chế kinh tế *(mechanism design)*.
 
-Hệ sinh thái được sử dụng làm nền tảng xuyên suốt cuốn sách này - được gọi là **VLP** - là một nền tảng tài chính tiêu dùng hiện đại bao gồm hơn hai mươi microservices, xử lý toàn bộ vòng đời tín dụng từ khi khách hàng nộp đơn vay đến khi tất toán. Đây không phải là hệ thống giả định hay ví dụ đơn giản hóa - đây là một hệ thống production thực tế với tất cả sự phức tạp mà thực tế đòi hỏi.
+Hệ sinh thái xuyên suốt cuốn sách này, **VLP**, là một nền tảng tài chính tiêu dùng hiện đại bao gồm hơn hai mươi microservices, xử lý toàn bộ vòng đời tín dụng từ khi khách hàng nộp đơn vay đến khi tất toán. VLP không phải một ví dụ đơn giản hóa: hệ thống đang vận hành hằng ngày, với đầy đủ sự phức tạp mà nghiệp vụ tín dụng đòi hỏi.
 
-Tên, chi tiết định danh và thông tin độc quyền đã được ẩn danh hóa. Nhưng các vấn đề, quyết định thiết kế, và bài học - tất cả đều là thật.
+Dữ liệu là mô phỏng. Nhưng các vấn đề, quyết định thiết kế và bài học, tất cả đều là thật.
 
 ## Cuốn sách này dành cho ai?
 
