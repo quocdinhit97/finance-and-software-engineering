@@ -4,28 +4,29 @@ sidebar_label: "4. Hành trình khách hàng"
 sidebar_position: 2
 chapter: 4
 subtitle: "Customer Journey"
-reading_time: 29
+reading_time: 30
+description: "Tám giai đoạn của hành trình vay, kinh tế học của các kênh phân phối, thiết kế mức độ ma sát, bốn thiên kiến hành vi trong tín dụng tiêu dùng và ranh giới giữa gợi ý hợp lý với thao túng."
 source_file: "phan-1-chuong-4.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Người vay không đưa ra quyết định tài chính thuần lý trí. Họ đưa ra quyết định con người - với tất cả sự phức tạp, thiên kiến, và cảm xúc đi kèm. Hệ thống tốt phải hiểu điều này."*
+> *"Người vay không đưa ra quyết định tài chính thuần lý trí. Họ đưa ra quyết định của con người, với đầy đủ sự phức tạp, thiên kiến và cảm xúc đi kèm. Hệ thống tốt phải hiểu điều này."*
 
-## Dẫn nhập: Cùng một người, hai quyết định khác nhau
+## Dẫn nhập: cùng một người, hai quyết định khác nhau
 
 ::::story
-Sáng thứ Hai, chị Lan đang ngồi trong văn phòng và đọc email thông báo laptop hỏng. Cô bình tĩnh, tính toán: "Mình cần 18.5 triệu. Lương còn 10 ngày nữa mới về. Vay tiêu dùng là hợp lý nhất."
+Sáng thứ hai, chị Lan ngồi ở văn phòng và đọc email báo laptop không sửa được. Chị bình tĩnh tính toán: "Mình cần 18.5 triệu. Mười ngày nữa mới có lương. Vay tiêu dùng là hợp lý nhất."
 
-Cô mở app, điền thông tin cẩn thận, đọc kỹ điều khoản trước khi ký. Quyết định hoàn toàn tỉnh táo.
+Chị mở ứng dụng, điền thông tin cẩn thận, đọc kỹ điều khoản rồi mới ký. Một quyết định hoàn toàn tỉnh táo.
 
-Chiều thứ Sáu cùng tuần, chị Lan đang mua sắm ở trung tâm thương mại với bạn. Bạn chị vừa mua bộ sofa mới, được nhân viên bán hàng giới thiệu chương trình "Trả góp 0%, chỉ 2 triệu/tháng trong 24 tháng." Chị Lan nhìn sang bộ ghế đẹp hơn, giá 56 triệu - "cũng chỉ" 2.3 triệu/tháng. Cô ký hợp đồng trong vòng 15 phút.
+Chiều thứ sáu cùng tuần, chị Lan đi mua sắm với bạn ở trung tâm thương mại. Bạn chị vừa mua một bộ sofa 48 triệu, được nhân viên giới thiệu chương trình "trả góp chỉ từ 2.3 triệu/tháng trong 24 tháng". Chị Lan nhìn sang bộ đẹp hơn, giá 56 triệu, "cũng chỉ" khoảng 2.7 triệu/tháng. Chị ký hợp đồng trong vòng 15 phút.
 
-Cùng một người. Cùng loại sản phẩm tài chính. Nhưng quá trình ra quyết định hoàn toàn khác nhau - và mức độ "hợp lý" cũng khác nhau.
+Cùng một người, cùng một loại sản phẩm tài chính. Nhưng cách ra quyết định hoàn toàn khác, và mức độ hợp lý của quyết định cũng khác.
 ::::
 
-Chương này theo dõi toàn bộ hành trình của chị Lan - từ khi nhận ra nhu cầu đến khi tất toán khoản vay - qua hai lăng kính: quy trình vận hành *(operational flow)* và kinh tế học hành vi *(behavioral economics)*. Hiểu cả hai là điều kiện cần để thiết kế sản phẩm và hệ thống thực sự phục vụ người dùng - thay vì chỉ khai thác điểm yếu của họ.
+Chương này theo chị Lan trong toàn bộ hành trình, từ lúc nhận ra nhu cầu đến khi tất toán khoản vay, qua hai lăng kính: quy trình vận hành *(operational flow)* và kinh tế học hành vi *(behavioral economics)*. Hiểu cả hai là điều kiện cần để thiết kế sản phẩm và hệ thống thực sự phục vụ người dùng, thay vì khai thác điểm yếu của họ.
 
-## 4.1 Tổng quan hành trình: 8 giai đoạn
+## 4.1 Tổng quan hành trình: tám giai đoạn
 
 ### Bức tranh toàn cảnh
 
@@ -35,50 +36,44 @@ flowchart TD
     --> B["[2] TÌM KIẾM & SO SÁNH 'Đâu cho vay tốt nhất?'"]
     --> C["[3] NỘP ĐƠN 'Điền form, upload CCCD'"]
     --> D{"[4] THẨM ĐỊNH Scoring + KYC"}
-    D -->|Approved| E["[5] NHẬN TIỀN Disbursement"]
+    D -->|Approved| E["[5] KÝ HỢP ĐỒNG & NHẬN TIỀN Disbursement"]
     D -->|Declined| F["[5'] TỪ CHỐI + Adverse action"]
     E --> G["[6] TRẢ NỢ HÀNG THÁNG Statement + payment"]
     G --> H{"Vấn đề?"}
     H -->|DPD > 0| I["[7] COLLECTIONS Reminders, restructure"]
     H -->|On-time| G
     I --> G
+    G -->|Kỳ cuối| J["[8] TẤT TOÁN & TÁI VAY Payoff, re-offer"]
 ```
-Đây không chỉ là flowchart - mỗi mũi tên là một quyết định kinh doanh, mỗi ô vuông là một hoặc nhiều module trong VLP, và mỗi điểm chuyển tiếp là cơ hội để cải thiện hoặc phá hỏng trải nghiệm.
 
-### Giai đoạn 1: Nhận ra nhu cầu *(Need Recognition)*
+*Hình 4.1. Tám giai đoạn của hành trình vay.*
 
-::::story
-Nhu cầu vay tiền không xuất hiện từ một điểm. Nó xuất hiện từ nhiều trigger khác nhau - và loại trigger quyết định rất nhiều về hành vi của người vay sau đó.
-::::
+Mỗi mũi tên trong hình là một quyết định kinh doanh, mỗi ô là một hoặc nhiều module của VLP, và mỗi điểm chuyển tiếp là cơ hội để cải thiện hoặc phá hỏng trải nghiệm của khách hàng.
 
-**Phân loại trigger:**
+### Giai đoạn 1: nhận ra nhu cầu
 
-| Loại trigger | Ví dụ | Trạng thái tâm lý | Hành vi vay |
-|-------------|-------|-------------------|-------------|
-| **Khủng hoảng cấp bách** | Laptop hỏng cần thay ngay | Lo lắng, áp lực thời gian | Ra quyết định nhanh, ít so sánh |
-| **Mua sắm có kế hoạch** | Tiết kiệm mua xe, thiếu phần còn lại | Tỉnh táo, có thời gian | So sánh nhiều, đàm phán |
-| **Tiêu dùng bốc đồng** | Thấy sofa đẹp trong mall | Hưng phấn, FOMO | Quyết định tại chỗ, ít đọc điều khoản |
-| **Tái cơ cấu tài chính** | Muốn gộp nợ nhiều nơi | Stress về tài chính | Tập trung vào rate, ít quan tâm thời hạn |
+Nhu cầu vay không xuất hiện từ một điểm duy nhất. Nó đến từ nhiều tác nhân *(trigger)* khác nhau, và loại tác nhân quyết định rất nhiều về hành vi của người vay sau đó.
 
-**Tại sao điều này quan trọng?**
+| Loại tác nhân | Ví dụ | Trạng thái tâm lý | Hành vi vay |
+|---|---|---|---|
+| **Khủng hoảng cấp bách** | Laptop hỏng, cần thay ngay | Lo lắng, áp lực thời gian | Quyết định nhanh, ít so sánh |
+| **Mua sắm có kế hoạch** | Tiết kiệm mua xe, còn thiếu một phần | Tỉnh táo, có thời gian | So sánh nhiều, thương lượng |
+| **Tiêu dùng bốc đồng** | Thấy sofa đẹp ở trung tâm thương mại | Hưng phấn, sợ bỏ lỡ | Quyết định tại chỗ, ít đọc điều khoản |
+| **Tái cơ cấu tài chính** | Muốn gộp nợ ở nhiều nơi | Căng thẳng về tài chính | Tập trung vào lãi suất, ít quan tâm kỳ hạn |
 
-Loại trigger ảnh hưởng đến:
-1. **Channel preference**: Khủng hoảng cấp bách → digital (nhanh); Mua có kế hoạch → có thể đến chi nhánh
-2. **Sensitivity**: Khủng hoảng → ít nhạy cảm với lãi suất (cần tiền ngay); Kế hoạch → so sánh kỹ
-3. **Default risk**: Tiêu dùng bốc đồng → PD cao hơn (quyết định ít cẩn thận)
-4. **Support needs**: Tái cơ cấu → cần tư vấn, không chỉ transaction
+Loại tác nhân ảnh hưởng tới bốn điều. **Kênh ưa thích**: khủng hoảng cấp bách hướng tới kênh số vì nhanh, còn mua có kế hoạch có thể đến chi nhánh. **Độ nhạy với giá**: người đang khủng hoảng ít nhạy với lãi suất vì cần tiền ngay, người có kế hoạch so sánh kỹ. **Rủi ro vỡ nợ**: tiêu dùng bốc đồng thường có PD cao hơn vì quyết định ít cân nhắc. **Nhu cầu hỗ trợ**: người tái cơ cấu nợ cần được tư vấn, không chỉ một giao dịch.
 
-**Ứng dụng thiết kế:** Marketing và UX cho từng channel cần align với trigger type. App push notification "Bạn có thể vay ngay 20 triệu trong 5 phút" target trigger khủng hoảng cấp bách - hiệu quả về conversion nhưng thu hút behavioral risk.
+Vì vậy, marketing và trải nghiệm của từng kênh cần khớp với loại tác nhân. Một thông báo đẩy "Vay ngay 20 triệu trong 5 phút" nhắm vào người đang khủng hoảng: hiệu quả về tỷ lệ chuyển đổi, nhưng cũng thu hút đúng nhóm có rủi ro hành vi cao.
 
-### Giai đoạn 2: Tìm kiếm và So sánh
+### Giai đoạn 2: tìm kiếm và so sánh
 
 ::::story
-Chị Lan mở Google tìm "vay tiêu dùng nhanh" và thấy hàng chục kết quả. Làm thế nào cô quyết định chọn đâu?
+Chị Lan tìm "vay tiêu dùng nhanh" trên mạng và thấy hàng chục kết quả. Chị chọn nơi nào?
 
-Nghiên cứu về information search trong financial services cho thấy pattern đáng ngạc nhiên: hầu hết người vay **không** chọn option tốt nhất về tài chính. Họ chọn option **đủ tốt** và **ít friction nhất**.
+Các nghiên cứu về hành vi tìm kiếm thông tin trong dịch vụ tài chính cho thấy một mẫu hình đáng chú ý: phần lớn người vay **không** chọn phương án tốt nhất về tài chính. Họ chọn phương án **đủ tốt** và **ít trở ngại nhất**.
 ::::
 
-**Yếu tố quyết định lựa chọn** (theo thứ tự ưu tiên thực tế):
+Thứ tự ưu tiên điển hình của người vay khi chọn nơi vay, với tỷ trọng mang tính minh họa:
 
 ```text
 1. Brand recognition / Trust (40%)
@@ -89,32 +84,17 @@ Nghiên cứu về information search trong financial services cho thấy patter
 
 3. Rate / terms (20%)
    "Lãi suất thế nào?" — thường được check SAU khi đã apply
-
-4. Referral (10%)
-   "Bạn tôi dùng và hài lòng"
 ```
 
-**Điều này có hệ quả quan trọng:** Lãi suất tốt hơn không tự động thu hút khách hàng tốt hơn. Trust và speed quan trọng hơn trong giai đoạn tìm kiếm. Đây là lý do marketing và UX trong fintech tập trung vào "3-minute approval" hơn là "lowest rate."
+Điều này có hệ quả quan trọng: lãi suất tốt hơn không tự động thu hút khách hàng tốt hơn. Ở giai đoạn tìm kiếm, niềm tin và tốc độ thường quan trọng hơn giá. Đó là lý do các công ty fintech quảng cáo "duyệt trong 3 phút" nhiều hơn "lãi suất thấp nhất". Lời giới thiệu từ bạn bè *(referral)* là yếu tố thứ tư, chiếm phần còn lại.
 
-### Giai đoạn 3: Nộp đơn và thẩm định
+### Giai đoạn 3: nộp đơn và thẩm định
 
-Đây là giai đoạn phức tạp nhất từ góc nhìn hệ thống. Origination flow trong VLP xử lý giai đoạn này - sẽ được mô tả chi tiết trong Chương 7. Ở đây, chúng ta focus vào trải nghiệm khách hàng.
+Đây là giai đoạn phức tạp nhất về mặt hệ thống. Quy trình khởi tạo khoản vay của VLP được mô tả chi tiết ở [Chương 7](/docs/system/ch07-origination); ở đây ta tập trung vào trải nghiệm của khách hàng.
 
-**Friction trong origination là con dao hai lưỡi:**
+Mức độ ma sát *(friction)* trong quy trình nộp đơn là con dao hai lưỡi. Ma sát cao, tức nhiều giấy tờ và nhiều bước, lọc bớt người vay thiếu nghiêm túc nên giảm lựa chọn bất lợi, và người đã "đầu tư công sức" ít bỏ cuộc sau khi được duyệt. Nhưng tỷ lệ hoàn thành đơn *(completion rate)* thấp, nên chi phí có khách hàng cao. Ma sát thấp, tức nộp đơn trong 5 phút, cho tỷ lệ chuyển đổi cao và nhiều đơn hơn; nhưng cũng nhiều đơn thiếu nghiêm túc, lựa chọn bất lợi tăng, và người vay ít suy nghĩ nên rủi ro vỡ nợ tiềm ẩn cao hơn.
 
-*Friction cao (nhiều giấy tờ, nhiều bước):*
-- Lọc bỏ người vay ít cam kết → adverse selection thấp hơn
-- Người vay phải "đầu tư" vào process → ít bỏ giữa chừng sau khi được duyệt
-- Nhưng: tỷ lệ hoàn thành đơn *(completion rate)* thấp → acquisition cost cao
-
-*Friction thấp (apply trong 5 phút):*
-- Conversion rate cao → nhiều đơn hơn
-- Nhưng: nhiều đơn không nghiêm túc → adverse selection tăng
-- Người vay ít suy nghĩ → default rate tiềm ẩn cao hơn
-
-**Optimal friction point** là điểm cân bằng giữa conversion và risk - khác nhau theo từng phân khúc và sản phẩm.
-
-**Ví dụ số:**
+Mức ma sát tối ưu là điểm cân bằng giữa chuyển đổi và rủi ro, và nó khác nhau theo từng phân khúc, từng sản phẩm.
 
 ```text
 Scenario A: High friction (10 giấy tờ, 3 ngày thẩm định)
@@ -131,21 +111,18 @@ Scenario B: Low friction (3 fields, 5 phút)
   Default rate: 6% (adverse selection)
   Bad loans: 1,200 × 6% = 72 khoản
 
-Volume: B tốt hơn 4x
-Bad loans: B tệ hơn 8.6x
+Volume: B gấp khoảng 4.3 lần
+Bad loans: B gấp khoảng 8.6 lần
 ```
 
-Scenario B có thể vẫn profitable nếu margin đủ cao, nhưng rủi ro tập trung vào portfolio chất lượng thấp hơn đáng kể.
+Kịch bản B vẫn có thể có lãi nếu biên lợi nhuận đủ cao, nhưng danh mục của nó chứa tỷ trọng khoản vay xấu cao hơn hẳn. Mục 4.2 sẽ tính lời lỗ cụ thể cho một bài toán tương tự.
 
-### Giai đoạn 4: Phán quyết và Offer Presentation
+### Giai đoạn 4: quyết định và trình bày đề nghị vay
 
-Khi hệ thống đã có đủ thông tin, hai điều xảy ra:
+Khi đã có đủ thông tin, hệ thống đi tới một trong hai kết quả.
 
-**4a. Từ chối *(Decline):***
+**Từ chối.** Thông báo từ chối là một trong những điểm chạm quan trọng nhất, nhưng thường được thiết kế kém nhất. Từ chối không khéo khiến khách hàng thấy bị xúc phạm và để lại đánh giá xấu. Từ chối tốt giúp khách hàng hiểu lý do và có thể quay lại khi đủ điều kiện.
 
-Thông điệp từ chối là một trong những touchpoint quan trọng nhất - nhưng thường được thiết kế tệ nhất. Từ chối tệ → khách hàng bị xúc phạm, phẫn nộ, review xấu. Từ chối tốt → khách hàng hiểu lý do, có thể quay lại khi đủ điều kiện.
-
-**Framework từ chối tốt:**
 ```text
 Thay vì: "Đơn của bạn bị từ chối."
 
@@ -154,55 +131,41 @@ Nên: "Hiện tại chúng tôi chưa thể phê duyệt đơn của bạn vì [
       Hãy thử lại sau [thời gian cụ thể]."
 ```
 
-Đây là thông tin mà hệ thống cần generate một cách thông minh - không chỉ là error code.
+Hệ thống vì vậy phải tạo ra được lý do từ chối có ý nghĩa với khách hàng, chứ không chỉ một mã lỗi. Yêu cầu này nối trực tiếp với tính giải thích được của mô hình chấm điểm ở mục 4.4 và [Chương 11](/docs/intelligence/ch11-credit-scoring).
 
-**4b. Chấp nhận và Offer Presentation:**
+**Chấp thuận.** Cách trình bày đề nghị vay ảnh hưởng lớn tới quyết định chấp nhận, và đây là nơi kinh tế học hành vi bắt đầu đóng vai trò quan trọng. Mục 4.3 sẽ đi sâu vào điều này.
 
-Cách trình bày offer ảnh hưởng lớn đến quyết định chấp nhận - và đây là nơi behavioral economics bắt đầu đóng vai trò quan trọng. Chúng ta sẽ đi sâu vào điều này ở section 4.3.
+### Giai đoạn 5 đến 8: từ ký hợp đồng đến vay lại
 
-### Giai đoạn 5-8: Từ ký hợp đồng đến tái vay
-
-Bốn giai đoạn cuối sẽ được mô tả chi tiết trong các chương kỹ thuật (Chương 7-10). Ở đây, điểm quan trọng cần ghi nhớ:
-
-**Mỗi giai đoạn là một cơ hội CLV:**
+Bốn giai đoạn cuối được mô tả chi tiết trong các chương kỹ thuật, từ [Chương 7](/docs/system/ch07-origination) đến [Chương 10](/docs/system/ch10-collections). Điều cần ghi nhớ ở đây là mỗi giai đoạn đều là một cơ hội, hoặc một rủi ro, đối với giá trị vòng đời khách hàng (CLV) đã giới thiệu ở [Chương 3](/docs/products/ch03-product-design):
 
 | Giai đoạn | Cơ hội CLV | Rủi ro CLV |
-|-----------|------------|------------|
-| Ký hợp đồng | Upsell, cross-sell bảo hiểm | Over-commitment → default |
-| Sử dụng (active) | Engage, loyalty | Disengagement → không tái vay |
-| Trả trễ | Hardship program → save the customer | Collections aggressive → mất khách |
-| Tất toán | Offer tái vay ngay | Không contact → khách đi chỗ khác |
+|---|---|---|
+| Ký hợp đồng | Bán thêm, bán chéo bảo hiểm | Cam kết quá khả năng, dẫn đến vỡ nợ |
+| Đang trả nợ | Gắn kết, trung thành | Thờ ơ, không vay lại |
+| Trả trễ | Chương trình hỗ trợ giữ được khách hàng | Thu hồi nợ quá gắt làm mất khách |
+| Tất toán | Đề nghị vay lại kịp thời | Không liên hệ, khách hàng đi nơi khác |
 
-:::summary[8 Giai Đoạn Hành Trình]
-Trigger type → channel preference + risk profile
-Search stage: Trust > Speed > Rate (theo thứ tự)
-Friction là con dao hai lưỡi: conversion vs risk
-Từ chối tốt = cơ hội retention tương lai
-Mỗi giai đoạn = cơ hội hoặc rủi ro CLV
+:::summary[Mục 4.1]
+Loại tác nhân dẫn tới nhu cầu vay quyết định kênh ưa thích và hồ sơ rủi ro của khách hàng. Ở giai đoạn tìm kiếm, niềm tin và tốc độ thường quan trọng hơn lãi suất. Ma sát khi nộp đơn là con dao hai lưỡi giữa chuyển đổi và rủi ro. Một lời từ chối tốt là cơ hội giữ khách hàng cho tương lai, và mỗi giai đoạn của hành trình là một cơ hội hoặc một rủi ro đối với CLV.
 :::
 
 ## 4.2 Kênh phân phối và hành vi khách hàng
 
-### Tình huống: Kênh nào tốt nhất?
+### Tình huống: kênh nào tốt nhất?
 
 ::::story
-Anh Minh nhận được câu hỏi từ CEO: "Chúng ta nên invest vào kênh nào? App hay POS merchant network?"
+Tổng giám đốc hỏi anh Minh: "Chúng ta nên đầu tư vào kênh nào, ứng dụng hay mạng lưới đối tác bán lẻ?"
 
-Câu trả lời đúng: "Phụ thuộc vào phân khúc target và risk tolerance. Không có kênh nào tốt nhất - chỉ có kênh phù hợp nhất với từng mục tiêu."
+Câu trả lời đúng là: "Tùy phân khúc mục tiêu và khẩu vị rủi ro. Không có kênh tốt nhất, chỉ có kênh phù hợp nhất với từng mục tiêu."
 ::::
 
-### Ba kênh chính và Economics
+### Ba kênh chính và kinh tế học của chúng
 
-**Kênh 1: POS *(Point of Sale)* - Tại Điểm Bán Hàng**
+#### Kênh 1: tại điểm bán (POS)
 
-Người mua đang ở cửa hàng, nhân viên bán hàng (đã được training) giới thiệu sản phẩm tài chính tại chỗ.
+Người mua đang ở cửa hàng; nhân viên bán hàng, đã được đào tạo, giới thiệu sản phẩm tài chính ngay tại chỗ. Tác nhân thường là mua sắm có kế hoạch hoặc bốc đồng, người mua đang hào hứng với món hàng, và ma sát thấp vì nhân viên hỗ trợ điền đơn.
 
-**Đặc điểm:**
-- Trigger: Tiêu dùng có kế hoạch hoặc bốc đồng
-- Decision context: Đang hưng phấn với sản phẩm muốn mua
-- Friction: Thấp - nhân viên hỗ trợ điền form
-
-**Economics:**
 ```text
 Acquisition cost: 500,000 - 1,500,000 VNĐ/khách hàng
   (commission cho merchant + training cost + system integration)
@@ -219,29 +182,24 @@ Nhược điểm:
   • Behavioral risk: bốc đồng → default cao hơn
 ```
 
-**Ví dụ số - POS Economics:**
+Một phép tính đơn giản cho thấy hoa hồng chiếm bao nhiêu trong lợi nhuận của kênh này:
 
 ```text
-100 merchant partners, mỗi merchant 50 khoản vay/tháng = 5,000 loans/tháng
-Average loan: 15,000,000 VNĐ
-Commission: 2% = 300,000 VNĐ/loan
-Total commission: 5,000 × 300,000 = 1,500,000,000 VNĐ/tháng
+100 merchant partners × 50 khoản vay/tháng = 5,000 khoản vay/tháng
+Khoản vay bình quân: 15,000,000 VNĐ
+Hoa hồng cho merchant: 2% = 300,000 VNĐ/khoản vay
+Tổng hoa hồng: 5,000 × 300,000 = 1,500,000,000 VNĐ/tháng
 
-Revenue (net margin per loan): 1,200,000 VNĐ × 5,000 = 6,000,000,000 VNĐ/tháng
-Commission as % of revenue: 1,500 / 6,000 = 25%
-→ Cần margin đủ lớn để profitable sau commission
+Lợi nhuận trước hoa hồng: 1,200,000 VNĐ/khoản vay × 5,000 = 6,000,000,000 VNĐ/tháng
+Hoa hồng / lợi nhuận trước hoa hồng: 1.5 / 6.0 = 25%
 ```
 
-**Kênh 2: Digital *(App/Web)* - Self-Service**
+Một phần tư lợi nhuận đi vào hoa hồng. Kênh POS chỉ bền vững khi biên lợi nhuận mỗi khoản vay đủ dày, và [Chương 3](/docs/products/ch03-product-design) đã cho thấy biên đó mỏng tới mức nào.
 
-Khách hàng tự apply qua app hoặc website, không cần nhân viên.
+#### Kênh 2: kênh số (ứng dụng, website)
 
-**Đặc điểm:**
-- Trigger: Thường là khủng hoảng hoặc kế hoạch có chủ ý
-- Decision context: Riêng tư, không áp lực xã hội
-- Friction: Thiết kế được - từ rất thấp đến trung bình
+Khách hàng tự nộp đơn qua ứng dụng hoặc website, không cần nhân viên. Tác nhân thường là khủng hoảng cấp bách hoặc kế hoạch có chủ ý; khách hàng quyết định trong không gian riêng tư, không có áp lực xã hội; và mức ma sát do công ty tự thiết kế, từ rất thấp đến trung bình.
 
-**Economics:**
 ```text
 Acquisition cost: 200,000 - 600,000 VNĐ/khách hàng
   (marketing digital: CPC, CPM, referral)
@@ -258,12 +216,10 @@ Nhược điểm:
   • Customer service phức tạp hơn (không có người hỗ trợ)
 ```
 
-**Một insight quan trọng về digital:**
-
-Thời điểm apply qua app tương quan với risk:
+Kênh số cũng tạo ra loại dữ liệu mà kênh khác không có, ví dụ thời điểm nộp đơn. Một số công ty tài chính tiêu dùng ghi nhận rằng thời điểm nộp đơn tương quan với rủi ro:
 
 ```text
-Dữ liệu thực tế từ nhiều CFTC:
+Mẫu hình quan sát được (minh họa):
   Apply 9h-17h (giờ hành chính): Default rate X%
   Apply 18h-22h (tối): Default rate X + 0.5%
   Apply 23h-5h sáng: Default rate X + 1.8%
@@ -272,18 +228,12 @@ Giải thích hành vi: Apply lúc 2h sáng thường là dấu hiệu
 của financial stress cấp tính → rủi ro cao hơn
 ```
 
-Thông tin này có thể là một feature trong scoring model - nhưng cũng đặt ra câu hỏi về đạo đức: có nên từ chối hoặc tính lãi cao hơn chỉ vì người ta cần tiền lúc 2h sáng không?
+Thông tin này có thể trở thành một biến trong mô hình chấm điểm. Nhưng nó cũng đặt ra một câu hỏi đạo đức: có nên từ chối, hoặc tính lãi cao hơn, chỉ vì một người cần tiền lúc 2 giờ sáng? [Chương 11](/docs/intelligence/ch11-credit-scoring) quay lại câu hỏi này khi bàn về tính công bằng của mô hình.
 
-**Kênh 3: Telesales / Agent - High Touch**
+#### Kênh 3: bán hàng qua điện thoại, nhân viên trực tiếp
 
-Nhân viên sales gọi điện hoặc gặp trực tiếp tại nhà/văn phòng khách hàng.
+Nhân viên gọi điện hoặc gặp khách hàng tại nhà, tại nơi làm việc. Kênh này thường chủ động tiếp cận *(outbound)*; khách hàng có người tư vấn nhưng cũng chịu áp lực; ma sát cao nhất, nhưng tỷ lệ chuyển đổi sau khi vượt qua ma sát thường tốt.
 
-**Đặc điểm:**
-- Trigger: Thường là outbound - công ty chủ động tiếp cận
-- Decision context: Có người tư vấn, nhưng cũng có pressure
-- Friction: Cao nhất - nhưng conversion sau friction thường tốt
-
-**Economics:**
 ```text
 Acquisition cost: 800,000 - 2,500,000 VNĐ/khách hàng
   (salary + commission cho agent + overhead)
@@ -294,17 +244,15 @@ Phù hợp với:
   • Vùng nông thôn ít smartphone penetration
 ```
 
-### Omnichannel và Friction Design
+### Đa kênh: trạng thái chung là yêu cầu kỹ thuật
 
 ::::story
-Chị Lan bắt đầu apply qua app lúc 10h tối, điền được 60% form thì buồn ngủ, tắt máy. Sáng hôm sau cô vào chi nhánh vì muốn hỏi thêm. Nhân viên nhìn vào hệ thống và nói: "Chị ơi, chị điền lại từ đầu nhé, chúng tôi không thấy đơn của chị."
+Chị Lan bắt đầu nộp đơn qua ứng dụng lúc 10 giờ tối, điền được 60% thì buồn ngủ và tắt máy. Sáng hôm sau chị ghé chi nhánh để hỏi thêm. Nhân viên tra hệ thống rồi nói: "Chị ơi, chị điền lại từ đầu nhé, em không thấy đơn của chị."
 
-Chị Lan bỏ đi, vay ở chỗ khác.
+Chị Lan bỏ về và vay ở nơi khác.
 ::::
 
-**Đây là Omnichannel failure** - và nó xảy ra do thiếu một shared state layer giữa các kênh.
-
-**Omnichannel requirement đối với hệ thống:**
+Đây là một thất bại đa kênh *(omnichannel failure)*, và nguyên nhân là các kênh không dùng chung một lớp trạng thái. Để tránh nó, hệ thống cần ba thứ:
 
 ```text
 Shared Application State:
@@ -321,22 +269,19 @@ Cross-channel Journey Tracking:
   → Attribution đúng cho marketing
 ```
 
-Trong VLP, đây là lý do ADR *(Application Data Repository)* module tồn tại tách biệt với LOS *(Loan Origination Service)* - ADR là persistent state store, LOS là stateless orchestrator. Thiết kế này cho phép tiếp tục đơn từ bất kỳ channel nào.
+Trong VLP, đây là lý do module ADR *(Application Data Repository)* tồn tại tách biệt với LOS *(Loan Origination Service)*. ADR là nơi lưu trạng thái lâu dài của đơn vay, còn LOS là bộ điều phối không trạng thái *(stateless orchestrator)*. Nhờ tách như vậy, một đơn vay có thể được tiếp tục từ bất kỳ kênh nào. [Chương 7](/docs/system/ch07-origination) phân tích thiết kế này chi tiết hơn.
 
-### Friction Design: Nghệ thuật và Khoa học
+### Thiết kế ma sát: vừa là nghệ thuật, vừa là phép tính
 
 ::::story
-Anh Minh đang A/B test hai phiên bản of onboarding:
-- Version A: 3 bước, 5 phút
-- Version B: 8 bước, 15 phút (thêm income verification, spending habit questions)
+Anh Minh chạy thử nghiệm A/B cho hai phiên bản quy trình đăng ký. Phiên bản A có 3 bước, mất 5 phút. Phiên bản B có 8 bước, mất 15 phút, thêm bước xác minh thu nhập và câu hỏi về thói quen chi tiêu.
 
-Version A: Completion rate 78%, default rate 5.8%
-Version B: Completion rate 45%, default rate 3.2%
+Phiên bản A có tỷ lệ hoàn thành 78% và tỷ lệ vỡ nợ 5.8%. Phiên bản B có tỷ lệ hoàn thành 45% và tỷ lệ vỡ nợ 3.2%.
 
-Câu hỏi: Version nào tốt hơn cho business?
+Phiên bản nào tốt hơn cho công ty?
 ::::
 
-**Phân tích:**
+Giả sử mỗi khoản vay tốt mang lại 1,200,000 VNĐ lợi nhuận, mỗi khoản vay xấu có EAD 15 triệu đồng và LGD 60%:
 
 ```text
 Version A (1,000 visitors):
@@ -358,167 +303,102 @@ Version B (1,000 visitors):
   NET: 293,400,000 VNĐ
 ```
 
-Version A tốt hơn về net value - dù bad loan rate cao hơn. Friction không phải luôn là giải pháp đúng.
+Phiên bản A mang lại giá trị ròng cao hơn, dù tỷ lệ vỡ nợ cao hơn. Ma sát không phải lúc nào cũng là câu trả lời đúng; điều cần tối ưu là giá trị ròng, không phải riêng tỷ lệ hoàn thành hay riêng tỷ lệ vỡ nợ. Kết quả này cũng rất nhạy với giả định: nếu lợi nhuận mỗi khoản vay tốt chỉ còn 800,000 VNĐ, phiên bản A còn 123.2 triệu, phiên bản B còn 162.6 triệu, và kết luận đảo ngược.
 
-**Nguyên tắc friction design:**
+:::key[Bốn nguyên tắc thiết kế ma sát]
+Thứ nhất, ma sát phải có mục đích: nếu không trả lời được "thu thông tin này để làm gì", hãy bỏ bước đó. Thứ hai, ma sát phải giải thích được với khách hàng, ví dụ "chúng tôi hỏi điều này để tránh cho bạn vay quá khả năng trả". Thứ ba, hỏi dần dần *(progressive disclosure)*: thông tin cơ bản trước, thông tin phức tạp sau. Thứ tư, ma sát không đồng đều theo rủi ro: khoản vay nhỏ ít ma sát, khoản vay lớn nhiều ma sát hơn, khách hàng quay lại ít ma sát hơn khách hàng lần đầu.
+:::
 
-```text
-1. Friction nên có mục đích rõ ràng
-   → "Thu thập data này để làm gì?" — nếu không có câu trả lời tốt, bỏ đi
-
-2. Friction nên có thể giải thích cho khách hàng
-   → "Chúng tôi hỏi điều này để bảo vệ bạn khỏi over-indebtedness"
-
-3. Progressive disclosure
-   → Hỏi thông tin cơ bản trước, thông tin phức tạp sau
-   → Không hỏi tất cả ngay từ đầu
-
-4. Friction không đồng đều theo risk
-   → Loan nhỏ: ít friction
-   → Loan lớn: nhiều friction
-   → Returning customer: ít friction hơn first-time
-```
-
-:::summary[Kênh Phân Phối]
-POS: conversion cao, commission cao, behavioral
-risk cao - phù hợp với purchase-linked products
-Digital: scalable, data-rich, fraud risk, trust
-barrier - phù hợp với tech-savvy, planned loans
-Telesales: highest cost, highest touch - phù hợp
-với large loans, first-time, rural
-Omnichannel: shared state là requirement kỹ thuật
-Friction: tối ưu hóa cho net value, không chỉ
-completion rate hoặc default rate riêng lẻ
+:::summary[Mục 4.2]
+Kênh POS có tỷ lệ chuyển đổi cao nhưng hoa hồng cao và rủi ro hành vi lớn, phù hợp với sản phẩm gắn với một món hàng. Kênh số mở rộng dễ và giàu dữ liệu, nhưng rủi ro gian lận cao hơn và khó tạo niềm tin với người lần đầu vay. Kênh bán hàng trực tiếp tốn kém nhất, phù hợp với khoản vay lớn, người vay lần đầu và vùng nông thôn. Trạng thái dùng chung giữa các kênh là một yêu cầu kỹ thuật, không phải tính năng phụ. Mức ma sát phải được tối ưu theo giá trị ròng.
 :::
 
 ## 4.3 Kinh tế học hành vi trong tín dụng tiêu dùng
 
-### Tại sao phần này quan trọng
+### Vì sao phần này quan trọng
 
-Kinh tế học truyền thống giả định con người ra quyết định tối ưu *(rational agents)*. Kinh tế học hành vi, được Richard Thaler và Daniel Kahneman tiên phong, cho thấy điều ngược lại: con người ra quyết định theo những pattern có thể dự đoán được - nhưng không phải lúc nào cũng tối ưu.
+Kinh tế học truyền thống giả định con người ra quyết định tối ưu *(rational agents)*. Kinh tế học hành vi, với những người tiên phong như Daniel Kahneman và Richard Thaler, cho thấy con người ra quyết định theo những mẫu hình có thể dự đoán được, nhưng không phải lúc nào cũng tối ưu.
 
-Trong tín dụng tiêu dùng, điều này có hai hệ quả:
+Trong tín dụng tiêu dùng, điều đó có hai mặt. Bên cho vay hiểu các thiên kiến hành vi thì có thể thiết kế sản phẩm và trải nghiệm để tăng chuyển đổi và giữ chân khách hàng. Nhưng cùng hiểu biết ấy cũng có thể được dùng để khai thác người vay, và ranh giới giữa hai việc này rất mỏng. Người thiết kế hệ thống cần hiểu cả hai mặt. [Chương 13](/docs/intelligence/ch13-behavioral-economics) đi sâu hơn vào chủ đề này; mục này giới thiệu bốn thiên kiến quan trọng nhất.
 
-1. **Opportunity for lender:** Biết behavioral biases → thiết kế sản phẩm và UX để tăng conversion và retention
-2. **Responsibility for lender:** Cùng kiến thức đó có thể được dùng để khai thác → ranh giới đạo đức mỏng
+### Thiên kiến 1: thiên kiến hiện tại
 
-Người thiết kế hệ thống cần hiểu cả hai phía.
-
-### Thiên kiến 1: Present Bias: Kẻ thù của kế hoạch tài chính
-
-**Khái niệm:**
-
-:::key
-**Present bias** *(thiên kiến hiện tại)* là xu hướng con người định giá phần thưởng immediate cao hơn phần thưởng tương lai một cách bất hợp lý - ngay cả khi đã biết điều này là không tối ưu.
+:::key[Thiên kiến hiện tại (present bias)]
+**Present bias** là xu hướng coi trọng phần thưởng trước mắt hơn phần thưởng trong tương lai một cách thiếu nhất quán, ngay cả khi biết điều đó không tối ưu.
 :::
 
-**Thí nghiệm kinh điển:**
+Một thí nghiệm kinh điển minh họa sự thiếu nhất quán này. Hỏi một người: "Bạn muốn nhận 100,000 VNĐ hôm nay hay 120,000 VNĐ vào tuần sau?" Đa số chọn 100,000 VNĐ hôm nay, dù chờ một tuần để được thêm 20% là một mức lợi suất phi thường. Hỏi tiếp: "Bạn muốn 100,000 VNĐ sau 52 tuần hay 120,000 VNĐ sau 53 tuần?" Lần này đa số chọn 120,000 VNĐ, vì cả hai đều xa và thêm một tuần chẳng đáng kể. Cùng một sự đánh đổi, thêm 20,000 VNĐ để chờ thêm một tuần, nhưng quyết định thay đổi tùy theo việc phần thưởng có nằm ngay trước mắt hay không.
 
-Hỏi người A: "Bạn muốn 100,000 VNĐ hôm nay hay 120,000 VNĐ tuần sau?"
-Đa số chọn 100,000 VNĐ hôm nay - dù lãi suất 20% trong một tuần là phi thường.
-
-Hỏi người A: "Bạn muốn 100,000 VNĐ trong 52 tuần hay 120,000 VNĐ trong 53 tuần?"
-Đa số chọn 120,000 VNĐ - vì cả hai đều xa, thêm một tuần không quan trọng.
-
-**Nghịch lý:** Cùng một sự đánh đổi (thêm 20,000 VNĐ để chờ thêm 1 tuần), nhưng quyết định khác nhau tùy thuộc vào bối cảnh.
-
-**Biểu hiện trong tín dụng tiêu dùng:**
-
-*Khi vay:* Present bias khiến người ta vay quá nhiều vì "tiền hôm nay" cảm thấy thật hơn "nợ tương lai."
+Trong tín dụng tiêu dùng, thiên kiến này xuất hiện ở hai thời điểm. Khi vay, "món đồ hôm nay" cảm thấy thật hơn nhiều so với "khoản nợ tương lai":
 
 ```text
 Tư duy của người vay có present bias:
-  "20 triệu hôm nay để mua sofa đẹp = rất thật, rất hấp dẫn"
-  "2,300,000 VNĐ × 24 tháng = 55,200,000 VNĐ = trừu tượng, xa vời"
+  "Bộ sofa 56 triệu hôm nay = rất thật, rất hấp dẫn"
+  "2,715,252 VNĐ × 24 tháng = 65,166,053 VNĐ = trừu tượng, xa vời"
 ```
 
-*Khi trả nợ:* "Tháng này tôi chi trước, tháng sau tiết kiệm để trả nợ" - nhưng tháng sau, tư duy tương tự lại xuất hiện.
+Khi trả nợ, người vay nghĩ "tháng này chi trước, tháng sau tiết kiệm để trả", nhưng sang tháng sau, cùng suy nghĩ đó lại xuất hiện.
 
-**Ví dụ số - Tổng chi phí của present bias:**
-
-Chị Lan, do present bias, mua sofa 56 triệu trả góp 24 tháng thay vì tiết kiệm 24 tháng rồi mua:
+::::story
+**Cái giá của việc có ngay.** Quay lại bộ sofa 56 triệu của chị Lan, vay với lãi suất 15%/năm trong 24 tháng. So sánh với phương án tiết kiệm trước rồi mua sau:
 
 ```text
-Kịch bản A — Tiết kiệm rồi mua (không có present bias):
-  Tiết kiệm 56,000,000 VNĐ trong 24 tháng
-  = 2,333,333 VNĐ/tháng vào tài khoản tiết kiệm lãi 6%/năm
-  Sau 24 tháng có: 56,000,000 + lãi tiết kiệm ~3,360,000 = 59,360,000 VNĐ
-  Mua sofa 56 triệu, còn dư 3,360,000 VNĐ
+Kịch bản A: tiết kiệm rồi mua
+  Gửi 2,333,333 VNĐ/tháng trong 24 tháng, lãi tiết kiệm 6%/năm
+  Sau 24 tháng có: ≈ 59,341,220 VNĐ (gồm ≈ 3,341,220 VNĐ tiền lãi)
+  Mua sofa 56 triệu, còn dư ≈ 3,341,220 VNĐ
 
-Kịch bản B — Vay và trả góp (có present bias):
+Kịch bản B: vay và trả góp ngay
   Vay 56,000,000 VNĐ, lãi 15%/năm, 24 tháng
   PMT = 56,000,000 × 0.0125 × (1.0125)^24 / [(1.0125)^24 - 1]
-      = 56,000,000 × 0.0125 × 1.3474 / 0.3474
-      = 56,000,000 × 0.04849
-      = 2,715,440 VNĐ/tháng
+      = 56,000,000 × 0.0125 × 1.34735 / 0.34735
+      = 2,715,252 VNĐ/tháng
+  Tổng lãi vay: 2,715,252 × 24 - 56,000,000 ≈ 9,166,053 VNĐ
 
-Chi phí thực:
-  Kịch bản A: 2,333,333/tháng → cuối cùng có sofa + 3,360,000 VNĐ
-  Kịch bản B: 2,715,440/tháng → cuối cùng chỉ có sofa
-
-  Chi phí của present bias = (2,715,440 - 2,333,333) × 24 = 9,170,568 VNĐ
-  ≈ 16.4% giá trị chiếc sofa
+Chênh lệch giữa hai kịch bản:
+  Lãi vay phải trả:          ≈ 9,166,053 VNĐ
+  Lãi tiết kiệm bỏ lỡ:       ≈ 3,341,220 VNĐ
+  Tổng:                      ≈ 12,507,273 VNĐ, khoảng 22% giá bộ sofa
 ```
 
-Present bias khiến chị Lan trả thêm gần 9.2 triệu VNĐ - gần bằng một chiếc điện thoại mới.
+Để có bộ sofa sớm hai năm, chị Lan trả thêm khoảng 12.5 triệu đồng.
+::::
 
-### Thiên kiến 2: Anchoring và Payment Size Illusion
+Có đồ dùng sớm hai năm không phải là vô giá trị, và vay để mua không tự nó là sai. Vấn đề là thiên kiến hiện tại khiến người vay đánh giá thấp cái giá đó tại thời điểm quyết định, đặc biệt khi quyết định diễn ra trong 15 phút ở cửa hàng.
 
-**Khái niệm:**
+### Thiên kiến 2: hiệu ứng mỏ neo và ảo giác khoản trả nhỏ
 
-:::key
-**Anchoring** *(neo giá)* là xu hướng con người phụ thuộc quá nhiều vào thông tin đầu tiên nhận được khi ra quyết định.
+:::key[Hiệu ứng mỏ neo (anchoring)]
+**Anchoring** là xu hướng dựa quá nhiều vào thông tin đầu tiên nhận được khi ra quyết định.
 :::
 
-**Payment Size Illusion trong consumer lending:**
+Trong cho vay tiêu dùng, con số đầu tiên người vay thấy thường là khoản trả hằng tháng, và nó trở thành mỏ neo. Người vay tập trung vào khoản trả mỗi tháng thay vì tổng chi phí vay. Thử đưa hai đề nghị cho cùng một nhóm người:
 
-Người vay có xu hướng tập trung vào PMT hàng tháng thay vì tổng chi phí vay.
+- Đề nghị A: vay 20 triệu, lãi 18%/năm, 12 tháng, trả 1,833,600 VNĐ/tháng.
+- Đề nghị B: vay 20 triệu, lãi 18%/năm, 36 tháng, trả 723,048 VNĐ/tháng.
 
-**Thí nghiệm:**
-
-Cho hai nhóm người xem hai offer:
-- Offer A: "Vay 20 triệu, lãi 18%/năm, 12 tháng, trả 1,836,500 VNĐ/tháng"
-- Offer B: "Vay 20 triệu, lãi 18%/năm, 36 tháng, trả 722,000 VNĐ/tháng"
-
-Hỏi: "Offer nào rẻ hơn?"
-
-Đa số người chưa qua training tài chính nói Offer B "rẻ hơn" - vì 722,000 < 1,836,500. Nhưng:
+Hỏi "đề nghị nào rẻ hơn?", phần lớn người chưa học về tài chính chọn B, vì 723,048 nhỏ hơn 1,833,600. Nhưng:
 
 ```text
-Offer A: 1,836,500 × 12 = 22,038,000 VNĐ → Lãi tổng: 2,038,000 VNĐ
-Offer B: 722,000 × 36 = 25,992,000 VNĐ → Lãi tổng: 5,992,000 VNĐ
+Offer A: tổng trả ≈ 22,003,199 VNĐ → Lãi tổng: ≈ 2,003,199 VNĐ
+Offer B: tổng trả ≈ 26,029,723 VNĐ → Lãi tổng: ≈ 6,029,723 VNĐ
 
-Offer B "rẻ hơn" tốn gấp 3x tiền lãi.
+Offer B "rẻ hơn" tốn gấp 3 lần tiền lãi.
 ```
 
-**Ứng dụng trong product design:**
+Đề nghị B có khoản trả nhỏ hơn và lãi suất như nhau, nhưng tổng tiền lãi gấp ba. Đây không phải lỗi của người vay, mà là hệ quả của việc khoản trả hằng tháng được đặt lên trước. Nhân viên bán hàng vì thế thường được hướng dẫn giới thiệu kỳ hạn dài trước: khoản trả mỗi tháng "dễ chịu" hơn, người vay ít khi tự tính tổng chi phí, và tổng thu nhập lãi của bên cho vay cao hơn.
 
-Salespeople được training để present kỳ hạn dài trước vì:
-- 722,000 VNĐ/tháng "cảm giác" dễ chịu hơn
-- Người vay ít có khả năng tính tổng chi phí
-- Margin cho lender cao hơn đáng kể
+Để chống lại hiệu ứng này, luật minh bạch thông tin ở nhiều nước yêu cầu hiển thị **tổng số tiền phải trả** bên cạnh khoản trả hằng tháng, và **APR** bên cạnh lãi suất danh nghĩa. Với hệ thống, điều này có nghĩa là giao diện đề nghị vay phải luôn hiển thị đủ thông tin để người vay quyết định có hiểu biết. Đây không chỉ là thực hành tốt về trải nghiệm người dùng, mà ở nhiều thị trường còn là yêu cầu pháp lý. Có thể so sánh nhanh nhiều kỳ hạn bằng [công cụ so sánh kỳ hạn](/docs/tools).
 
-**Hệ quả ethical:** Transparency laws ở nhiều nước yêu cầu hiển thị **tổng số tiền phải trả** (không chỉ PMT) và **APR** (không chỉ nominal rate) để counteract anchoring bias.
+### Thiên kiến 3: hạch toán tâm lý, vì sao BNPL "có cảm giác miễn phí"
 
-**Trong hệ thống:** Giao diện app phải hiển thị đủ thông tin để người vay có thể ra quyết định informed. Đây không chỉ là UX best practice - ở nhiều thị trường, đây là regulatory requirement.
-
-### Thiên kiến 3: Mental Accounting: Tại sao BNPL "cảm thấy Free"
-
-**Khái niệm:**
-
-:::key
-**Mental accounting** *(hạch toán tâm lý)* là xu hướng con người phân loại tiền vào các "tài khoản" tâm lý khác nhau và xử lý chúng khác nhau dù về mặt tài chính là như nhau.
+:::key[Hạch toán tâm lý (mental accounting)]
+**Mental accounting** là xu hướng chia tiền vào các "tài khoản" tâm lý khác nhau và đối xử với chúng khác nhau, dù về mặt tài chính chúng như nhau.
 :::
 
-**Ví dụ kinh điển:**
+Ví dụ kinh điển: bạn nhận 1,000,000 VNĐ tiền thưởng bất ngờ và dùng nó cho một bữa tối sang trọng cùng vài bộ quần áo. Nếu 1,000,000 VNĐ đó là tiền làm thêm vất vả mới có, bạn có chi thoải mái như vậy không? Nghiên cứu cho thấy thường là không. "Tiền trời cho" và "tiền mồ hôi" được đối xử khác nhau dù có cùng giá trị.
 
-Bạn nhận được 1,000,000 VNĐ tiền thưởng bất ngờ. Bạn dùng nó để mua bữa tối sang (500,000 VNĐ) và quần áo (500,000 VNĐ).
-
-Nếu bạn tự kiếm 1,000,000 VNĐ qua làm thêm - bạn có chi thoải mái như vậy không? Nghiên cứu cho thấy: không. "Tiền thưởng bất ngờ" và "tiền mồ hôi" được xử lý khác nhau dù có cùng giá trị.
-
-**Mental Accounting trong BNPL:**
-
-"Chỉ 500,000 VNĐ/tháng" được mental account vào bucket "chi phí hàng tháng nhỏ" - không phải "nợ." Cảm giác hoàn toàn khác với "tôi đang nợ 6,000,000 VNĐ."
+Với BNPL, "chỉ 500,000 VNĐ/tháng" được xếp vào ngăn "chi tiêu nhỏ hằng tháng", không phải ngăn "nợ". Cảm giác đó khác hẳn với "tôi đang nợ 6 triệu đồng".
 
 ```text
 Thực tế tài chính:
@@ -531,29 +411,17 @@ Hệ quả: Người có 5 BNPL đang chạy đồng thời có thể
   không nhận ra họ đang nợ 20-30 triệu VNĐ
 ```
 
-**Giải thích tại sao BNPL có default rate cao hơn dự kiến:**
+Điều này góp phần giải thích vì sao tỷ lệ vỡ nợ BNPL thường cao hơn dự kiến. Mô hình rủi ro của nhà cung cấp BNPL dễ đánh giá thấp hiệu ứng hạch toán tâm lý: người dùng tích lũy nhiều nghĩa vụ hơn họ nhận ra, và khi các khoản đến hạn cùng lúc, khả năng trả thực tế thấp hơn dự báo. Kết hợp với rủi ro vay ở nhiều nơi đã nêu ở [Chương 3](/docs/products/ch03-product-design), đây là một trong những điểm yếu lớn nhất của mô hình BNPL.
 
-BNPL providers thường under-estimate default risk vì họ không account cho mental accounting effect - người dùng tích lũy nhiều BNPL obligations hơn họ nhận ra, và khi tất cả đến hạn cùng lúc, khả năng trả của họ thấp hơn dự báo.
+### Thiên kiến 4: né tránh tổn thất
 
-### Thiên kiến 4: Loss Aversion: Công cụ Retention mạnh nhất
-
-**Khái niệm:**
-
-:::key
-**Loss aversion** *(né tránh tổn thất)* là xu hướng con người cảm nhận nỗi đau của việc mất mát mạnh gấp khoảng 2-2.5 lần niềm vui của việc đạt được tương đương.
+:::key[Né tránh tổn thất (loss aversion)]
+**Loss aversion** là xu hướng cảm nhận nỗi đau khi mất mát mạnh hơn niềm vui khi được một lượng tương đương, theo các nghiên cứu là khoảng 2 đến 2.5 lần.
 :::
 
-**Thí nghiệm:**
+Thử một trò tung đồng xu: ngửa bạn được 150,000 VNĐ, sấp bạn mất 100,000 VNĐ. Giá trị kỳ vọng là $0.5 \times 150,000 - 0.5 \times 100,000 = +25,000$ VNĐ. Trò chơi có lợi, nhưng phần lớn mọi người từ chối, vì nỗi đau mất 100,000 VNĐ lớn hơn niềm vui được 150,000 VNĐ. Với hệ số né tránh tổn thất khoảng 2.25, khoản mất "cảm thấy" như 225,000 VNĐ.
 
-Bạn muốn chơi game: tung đồng xu.
-- Ngửa: bạn thắng 150,000 VNĐ
-- Sấp: bạn mất 100,000 VNĐ
-
-Expected value: 150,000 × 0.5 - 100,000 × 0.5 = +25,000 VNĐ → Positive!
-
-Nhưng đa số người từ chối chơi. Tại sao? Vì nỗi đau mất 100,000 VNĐ cảm thấy mạnh hơn niềm vui thắng 150,000 VNĐ.
-
-**Ứng dụng trong retention:**
+Né tránh tổn thất là một công cụ mạnh trong giữ chân khách hàng. Cùng một phần thưởng có thể được diễn đạt theo hai cách:
 
 ```text
 Thông điệp A (gain framing):
@@ -562,107 +430,68 @@ Thông điệp A (gain framing):
 Thông điệp B (loss framing):
   "Bạn đang có 50,000 điểm reward sắp hết hạn
    nếu không trả đúng hạn tháng này"
-
-Nghiên cứu cho thấy: Thông điệp B hiệu quả hơn ~30-40%
-về on-time payment rate
 ```
 
-**Ứng dụng trong collections:**
+Lý thuyết dự đoán thông điệp B hiệu quả hơn, nhưng mức chênh lệch phụ thuộc vào sản phẩm và khách hàng, nên cần được đo bằng thử nghiệm A/B trước khi áp dụng rộng.
+
+Trong thu hồi nợ, cách diễn đạt theo tổn thất cũng giúp tăng cure rate:
 
 ```text
-Thông điệp collections A (standard):
+Thông điệp A (standard):
   "Bạn đang nợ quá hạn. Vui lòng thanh toán ngay."
 
-Thông điệp collections B (loss framing):
-  "Bạn sắp mất credit score của mình.
-   Chỉ còn 3 ngày để tránh ảnh hưởng đến credit history.
-   Mất credit score sẽ ảnh hưởng đến khả năng vay tiếp theo."
-
-Thông điệp B sử dụng loss aversion để tăng cure rate.
+Thông điệp B (loss framing, đúng sự thật):
+  "Khoản thanh toán của bạn đã trễ 5 ngày.
+   Nếu thanh toán trước ngày [X], lịch sử tín dụng của bạn sẽ không bị ảnh hưởng.
+   Lịch sử tín dụng tốt giúp bạn vay với điều kiện tốt hơn trong tương lai."
 ```
 
-**Ranh Giới Đạo Đức:**
-
-Loss aversion là công cụ mạnh. Dùng sai:
-- "Bạn sắp mất nhà" (khi không có tài sản đảm bảo) → misleading
-- Tạo ra sự sợ hãi không có căn cứ để pressure payment
-
-Dùng đúng:
-- Thông báo về real consequences (credit score, future borrowing)
-- Nhắc về rewards sắp hết hạn
-- "You're almost there" messaging khi gần tất toán
-
-### Ứng dụng tổng hợp: Thiết kế hành trình tốt
-
-::::story
-Kỹ sư Tuấn được giao thiết kế notification system cho app. Anh có data về behavioral biases và muốn dùng nó để tối ưu hóa.
-
-Anh Minh - Product Owner - nhắc nhở: "Tuấn, mình có thể dùng psychology để increase payment rate. Nhưng phải phân biệt rõ: đâu là nudge hợp lý, đâu là manipulation."
-::::
-
-**Framework phân biệt Nudge vs Manipulation:**
-
-```text
-NUDGE (hợp lý):
-  ✅ Thông tin chính xác, được trình bày rõ ràng
-  ✅ Người dùng vẫn có thể opt-out hoặc chọn khác
-  ✅ Hướng đến lợi ích của người dùng
-  ✅ Transparent về cơ chế hoạt động
-
-MANIPULATION (không hợp lý):
-  ❌ Tạo ra áp lực giả tạo (fake urgency)
-  ❌ Ẩn thông tin quan trọng
-  ❌ Khai thác vulnerabilities (người đang khủng hoảng)
-  ❌ Hướng đến lợi ích của lender, gây hại cho user
-```
-
-**Ví dụ thực tế:**
-
-| Hành vi | Nudge hay Manipulation? |
-|---------|------------------------|
-| Hiển thị countdown "Offer hết hạn trong 2h" (thực sự có deadline) | ✓ Nudge |
-| Hiển thị countdown (không có deadline thực, tự động reset) | ✗ Manipulation |
-| "Bạn đang tiết kiệm X VNĐ so với trả hết một lần" (đúng sự thật) | ✓ Nudge |
-| Hiển thị PMT thay vì tổng chi phí để hide total cost | ✗ Manipulation |
-| Nhắc nhở trả nợ 3 ngày trước deadline | ✓ Nudge |
-| Gọi điện nhiều lần/ngày khi chỉ quá hạn 1 ngày | ✗ Manipulation |
-
-:::summary[Behavioral Economics]
-Present bias: immediate > future → over-borrowing
-Anchoring: PMT framing → people ignore total cost
-Mental accounting: BNPL "feels free" → debt
-accumulation without awareness
-Loss aversion: ~2.5x mạnh hơn gain → dùng trong
-retention và collections (responsibly)
-Ranh giới: nudge = hướng lợi ích user;
-manipulation = khai thác biases để harm user
+:::caution[Ranh giới đạo đức của né tránh tổn thất]
+Dùng sai, né tránh tổn thất trở thành công cụ gây sợ hãi: "Bạn sắp mất nhà" khi khoản vay không có tài sản đảm bảo, hay đe dọa những hậu quả không có thật để ép trả nợ. Dùng đúng là thông báo hậu quả có thật (ảnh hưởng tới lịch sử tín dụng, khả năng vay sau này), nhắc phần thưởng sắp hết hạn, hay thông điệp "bạn sắp hoàn thành rồi" khi khách hàng gần tất toán.
 :::
 
-## 4.4 Phân khúc khách hàng và Product Fit
-
-### Tình huống: Sản phẩm đúng, khách hàng Sai
+### Gợi ý hợp lý hay thao túng
 
 ::::story
-Công ty tài chính Z ra sản phẩm vay giáo viên thành công vang dội - default rate chỉ 1.5%, NPS 72. Năm sau, họ quyết định scale: mở rộng cùng sản phẩm (cùng lãi suất, cùng terms) cho "công nhân viên chức nhà nước."
+Kỹ sư Tuấn được giao thiết kế hệ thống thông báo cho ứng dụng. Anh có dữ liệu về các thiên kiến hành vi và muốn dùng chúng để tối ưu.
 
-12 tháng sau, default rate nhảy lên 4.8%. Điều tra phát hiện: "công nhân viên chức nhà nước" là định nghĩa quá rộng, bao gồm cả những người có thu nhập không ổn định, nhiều khoản nợ khác, và rủi ro cao hơn giáo viên nhiều.
-
-Sản phẩm đúng - nhưng phân khúc sai.
+Anh Minh nhắc: "Tuấn, mình có thể dùng tâm lý học để tăng tỷ lệ trả đúng hạn. Nhưng phải phân biệt rõ đâu là gợi ý hợp lý, đâu là thao túng."
 ::::
 
-### Thin-File vs Thick-File Borrowers
+Gợi ý hợp lý *(nudge)* đưa ra thông tin chính xác và trình bày rõ ràng, để người dùng vẫn tự do chọn khác hoặc từ chối, hướng tới lợi ích của chính người dùng và minh bạch về cách nó hoạt động. Thao túng *(manipulation)* tạo áp lực giả, che giấu thông tin quan trọng, khai thác người đang ở thế yếu như người đang khủng hoảng tài chính, và phục vụ lợi ích của bên cho vay bằng cách gây hại cho người dùng.
 
-**Thin-file borrower:**
-- Ít hoặc không có lịch sử tín dụng chính thức
-- Có thể là người trẻ lần đầu vay, người mới chuyển đến thành phố, người chưa bao giờ dùng ngân hàng
-- Challenge: Không có data để score → rủi ro cao và/hoặc bị từ chối oan
+| Hành vi | Gợi ý hợp lý hay thao túng? |
+|---|---|
+| Đếm ngược "đề nghị hết hạn sau 2 giờ", khi thời hạn là thật | Gợi ý hợp lý |
+| Đếm ngược không có thời hạn thật, tự động đặt lại | Thao túng |
+| "Bạn tiết kiệm X VNĐ so với trả hết một lần", khi điều đó đúng | Gợi ý hợp lý |
+| Chỉ hiển thị khoản trả hằng tháng để giấu tổng chi phí | Thao túng |
+| Nhắc trả nợ 3 ngày trước hạn | Gợi ý hợp lý |
+| Gọi điện nhiều lần trong ngày khi khách hàng mới trễ hạn 1 ngày | Thao túng |
 
-**Thick-file borrower:**
-- Có lịch sử tín dụng phong phú
-- Score dễ tính, risk predictable
-- Competition cao: ngân hàng cũng muốn phân khúc này
+:::summary[Mục 4.3]
+Thiên kiến hiện tại khiến người vay đánh giá thấp cái giá của việc có ngay, dẫn tới vay quá mức. Hiệu ứng mỏ neo khiến người vay nhìn vào khoản trả hằng tháng và bỏ qua tổng chi phí. Hạch toán tâm lý khiến các khoản BNPL không "có cảm giác" là nợ. Né tránh tổn thất là công cụ mạnh cho giữ chân khách hàng và thu hồi nợ nếu dùng có trách nhiệm. Ranh giới là: gợi ý hợp lý hướng tới lợi ích người dùng, còn thao túng khai thác thiên kiến để gây hại cho họ.
+:::
 
-**Chiến lược với thin-file:**
+## 4.4 Phân khúc khách hàng và độ phù hợp của sản phẩm
+
+### Tình huống: sản phẩm đúng, phân khúc sai
+
+::::story
+Một công ty tài chính ra sản phẩm vay cho giáo viên và thành công lớn: tỷ lệ vỡ nợ chỉ 1.5%, NPS đạt 72. Năm sau, họ mở rộng đúng sản phẩm đó, cùng lãi suất và điều khoản, cho nhóm "cán bộ, công nhân viên chức nhà nước".
+
+Mười hai tháng sau, tỷ lệ vỡ nợ tăng lên 4.8%. Điều tra cho thấy "công nhân viên chức nhà nước" là một định nghĩa quá rộng, gồm cả những người thu nhập không ổn định, đang có nhiều khoản nợ khác và rủi ro cao hơn hẳn giáo viên.
+
+Sản phẩm đúng, nhưng phân khúc sai.
+::::
+
+### Hồ sơ tín dụng mỏng và hồ sơ tín dụng dày
+
+Người có **hồ sơ tín dụng mỏng** *(thin-file)* có ít hoặc không có lịch sử tín dụng chính thức: người trẻ vay lần đầu, người mới chuyển đến thành phố, người chưa từng dùng dịch vụ ngân hàng. Khó khăn là không có dữ liệu để chấm điểm, nên họ hoặc bị coi là rủi ro cao, hoặc bị từ chối oan.
+
+Người có **hồ sơ tín dụng dày** *(thick-file)* có lịch sử tín dụng phong phú, dễ chấm điểm và rủi ro dễ dự đoán. Nhưng cạnh tranh ở phân khúc này rất gay gắt, vì ngân hàng cũng muốn phục vụ họ.
+
+Với nhóm hồ sơ mỏng, có ba chiến lược:
 
 ```text
 Option A: Từ chối toàn bộ
@@ -677,30 +506,26 @@ Option C: Starter loan → Build history → Graduate to better products
   → Đây là sustainable model với thin-file
 ```
 
-### Behavioral Segmentation
+Phương án C bền vững nhất. Nó biến vấn đề thiếu thông tin ở [Chương 1](/docs/foundations/ch01-credit-economics) thành một quá trình học: mỗi kỳ trả nợ đúng hạn là một tín hiệu, và khoản vay đầu tiên nhỏ giới hạn thiệt hại trong lúc công ty còn đang học.
 
-Ngoài demographic và credit score, hành vi trên platform cung cấp tín hiệu có giá trị:
+### Phân khúc theo hành vi
+
+Ngoài thông tin nhân khẩu học và điểm tín dụng, hành vi trên nền tảng cũng cung cấp những tín hiệu có giá trị:
 
 | Hành vi | Tín hiệu |
-|---------|---------|
-| Đọc full terms & conditions | Responsible borrower |
-| Dùng calculator trước khi apply | Careful planner |
-| Apply và cancel nhiều lần | Uncertain / shopping around |
-| Trả hơn MMI mỗi tháng | Financial discipline cao |
-| Rút revolving credit đúng ngày nhận lương | Cash flow tight |
-| Không login app sau 3 tháng đầu | Disengagement risk |
+|---|---|
+| Đọc hết điều khoản và điều kiện | Người vay có trách nhiệm |
+| Dùng công cụ tính trước khi nộp đơn | Người lập kế hoạch cẩn thận |
+| Nộp đơn rồi hủy nhiều lần | Còn phân vân hoặc đang so sánh nhiều nơi |
+| Mỗi tháng trả nhiều hơn mức tối thiểu | Kỷ luật tài chính cao |
+| Rút tiền từ hạn mức đúng ngày nhận lương | Dòng tiền eo hẹp |
+| Không đăng nhập ứng dụng sau ba tháng đầu | Nguy cơ thờ ơ, không vay lại |
 
-**Ứng dụng:** Behavioral signals kết hợp với credit score tạo ra segmentation phong phú hơn - không chỉ "tốt/xấu" mà còn "tốt nhưng cần education," "average nhưng improving," "xấu nhưng temporary hardship."
+Kết hợp tín hiệu hành vi với điểm tín dụng cho phép phân khúc tinh hơn, không chỉ "tốt" và "xấu" mà còn "tốt nhưng cần được hướng dẫn", "trung bình nhưng đang cải thiện", hay "xấu do khó khăn tạm thời".
 
-### Risk-Based Segmentation và Pricing Implications
+### Phân khúc theo rủi ro và hệ quả với định giá
 
-Phân khúc tốt dẫn đến pricing tốt. Nhưng cần cẩn thận với một tension quan trọng:
-
-**Tension: Accuracy vs Fairness**
-
-Risk-based pricing chính xác có thể dẫn đến price discrimination theo demographic - nếu demographic features correlate với risk, pricing "fair" về mặt actuarial có thể "unfair" về mặt xã hội.
-
-**Ví dụ:**
+Phân khúc tốt dẫn tới định giá tốt, theo đúng logic định giá dựa trên rủi ro ở [Chương 1](/docs/foundations/ch01-credit-economics). Nhưng có một mâu thuẫn quan trọng giữa độ chính xác và sự công bằng. Định giá chính xác theo rủi ro có thể dẫn tới phân biệt đối xử: nếu một đặc điểm nhân khẩu học tương quan với rủi ro, mức giá "công bằng" về mặt tính toán bảo hiểm có thể "bất công" về mặt xã hội.
 
 ```text
 Nếu model scoring phát hiện: địa chỉ ở một số phường nhất định
@@ -712,179 +537,104 @@ correlates với PD cao hơn (vì socioeconomic factors)
 → Bị cấm ở nhiều nước
 ```
 
-**Regulatory approach:** Nhiều nước yêu cầu model phải "explainable" - không chỉ accurate. Và một số features (race, religion, gender - hoặc proxies của chúng) bị cấm sử dụng trong credit decisions.
+Nhiều nước yêu cầu mô hình chấm điểm phải giải thích được, không chỉ chính xác, và cấm dùng một số đặc điểm như chủng tộc, tôn giáo, giới tính, cùng các biến đại diện gián tiếp cho chúng *(proxy)*, trong quyết định tín dụng.
 
-**Hệ quả thiết kế hệ thống:**
+Với hệ thống, điều đó có nghĩa mô hình chấm điểm phải giải thích được lý do từ chối, các biến đầu vào phải được kiểm toán để phát hiện phân biệt đối xử gián tiếp, và mọi quyết định phải được ghi nhật ký đầy đủ để cơ quan quản lý có thể xem xét. Đây không phải tính năng "có thì tốt", mà là yêu cầu tuân thủ, ảnh hưởng tới kiến trúc của toàn bộ chuỗi xử lý máy học. [Chương 11](/docs/intelligence/ch11-credit-scoring) trình bày cách hiện thực hóa các yêu cầu này.
 
-Scoring model phải có khả năng:
-1. Giải thích lý do từ chối *(explainability)*
-2. Audit features để phát hiện proxy discrimination
-3. Log đầy đủ để regulatory review
-
-Đây là yêu cầu không phải của "nice to have" mà là compliance requirement ảnh hưởng đến architecture của toàn bộ ML pipeline.
-
-:::summary[Phân Khúc Khách Hàng]
-Product fit cần đúng segment - không phải
-mọi "government employee" là như nhau
-Thin-file: starter loan → build history là
-sustainable hơn từ chối hoặc lãi cao ngay
-Behavioral signals bổ sung demographic +
-credit score để segmentation phong phú hơn
-Accuracy vs Fairness: pricing chính xác có thể
-vi phạm anti-discrimination law → explainability
-và feature audit là architecture requirement
+:::summary[Mục 4.4]
+Một sản phẩm thành công chỉ thành công với đúng phân khúc của nó. Với người có hồ sơ tín dụng mỏng, khoản vay khởi đầu nhỏ để xây dựng lịch sử bền vững hơn cả từ chối lẫn tính lãi cao ngay. Tín hiệu hành vi bổ sung cho thông tin nhân khẩu học và điểm tín dụng. Định giá chính xác theo rủi ro có thể vi phạm luật chống phân biệt đối xử, nên tính giải thích được và kiểm toán biến đầu vào là yêu cầu kiến trúc.
 :::
 
-## 4.5 Thiết kế hành trình tốt
+## 4.5 Mười nguyên tắc thiết kế hành trình khách hàng
 
-### 10 Nguyên tắc thiết kế hành trình khách hàng
+Tổng hợp toàn chương, đây là mười nguyên tắc thiết kế hành trình khách hàng trong tài chính tiêu dùng.
 
-Tổng hợp toàn bộ chương, đây là 10 nguyên tắc cho việc thiết kế customer journey tốt trong consumer finance:
+1. **Khớp kênh với loại tác nhân.** Khủng hoảng cấp bách cần kênh số nhanh; kế hoạch có chủ ý có thể cần nhân viên tư vấn; tiêu dùng bốc đồng cần ma sát có chủ ý để bảo vệ khách hàng.
+2. **Niềm tin trước, lãi suất sau.** Ở giai đoạn tìm kiếm, niềm tin và tốc độ quan trọng hơn lãi suất. Hãy đầu tư vào thương hiệu và trải nghiệm, không chỉ vào giá.
+3. **Ma sát phải có mục đích.** Mỗi trường trong biểu mẫu phải trả lời được câu hỏi "thông tin này giúp phục vụ khách hàng tốt hơn thế nào?". Ma sát không có mục đích chỉ là rào cản.
+4. **Từ chối là cơ hội.** Một lời từ chối tốt gồm lý do, việc khách hàng có thể làm, và lời mời quay lại. Đó là một khoảnh khắc thương hiệu.
+5. **Minh bạch tổng chi phí.** Hiển thị APR, tổng số tiền phải trả và thời gian tất toán, không chỉ khoản trả hằng tháng. Điều đó đúng về đạo đức và đúng về luật.
+6. **Hóa giải thiên kiến, không khai thác.** Dùng hiểu biết về hành vi để giúp khách hàng quyết định tốt hơn: hiển thị tổng chi phí để hóa giải hiệu ứng mỏ neo, cảnh báo tổng dư nợ để hóa giải hạch toán tâm lý.
+7. **Đa kênh là bắt buộc.** Khách hàng không sống trong một kênh. Lớp trạng thái dùng chung là nền móng không thể thiếu.
+8. **Phân khúc dẫn dắt cá nhân hóa.** Người vay lần đầu và người quay lại, hồ sơ mỏng và hồ sơ dày, người quen dùng điện thoại và người quen đến chi nhánh cần những hành trình khác nhau.
+9. **Thu hồi nợ là dịch vụ khách hàng.** Đội thu hồi nợ là tuyến cuối cùng để giữ một mối quan hệ khách hàng. Về CLV, chương trình hỗ trợ khách hàng gặp khó khăn có giá trị hơn thu hồi gắt gao.
+10. **Vay lại là kết quả, không phải mặc định.** Sau khi tất toán, đề nghị vay lại phải dựa trên việc khoản vay mới có phù hợp với nhu cầu của khách hàng hay không, không chỉ vì cần thêm doanh số.
 
-**1. Align channel với trigger type**
-Khủng hoảng cấp bách → digital nhanh; Kế hoạch có chủ ý → có thể có agent; Bốc đồng → friction có chủ ý để protect khách hàng.
+## Tổng kết chương 4
 
-**2. Trust first, rate second**
-Trong giai đoạn tìm kiếm, trust và speed quan trọng hơn rate. Invest vào brand và UX, không chỉ vào pricing.
+Hành trình của chị Lan có thể được nhìn từ hai góc độ:
 
-**3. Friction phải có mục đích**
-Mỗi field trong form phải trả lời được câu hỏi: "Thông tin này giúp chúng ta phục vụ khách hàng tốt hơn như thế nào?" Friction không có mục đích là acquisition barrier.
+| Góc nhìn vận hành | Góc nhìn hành vi |
+|---|---|
+| Nhận ra nhu cầu, tìm kiếm (niềm tin trước tốc độ, tốc độ trước lãi suất) | Thiên kiến hiện tại: vay nhiều hơn mức tối ưu |
+| Nộp đơn (tối ưu ma sát), thẩm định (LOS, CIS, chấm điểm) | Hiệu ứng mỏ neo: nhìn khoản trả hằng tháng, bỏ qua tổng chi phí |
+| Trình bày đề nghị vay, ký hợp đồng (DMS) | Hạch toán tâm lý: nợ BNPL không "có cảm giác" là nợ |
+| Trả nợ và lập hóa đơn (LAS, EOM), tất toán (cơ hội CLV) | Né tránh tổn thất: công cụ giữ chân và thu hồi nợ |
 
-**4. Từ chối là cơ hội**
-Từ chối tốt = thông báo lý do + action plan + invitation to return. Đây là brand moment, không chỉ là rejection.
+Thiết kế tốt tính đến cả hai góc nhìn. Thiết kế kém chỉ nhìn một. Thiết kế xấu cố ý khai thác thiên kiến của người vay.
 
-**5. Transparency về total cost**
-Hiển thị APR, tổng số tiền phải trả, và thời gian tất toán - không chỉ PMT. Đây là đúng về đạo đức và đúng về luật.
+### Những điểm cần ghi nhớ
 
-**6. Counter-act biases, không khai thác**
-Dùng behavioral knowledge để help khách hàng ra quyết định tốt hơn: hiển thị total cost để counter anchoring; thông báo về debt accumulation để counter mental accounting.
+| Khái niệm | Ý nghĩa | Liên hệ với VLP |
+|---|---|---|
+| Tám giai đoạn hành trình | Mỗi giai đoạn là một cơ hội hoặc rủi ro CLV | Mỗi giai đoạn gắn với một nhóm module |
+| Ma sát | Đánh đổi giữa chuyển đổi và rủi ro | Tối ưu theo giá trị ròng |
+| Đa kênh | Khách hàng tiếp tục đơn vay ở bất kỳ kênh nào | ADR lưu trạng thái, LOS không trạng thái |
+| Thiên kiến hiện tại, mỏ neo | Người vay đánh giá thấp chi phí tương lai | Màn hình đề nghị vay hiển thị tổng chi phí và APR |
+| Hạch toán tâm lý | Nợ nhỏ chia nhiều kỳ không "có cảm giác" là nợ | Cảnh báo tổng dư nợ |
+| Gợi ý hợp lý và thao túng | Ranh giới đạo đức của thiết kế hành vi | Quy tắc cho hệ thống thông báo |
+| Tính giải thích được | Lý do từ chối, kiểm toán biến đầu vào | Yêu cầu kiến trúc của chuỗi chấm điểm |
 
-**7. Omnichannel là bắt buộc**
-Khách hàng không sống trong một channel. Shared state layer là foundation không thể thiếu.
+### Thuật ngữ quan trọng
 
-**8. Segmentation drives personalization**
-Người dùng khác nhau cần journey khác nhau: first-time vs returning, thin-file vs thick-file, mobile-first vs branch.
-
-**9. Collections là customer service**
-Collections team không chỉ là "debt collectors" - họ là tuyến cuối cùng để save a customer relationship. Hardship program > aggressive collections về CLV.
-
-**10. Tái vay là kết quả, không phải mặc định**
-Sau khi tất toán, offer tái vay phải dựa trên việc tái vay có phù hợp với nhu cầu khách hàng không - không phải chỉ vì pipeline cần volume.
-
-## Tóm tắt chương 4
-
-```text
-Hành trình của chị Lan nhìn từ hai góc độ:
-
-Operational view:
-  Nhận ra nhu cầu
-    → Tìm kiếm (Trust > Speed > Rate)
-    → Apply (Friction optimization)
-    → Thẩm định (LOS/CIS/Scoring)
-    → Offer presentation (Behavioral framing)
-    → Ký hợp đồng (DMS)
-    → Sử dụng và billing (LAS + EOM)
-    → Tất toán (CLV opportunity)
-
-Behavioral view:
-  Present bias → vay nhiều hơn tối ưu
-  Anchoring → tập trung PMT, bỏ qua total cost
-  Mental accounting → BNPL debt không "cảm thấy" là debt
-  Loss aversion → công cụ retention và collections
-
-Thiết kế tốt phải account cho cả hai.
-Thiết kế tệ chỉ nhìn một trong hai.
-Thiết kế xấu cố ý khai thác behavioral biases.
-```
+Hành trình khách hàng (customer journey), tác nhân (trigger), ma sát (friction), tỷ lệ hoàn thành (completion rate), đa kênh (omnichannel), thiên kiến hiện tại (present bias), hiệu ứng mỏ neo (anchoring), hạch toán tâm lý (mental accounting), né tránh tổn thất (loss aversion), gợi ý hợp lý (nudge), hồ sơ tín dụng mỏng (thin-file), phân biệt đối xử theo địa lý (redlining). Xem định nghĩa trong trang [Thuật ngữ](/docs/glossary).
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. Kể 4 loại trigger khiến người ta muốn vay tiêu dùng. Mỗi loại trigger ảnh hưởng đến hành vi vay như thế nào?
-2. Present bias là gì? Cho một ví dụ không liên quan đến tín dụng.
-3. Thin-file borrower khác thick-file borrower ở điểm nào? Tại sao phân biệt này quan trọng với lender?
-4. Omnichannel yêu cầu gì về mặt kỹ thuật từ hệ thống?
+**Nhớ lại**
 
-**Loại 2 - Hiểu:**
-5. Tại sao "Trust > Speed > Rate" trong giai đoạn tìm kiếm? Điều này có nghĩa là lãi suất không quan trọng không?
-6. Giải thích tại sao friction cao không phải lúc nào cũng tốt cho business - dù nó giảm default rate. Dùng phân tích net value để minh họa.
-7. Mental accounting giải thích tại sao người có nhiều khoản BNPL đồng thời có thể không nhận ra mức nợ thực sự của họ. Điều này tạo ra rủi ro gì cho hệ thống?
-8. Tại sao explainability của scoring model là architecture requirement, không chỉ là "nice to have"?
+1. Kể bốn loại tác nhân khiến người ta muốn vay tiêu dùng. Mỗi loại ảnh hưởng tới hành vi vay như thế nào?
+2. Thiên kiến hiện tại là gì? Cho một ví dụ không liên quan đến tín dụng.
+3. Người có hồ sơ tín dụng mỏng khác người có hồ sơ dày ở điểm nào? Vì sao bên cho vay cần phân biệt?
+4. Đa kênh đòi hỏi gì về mặt kỹ thuật từ hệ thống?
 
-**Loại 3 - Áp dụng:**
-9. Công ty tài chính đang thiết kế notification system để tăng on-time payment rate. Với kiến thức về loss aversion và present bias, thiết kế 3 loại notification khác nhau - một cho 7 ngày trước deadline, một cho 1 ngày trước, và một cho ngày sau khi quá hạn. Giải thích tại sao bạn chọn framing đó.
+**Hiểu**
 
-10. Anh Minh đang phân tích hai A/B test:
-    - Variant A: Hiển thị "Chỉ 722,000 VNĐ/tháng" (không có thông tin khác)
-    - Variant B: Hiển thị "722,000 VNĐ/tháng | Tổng trả: 25,992,000 VNĐ | APR: 22.5%"
+5. Vì sao ở giai đoạn tìm kiếm, niềm tin và tốc độ quan trọng hơn lãi suất? Điều đó có nghĩa là lãi suất không quan trọng không?
+6. Vì sao ma sát cao không phải lúc nào cũng tốt cho công ty, dù nó giảm tỷ lệ vỡ nợ? Dùng phân tích giá trị ròng để minh họa.
+7. Hạch toán tâm lý giải thích thế nào việc người có nhiều khoản BNPL cùng lúc không nhận ra mức nợ thực của họ? Điều đó tạo ra rủi ro gì cho hệ thống?
+8. Vì sao tính giải thích được của mô hình chấm điểm là yêu cầu kiến trúc, không chỉ là tính năng "có thì tốt"?
 
-    Variant A có conversion rate 68%, Variant B có 52%.
-    - (a) Tại sao Variant A có conversion cao hơn? (behavioral explanation)
-    - (b) Dự đoán sự khác biệt về default rate và customer satisfaction giữa hai variant
-    - (c) Bạn nên chọn variant nào? Justify từ cả business và ethical perspective.
+**Áp dụng**
 
-**Loại 4 - Phân tích:**
-11. Một công ty tài chính thu thập app usage data (thời điểm login, tần suất check balance, pattern mua sắm qua linked accounts) và dùng nó để:
-    - (a) Detect early warning signs của financial stress → proactive outreach
-    - (b) Score people who have no credit history
-    - (c) Charge higher rates to people who check balance more frequently (proxy for financial anxiety)
+9. Một công ty tài chính thiết kế hệ thống thông báo để tăng tỷ lệ trả đúng hạn. Dựa trên né tránh tổn thất và thiên kiến hiện tại, thiết kế ba thông báo: một gửi 7 ngày trước hạn, một gửi 1 ngày trước hạn, và một gửi sau khi trễ hạn. Giải thích vì sao bạn chọn cách diễn đạt đó.
+10. Anh Minh phân tích một thử nghiệm A/B. Biến thể A chỉ hiển thị "Chỉ 723,048 VNĐ/tháng". Biến thể B hiển thị "723,048 VNĐ/tháng · Tổng trả 26,029,723 VNĐ · APR 18%". Biến thể A có tỷ lệ chuyển đổi 68%, biến thể B có 52%.
+    (a) Vì sao biến thể A có tỷ lệ chuyển đổi cao hơn? Giải thích theo kinh tế học hành vi.
+    (b) Dự đoán khác biệt về tỷ lệ vỡ nợ và mức độ hài lòng giữa hai biến thể.
+    (c) Bạn chọn biến thể nào? Lập luận từ cả góc độ kinh doanh và đạo đức.
 
-    Phân tích từng use case: (i) có acceptable không về ethical, (ii) có hợp pháp không, (iii) hệ thống cần gì để implement safely?
+**Phân tích**
 
-12. Startup fintech đề xuất: "Thay vì 8-step origination, chúng tôi dùng AI để approve trong 30 giây với chỉ số điện thoại." Phân tích:
-    - (a) Behavioral economics implications (adverse selection, moral hazard)
-    - (b) Risk modeling challenges (thin data)
-    - (c) Regulatory compliance risks
-    - (d) Long-term viability của business model này
+11. Một công ty tài chính thu thập dữ liệu sử dụng ứng dụng (thời điểm đăng nhập, tần suất xem số dư, mẫu hình chi tiêu qua tài khoản liên kết) và dùng nó để (a) phát hiện sớm dấu hiệu căng thẳng tài chính để chủ động hỗ trợ, (b) chấm điểm người chưa có lịch sử tín dụng, (c) tính lãi cao hơn với người hay xem số dư, coi đó là dấu hiệu lo âu tài chính. Với từng trường hợp, phân tích (i) có chấp nhận được về đạo đức không, (ii) có hợp pháp không, và (iii) hệ thống cần gì để triển khai an toàn.
+12. Một startup fintech đề xuất: "Thay vì quy trình 8 bước, chúng tôi dùng AI để duyệt trong 30 giây chỉ với số điện thoại." Phân tích (a) hệ quả về lựa chọn bất lợi và rủi ro đạo đức, (b) khó khăn khi mô hình hóa rủi ro với ít dữ liệu, (c) rủi ro tuân thủ pháp luật, và (d) khả năng tồn tại dài hạn của mô hình kinh doanh này.
 
 ## Bài tập áp dụng
 
-**Bài 1 - Customer Journey Mapping:**
-Vẽ customer journey map đầy đủ cho một khách hàng muốn vay 30 triệu VNĐ qua kênh digital để mua xe máy.
+**Bài 1. Bản đồ hành trình khách hàng.** Vẽ bản đồ hành trình đầy đủ cho một khách hàng muốn vay 30 triệu đồng qua kênh số để mua xe máy. (a) Tám giai đoạn, mỗi giai đoạn ít nhất ba điểm chạm cụ thể. (b) Đường cảm xúc: mức độ hài lòng hoặc lo lắng ở từng điểm chạm. (c) Ba điểm dễ mất khách nhất, và vì sao. (d) Module nào của VLP được kích hoạt ở từng giai đoạn? (e) Thiên kiến hành vi nào có thể xuất hiện ở từng giai đoạn?
 
-Yêu cầu:
-- (a) 8 giai đoạn với touchpoints cụ thể (ít nhất 3 touchpoints mỗi giai đoạn)
-- (b) Emotional curve: mức độ hài lòng/lo lắng tại mỗi touchpoint
-- (c) Pain points: 3 điểm dễ bỏ lỡ nhất (và tại sao)
-- (d) System interactions: module VLP nào được kích hoạt tại mỗi giai đoạn?
-- (e) Behavioral bias nào có thể ảnh hưởng tại mỗi giai đoạn?
+**Bài 2. Thiết kế can thiệp hành vi.** Một công ty tài chính muốn giảm tỷ lệ trả trễ từ 8% xuống 5%, với ngân sách can thiệp 50,000 VNĐ mỗi khách hàng mỗi tháng. Dữ liệu sẵn có: 70% khách hàng dùng điện thoại thông minh thường xuyên, 85% cho phép thông báo đẩy, số ngày trễ bình quân khi trả trễ là 12 ngày, phí trả trễ 200,000 VNĐ mỗi lần. (a) Thiết kế ít nhất ba loại can thiệp dựa trên các nguyên lý hành vi khác nhau. (b) Xác định thứ tự và thời điểm của từng can thiệp. (c) Thiết kế thử nghiệm A/B để kiểm chứng hiệu quả. (d) Dùng những chỉ số nào để biết chương trình có hiệu quả?
 
-**Bài 2 - Behavioral Design:**
-Công ty tài chính muốn giảm tỷ lệ trả trễ từ 8% xuống 5%. Budget: 50,000 VNĐ/tháng/khách hàng cho intervention.
-
-Data có sẵn:
-- 70% khách hàng dùng smartphone thường xuyên
-- 85% cho phép push notification
-- Average DPD khi trả trễ: 12 ngày
-- Phí trả trễ: 200,000 VNĐ/lần
-
-Thiết kế một behavioral intervention program:
-- (a) Ít nhất 3 loại intervention khác nhau, dùng behavioral principles khác nhau
-- (b) Sequence và timing của từng intervention
-- (c) A/B test design để validate effectiveness
-- (d) Đo lường: metrics nào để biết chương trình có hiệu quả?
-
-**Bài 3 - Segmentation Strategy:**
-Công ty tài chính X đang target phân khúc "freelancer và người tự kinh doanh" (chiếm 30% workforce nhưng chỉ 8% loan portfolio hiện tại).
-
-Challenge: Thu nhập không đều, không có payslip truyền thống, thin-file với nhiều người.
-
-Yêu cầu:
-- (a) Thiết kế scoring approach không dựa vào payslip (alternative data sources nào?)
-- (b) Thiết kế product phù hợp (kỳ hạn, repayment schedule, limit) cho thu nhập không đều
-- (c) Thiết kế origination journey phù hợp với đặc thù của segment này
-- (d) Rủi ro chính và cách mitigate
-- (e) Trong VLP, những thay đổi nào cần thiết để hỗ trợ flexible repayment schedule?
+**Bài 3. Chiến lược cho một phân khúc mới.** Một công ty tài chính nhắm tới phân khúc người làm tự do và tự kinh doanh, chiếm 30% lực lượng lao động nhưng chỉ 8% danh mục cho vay hiện tại. Khó khăn: thu nhập không đều, không có bảng lương truyền thống, nhiều người có hồ sơ tín dụng mỏng. (a) Thiết kế cách chấm điểm không dựa vào bảng lương: dùng nguồn dữ liệu thay thế nào? (b) Thiết kế sản phẩm phù hợp với thu nhập không đều: kỳ hạn, lịch trả nợ, hạn mức. (c) Thiết kế quy trình khởi tạo phù hợp với đặc thù phân khúc. (d) Nêu các rủi ro chính và cách giảm thiểu. (e) VLP cần thay đổi gì để hỗ trợ lịch trả nợ linh hoạt?
 
 ## Đọc thêm
 
-**Behavioral Economics:**
-- Thaler, R. H., & Sunstein, C. R. (2008). *Nudge: Improving Decisions About Health, Wealth, and Happiness.* Yale University Press. - Cuốn sách foundational về nudge theory và ứng dụng.
+**Kinh tế học hành vi**
 
-**Consumer Finance Psychology:**
-- Kahneman, D. (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. - Mô tả System 1 vs System 2 thinking - nền tảng để hiểu tại sao người vay ra quyết định như họ làm.
+- Thaler, R. H. & Sunstein, C. R. (2008). *Nudge: Improving Decisions About Health, Wealth, and Happiness.* Yale University Press. Cuốn sách nền tảng về lý thuyết gợi ý hợp lý và ứng dụng.
+- Kahneman, D. (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. Trình bày hai hệ thống tư duy, nền tảng để hiểu vì sao người vay quyết định như họ vẫn làm.
 
-**UX trong Financial Services:**
-- Morville, P. (2014). *Intertwingled: Information Changes Everything.* Semantic Studios. - Về thiết kế trải nghiệm thông tin trong context phức tạp - applicable cho financial UX.
+**Trải nghiệm người dùng trong dịch vụ tài chính**
 
-*Chương 5 sẽ nhìn vào hành trình của chị Lan từ góc độ của người điều hành công ty: mô hình doanh thu, quản lý danh mục, và những gì xảy ra ở cấp độ portfolio khi hàng triệu hành trình cá nhân như của chị Lan được cộng lại.*
+- Morville, P. (2014). *Intertwingled: Information Changes Everything.* Semantic Studios. Về thiết kế trải nghiệm thông tin trong bối cảnh phức tạp, áp dụng được cho sản phẩm tài chính.
+
+Chương 5 nhìn hành trình của chị Lan từ góc độ người điều hành công ty: mô hình doanh thu, quản lý danh mục, và điều gì xảy ra khi hàng triệu hành trình như của chị Lan được cộng lại. [Chương 5. Mô hình doanh thu và quản lý danh mục](/docs/products/ch05-revenue-portfolio).
