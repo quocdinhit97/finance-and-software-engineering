@@ -29,9 +29,9 @@ Cập nhật lần cuối: 2026-11-18, phiên 4 (logo mới, giao diện kiểu 
 | Lời mở đầu | mechanical | Cập nhật đoạn "Tại sao..." theo hệ sinh thái hư cấu, bỏ emoji ba lớp |
 | Ch.1 | **edited** | Phiên 2. Số liệu đã kiểm lại bằng script (TVM, adverse selection, EL, bảng chi phí); làm rõ hai cách phân tách 18%; nhận định 2015-2018 chuyển thành nhận định chưa xác minh; sửa tham chiếu BIS |
 | Ch.2 | **edited** | Pilot. Đã sửa 6 lỗi (xem PROJECT_AUDIT §4). Còn 1 điểm cần xác minh: `PRIORITY_ONLY` |
-| Ch.3 | mechanical | |
-| Ch.4 | mechanical | |
-| Ch.5 | mechanical | |
+| Ch.3 | **edited** | Phiên 4. Sửa APR khoản vay có phí (28.5% → 35.7%), cơ chế subvention (chiết khấu khi giải ngân, 1,365,618 VNĐ), phân tích lợi ích của người bán theo lợi nhuận gộp, bẫy trả tối thiểu (85 tháng, không phải 10+ năm), lãi lỗ khoản vay (bỏ phí bảo hiểm thu hộ khỏi doanh thu, chi phí vốn theo dư nợ bình quân, biên 3.6%), cảnh báo về phép so sánh ROI retention. Nghĩa `SVCFEE` = phí dịch vụ của ACCMAINT. Hình 3.1 |
+| Ch.4 | **edited** | Phiên 4. Sửa PMT các đề nghị 12/36 tháng, câu chuyện sofa (bỏ "0%" mâu thuẫn), chi phí của thiên kiến hiện tại (gồm cả lãi tiết kiệm bỏ lỡ), thêm giai đoạn 8 vào sơ đồ, câu hỏi 10 (APR 18%), bỏ các con số "nghiên cứu cho thấy" không nguồn |
+| Ch.5 | **edited** | Phiên 4. Dựng lại báo cáo lãi lỗ cho nhất quán (lợi suất 28%, chi phí vốn khớp nguồn vốn ALM, NIM 20.2%, ROA 3.95%, ROE 19.75%), đối chiếu chi phí dự phòng với số dư dự phòng, sửa số liệu vintage và roll rate (tổng 10,530 tài khoản, hàng 91+), duration 11.9 tháng, kỳ hạn nguồn vốn 17.8 tháng, ví dụ trả trước. Hình 5.1 (SeriesLineChart) thay biểu đồ ASCII |
 | Ch.6 | mechanical | Số cụm PostgreSQL cần đối chiếu |
 | Ch.7 | mechanical | |
 | Ch.8 | mechanical | Lỗi fence đã sửa tự động; còn 1 đoạn nhỏ chưa vào khối code (mục Balance integrity) |
@@ -77,6 +77,7 @@ Bản tiếng Anh: giao diện, trang chủ, Cách đọc, Về cuốn sách, 5 
 21. Logo và favicon lấy từ ảnh chủ sở hữu gửi: `static/img/logo.png`, `favicon.ico`, `favicon-32.png`, `apple-touch-icon.png`, `social-card.png`. Các file `.svg` cũ còn trên máy không còn được dùng.
 22. `package.json` có `overrides` để vá lỗ hổng trong công cụ build: `serialize-javascript ^7.1.4`, `tinypool ^2.2.0`, `uuid ^11.1.1`, `katex ^0.19.1` (đã build và chạy thử dev, Mermaid, KaTeX đều ổn). `npm audit` còn báo picomatch (ReDoS) qua chuỗi phụ thuộc của Docusaurus; chưa có bản vá, chỉ ảnh hưởng lúc build với pattern do dự án tự định nghĩa, không ảnh hưởng website tĩnh. Không chạy `npm audit fix --force` (sẽ hạ/đổi phiên bản Docusaurus).
 23. Giọng văn (chỉ áp dụng cho lời văn, không sửa code minh họa): sách nói về VLP như một hệ thống đang vận hành. Trong lời văn không viết "đã ẩn danh hóa", "thông tin độc quyền", "hư cấu", "không phải dữ liệu production", "(verified: x.md)", "bản thảo gốc", "biên tập viên". Được phép nói "dữ liệu mô phỏng". Mọi thứ trong khối code (comment `// verified`, `illustrative`...) giữ nguyên. Với chương sinh tự động, `narrative_cleanup()` trong `scripts/transform.py` chỉ xử lý phần ngoài code fence; chương sửa tay phải tự tuân theo.
+24. Khi biên tập tay một chương: không sửa khối code Java/SQL/cấu hình (kể cả comment); được sửa khối `text` chứa phép tính và số liệu khi số sai, và sơ đồ Mermaid. Lỗi trong khối code được giải thích bằng lời văn bên cạnh (ví dụ khoảng hiệu lực `validTo` ở Ch.3). Biểu đồ dùng `src/components/Charts/CostStackChart.tsx` (cột chồng) và `SeriesLineChart.tsx` (đường, cho vintage và chuỗi thời gian), dữ liệu truyền từ trang.
 
 ## Ánh xạ ẩn danh (tóm tắt)
 
@@ -99,7 +100,7 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 ## Blockers và câu hỏi mở
 
 1. **Deploy**: cần repository GitHub và bật Pages với source = GitHub Actions. Chưa thể xác minh deployment.
-2. **Nghĩa của mã phí `SVCFEE`**: bản thảo Ch.3 và Ch.12 mô tả khác nhau.
+2. **Nghĩa của mã phí `SVCFEE`**: Ch.3 và Ch.9 dùng nghĩa phí dịch vụ của ACCMAINT (phí quản lý tài khoản). Ch.12 bản thảo gọi là "interest fee"; sửa khi biên tập Ch.12.
 3. **Ghi tên tác giả**: `TOC.md` ghi tên tác giả bản thảo; website hiện không ghi tên. Cần chủ sở hữu quyết định.
 4. **Mức ẩn danh còn lại**: tên method/field (`sourceTxCode`, `pairInstalments`...) vẫn giữ nguyên. Tên file tài liệu nội bộ trong comment (`verified: ...`) đã được lọc bỏ.
 5. **`PRIORITY_ONLY`**: Ch.2 và Ch.8 bản thảo mâu thuẫn; Ch.2 hiện viết theo mô tả của Ch.8 (trừ phí phạt trước). Nếu cấu hình thật khác, sửa khung `:::key` trong Ch.2 mục 2.4.
@@ -107,7 +108,7 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 
 ## Bước tiếp theo (theo thứ tự)
 
-1. Biên tập Ch.3, Ch.4, Ch.5 (Phần II) theo mẫu Ch.1 và Ch.2: thêm vào `scripts/hand-edited.txt` trước khi sửa; dùng `format: mdx` nếu cần component; kiểm tra lại mọi số liệu bằng script. Ưu tiên số liệu Ch.3 (unit economics, 0% lãi suất) và Ch.5 (P&L, roll rate, HHI, ALM). Ch.3: làm rõ nghĩa `SVCFEE`.
+1. ~~Biên tập Ch.3, Ch.4, Ch.5~~ (xong ở phiên 4).
 2. Biên tập Ch.8 và Ch.9 (lõi billing): sửa đoạn chưa vào khối code ở Ch.8, chuyển sơ đồ ASCII sang Mermaid (state machine AccountStatus, BillingRun, luồng EOM), đối chiếu `PRIORITY_ONLY`.
 3. Thêm công cụ "số tiền tất toán / trả trước hạn" cho Ch.2 Bài 1 và Ch.9.
 4. Tiếp tục Ch.6, 7, 10, rồi 11-16, rồi Phụ lục A, D, Thuật ngữ, Lời mở đầu.

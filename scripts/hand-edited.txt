@@ -1,3 +1,6 @@
 foundations/ch02-mathematics-of-lending.mdx
 appendices/c-math-reference.md
 foundations/ch01-credit-economics.md
+products/ch03-product-design.md
+products/ch04-customer-journey.md
+products/ch05-revenue-portfolio.md
