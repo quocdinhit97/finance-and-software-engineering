@@ -1,0 +1,28 @@
+---
+title: "Calculators"
+sidebar_label: "Calculators"
+description: "Repayment schedule, term comparison and the true cost of credit (APR, EIR), using exactly the methods described in the book."
+lang: en
+---
+
+import {LoanCalculator, TermComparison, CostOfCreditCalculator} from '@site/src/components/Loan';
+
+These tools use the same methods as Chapter 2 and Appendix C. The defaults are Ms. Lan's loan: 18,500,000 VND, 18% per year, 12 months. They are learning tools, not a quote from any lender.
+
+## Repayment schedule
+
+Enter the amount, nominal rate and term to see the monthly payment, the principal and interest in each period, and the remaining balance over time.
+
+<LoanCalculator />
+
+## Comparing terms
+
+A longer term lowers the monthly payment but raises total interest. The table shows that trade-off for the same amount and rate.
+
+<TermComparison />
+
+## The true cost of credit
+
+The nominal rate excludes fees. With an up-front fee (deducted from the disbursement) and a fixed monthly fee, the true cost is measured by the IRR of the cash the borrower actually receives and pays, annualized as APR or EIR.
+
+<CostOfCreditCalculator />

@@ -1,0 +1,34 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.book.category.Phần I. Nền tảng": {
+    "message": "Part I. Foundations",
+    "description": "The label for category 'Phần I. Nền tảng' in sidebar 'book'"
+  },
+  "sidebar.book.category.Phần II. Sản phẩm": {
+    "message": "Part II. Products",
+    "description": "The label for category 'Phần II. Sản phẩm' in sidebar 'book'"
+  },
+  "sidebar.book.category.Phần III. Hệ thống": {
+    "message": "Part III. The System",
+    "description": "The label for category 'Phần III. Hệ thống' in sidebar 'book'"
+  },
+  "sidebar.book.category.Phần IV. Trí tuệ": {
+    "message": "Part IV. Intelligence",
+    "description": "The label for category 'Phần IV. Trí tuệ' in sidebar 'book'"
+  },
+  "sidebar.book.category.Phần V. Tương lai": {
+    "message": "Part V. The Future",
+    "description": "The label for category 'Phần V. Tương lai' in sidebar 'book'"
+  },
+  "sidebar.book.category.Bắt đầu": {
+    "message": "Getting started",
+    "description": "The label for category 'Bắt đầu' in sidebar 'book'"
+  },
+  "sidebar.book.category.Tra cứu": {
+    "message": "Reference",
+    "description": "The label for category 'Tra cứu' in sidebar 'book'"
+  }
+}

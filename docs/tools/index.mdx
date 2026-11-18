@@ -1,0 +1,28 @@
+---
+title: "Công cụ tính"
+sidebar_label: "Công cụ tính"
+description: "Tính lịch trả nợ, so sánh kỳ hạn và chi phí tín dụng thực tế (APR, EIR) theo đúng phương pháp trong sách."
+lang: vi
+---
+
+import {LoanCalculator, TermComparison, CostOfCreditCalculator} from '@site/src/components/Loan';
+
+Các công cụ dưới đây dùng đúng phương pháp tính được trình bày ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending) và [Phụ lục C](/docs/appendices/c-math-reference). Giá trị mặc định là khoản vay của chị Lan: 18,500,000 VNĐ, 18%/năm, 12 tháng. Đây là công cụ học tập, không phải báo giá của bất kỳ tổ chức tín dụng nào.
+
+## Lịch trả nợ
+
+Nhập số tiền, lãi suất danh nghĩa và kỳ hạn để xem số tiền trả mỗi tháng, phần gốc và phần lãi của từng kỳ, và dư nợ còn lại theo thời gian.
+
+<LoanCalculator />
+
+## So sánh kỳ hạn
+
+Kỳ hạn dài hơn làm khoản trả hằng tháng nhỏ hơn nhưng tổng lãi lớn hơn. Bảng dưới đây cho thấy sự đánh đổi đó với cùng số tiền và lãi suất.
+
+<TermComparison />
+
+## Chi phí tín dụng thực tế
+
+Lãi suất danh nghĩa không bao gồm phí. Khi có phí trả trước (trừ vào số tiền giải ngân) và phí cố định hằng tháng, chi phí thực tế của khoản vay được đo bằng IRR của dòng tiền mà người vay thực nhận và thực trả, rồi quy về năm dưới dạng APR hoặc EIR.
+
+<CostOfCreditCalculator />

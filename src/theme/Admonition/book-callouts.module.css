@@ -1,0 +1,61 @@
+.callout {
+  margin: 2rem 0;
+  border-radius: 8px;
+  padding: 1.1rem 1.35rem 0.4rem;
+  font-family: var(--book-font-sans);
+}
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 0.6rem;
+  margin-bottom: 0.6rem;
+}
+.label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.title {
+  font-weight: 600;
+  font-size: 1rem;
+}
+.body > :last-child {
+  margin-bottom: 0.8rem;
+}
+
+/* Summary: the strongest emphasis, tinted panel with primary accent */
+.summary {
+  background: color-mix(in srgb, var(--ifm-color-primary) 7%, var(--book-paper));
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 30%, transparent);
+  border-top: 4px solid var(--ifm-color-primary);
+}
+.summary .label {
+  color: var(--ifm-color-primary);
+}
+
+/* Story: narrative voice, warm accent and a slightly softer text colour */
+.story {
+  background: color-mix(in srgb, var(--book-accent) 7%, var(--book-paper));
+  border-left: 4px solid var(--book-accent);
+  border-radius: 0 8px 8px 0;
+}
+.story .label {
+  color: var(--book-accent);
+}
+.story .body {
+  font-style: normal;
+}
+.story .body p {
+  color: color-mix(in srgb, var(--book-ink) 88%, var(--book-accent));
+}
+
+/* Key concept / definition: outlined box */
+.key {
+  background: var(--book-paper);
+  border: 2px solid color-mix(in srgb, var(--book-positive) 55%, transparent);
+}
+.key .label {
+  color: var(--book-positive);
+}

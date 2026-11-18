@@ -1,0 +1,10 @@
+{
+  "position": 2,
+  "label": "Phần I. Nền tảng",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "foundations/index"
+  }
+}

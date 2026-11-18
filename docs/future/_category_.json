@@ -1,0 +1,10 @@
+{
+  "position": 6,
+  "label": "Phần V. Tương lai",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "future/index"
+  }
+}

@@ -1,0 +1,20 @@
+# Dependencies and build output
+node_modules/
+build/
+.docusaurus/
+.cache-loader/
+static/katex/
+.DS_Store
+npm-debug.log*
+
+# Internal project-management notes (audit, mapping, anonymization report).
+# Not part of the website; kept locally only.
+docs-internal/
+
+# The two entries below contain the original (non-anonymized) names.
+# Uncomment them if the repository is public. The build and CI keep working:
+# check:content skips the original-name check when entities.json is absent.
+docs/reference/
+scripts/entities.json
+scripts/source-patches.json
+.PROGRESS.md

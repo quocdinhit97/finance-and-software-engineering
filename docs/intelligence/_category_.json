@@ -1,0 +1,10 @@
+{
+  "position": 5,
+  "label": "Phần IV. Trí tuệ",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "intelligence/index"
+  }
+}

@@ -1,0 +1,3 @@
+foundations/ch02-mathematics-of-lending.mdx
+appendices/c-math-reference.md
+foundations/ch01-credit-economics.md

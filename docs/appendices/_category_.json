@@ -1,0 +1,10 @@
+{
+  "position": 8,
+  "label": "Phụ lục",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "appendices/index"
+  }
+}

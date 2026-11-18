@@ -1,0 +1,131 @@
+.figure {
+  margin: 2rem 0;
+  font-family: var(--book-font-sans);
+}
+.figureTitle {
+  font-family: var(--book-font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+}
+.figureNote {
+  font-size: 0.85rem;
+  color: var(--book-muted);
+  margin: 0.5rem 0 0;
+  line-height: 1.55;
+}
+.chart {
+  width: 100%;
+  height: 300px;
+}
+.panel {
+  border: 1px solid var(--book-rule);
+  border-radius: 6px;
+  padding: 1.25rem;
+  background: var(--book-surface);
+  margin: 2rem 0;
+  font-family: var(--book-font-sans);
+  font-size: 0.92rem;
+}
+.inputs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 0.9rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+.field label {
+  font-size: 0.8rem;
+  color: var(--book-muted);
+}
+.field input,
+.field select {
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  padding: 0.45rem 0.6rem;
+  border: 1px solid var(--book-rule);
+  border-radius: 4px;
+  background: var(--book-paper);
+  color: var(--book-ink);
+}
+.field input:focus,
+.field select:focus {
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 0;
+}
+.results {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.8rem 1.2rem;
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--book-rule);
+  border-bottom: 1px solid var(--book-rule);
+  margin-bottom: 1rem;
+}
+.metricLabel {
+  font-size: 0.78rem;
+  color: var(--book-muted);
+}
+.metricValue {
+  font-size: 1.15rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.tableWrap {
+  max-height: 360px;
+  overflow: auto;
+  margin-top: 1rem;
+}
+.table {
+  width: 100%;
+  display: table !important;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+.table th,
+.table td {
+  text-align: right;
+  padding: 0.35rem 0.6rem;
+  border: none;
+  border-bottom: 1px solid var(--book-rule);
+  white-space: nowrap;
+}
+.table th:first-child,
+.table td:first-child {
+  text-align: left;
+}
+.table thead th {
+  position: sticky;
+  top: 0;
+  background: var(--book-surface);
+  border-bottom: 2px solid var(--book-ink);
+}
+.assumptions {
+  font-size: 0.82rem;
+  color: var(--book-muted);
+  margin-top: 1rem;
+  line-height: 1.55;
+}
+.assumptions ul {
+  margin: 0.3rem 0 0;
+  padding-left: 1.1rem;
+}
+.error {
+  color: var(--book-negative);
+  font-size: 0.85rem;
+}
+.toggle {
+  font: inherit;
+  font-size: 0.85rem;
+  background: none;
+  border: 1px solid var(--book-rule);
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  cursor: pointer;
+  color: var(--book-ink);
+}

@@ -1,0 +1,10 @@
+{
+  "position": 4,
+  "label": "Phần III. Hệ thống",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "system/index"
+  }
+}

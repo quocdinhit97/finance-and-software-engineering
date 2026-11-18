@@ -1,0 +1,10 @@
+{
+  "position": 3,
+  "label": "Phần II. Sản phẩm",
+  "collapsible": true,
+  "collapsed": true,
+  "link": {
+    "type": "doc",
+    "id": "products/index"
+  }
+}

@@ -1,0 +1,297 @@
+/*
+ * Design tokens: modern editorial + financial technology + technical book.
+ * Typography carries hierarchy; colour is used sparingly.
+ */
+:root {
+  /* Inter covers the full Vietnamese range (stacked diacritics) and stays legible at long reading lengths. */
+  --book-font-sans: 'Inter Variable', 'Inter', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --book-font-serif: var(--book-font-sans);
+  --book-font-mono: 'JetBrains Mono Variable', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --ifm-font-family-base: var(--book-font-sans);
+  --ifm-font-family-monospace: var(--book-font-mono);
+  --ifm-heading-font-family: var(--book-font-serif);
+
+  /* Mint palette. Primary is darkened enough for 4.5:1 text contrast on white. */
+  --ifm-color-primary: #0b8a66;
+  --ifm-color-primary-dark: #0a7c5c;
+  --ifm-color-primary-darker: #097556;
+  --ifm-color-primary-darkest: #076047;
+  --ifm-color-primary-light: #0c9870;
+  --ifm-color-primary-lighter: #0d9f75;
+  --ifm-color-primary-lightest: #10b585;
+  --book-mint-50: #effaf6;
+  --book-mint-100: #dcf4ea;
+  --book-mint-200: #bfe9d7;
+
+  --book-ink: #1d2329;
+  --book-muted: #5b6672;
+  --book-rule: #e3e6ea;
+  --book-paper: #ffffff;
+  --book-surface: #f7f8fa;
+  --book-accent: #9a6b16;
+  --book-positive: #2f6f9f;
+  --book-negative: #a23b2a;
+
+  --ifm-font-color-base: var(--book-ink);
+  --ifm-background-color: var(--book-paper);
+  --ifm-font-size-base: 17px;
+  --ifm-line-height-base: 1.8;
+  --ifm-heading-line-height: 1.3;
+  --ifm-h1-font-size: 2.2rem;
+  --ifm-h2-font-size: 1.6rem;
+  --ifm-h3-font-size: 1.25rem;
+  --ifm-h4-font-size: 1.05rem;
+  --ifm-code-font-size: 88%;
+  --ifm-paragraph-margin-bottom: 1.15rem;
+  --ifm-container-width-xl: 1360px;
+  --docusaurus-highlighted-code-line-bg: rgba(11, 138, 102, 0.08);
+  --ifm-navbar-height: 7rem; /* top bar 4rem + section tabs 3rem */
+  --book-topbar-height: 4rem;
+  --book-tabs-height: 3rem;
+  --doc-sidebar-width: 290px !important;
+  --ifm-table-stripe-background: transparent;
+  --ifm-toc-border-color: var(--book-rule);
+  --ifm-hr-border-color: var(--book-rule);
+}
+
+[data-theme='dark'] {
+  --ifm-color-primary: #5fd3a8;
+  --ifm-color-primary-dark: #45cb99;
+  --ifm-color-primary-darker: #38c792;
+  --ifm-color-primary-darkest: #2ca97a;
+  --ifm-color-primary-light: #79dbb7;
+  --ifm-color-primary-lighter: #86dfbe;
+  --ifm-color-primary-lightest: #aceacf;
+  --book-mint-50: #12241e;
+  --book-mint-100: #173129;
+  --book-mint-200: #1f4337;
+
+  --book-ink: #e4e7eb;
+  --book-muted: #a0a9b4;
+  --book-rule: #2e353d;
+  --book-paper: #15191e;
+  --book-surface: #1c2128;
+  --book-accent: #d6a94f;
+  --book-positive: #8ab4dc;
+  --book-negative: #e48a7b;
+  --docusaurus-highlighted-code-line-bg: rgba(95, 211, 168, 0.12);
+}
+
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+
+/* ---------- reading column ---------- */
+.theme-doc-markdown {
+  font-family: var(--book-font-sans);
+  font-size: 1.05rem;
+  max-width: 46rem;
+  font-feature-settings: 'cv11', 'ss01';
+}
+.theme-doc-markdown h1,
+.theme-doc-markdown h2,
+.theme-doc-markdown h3 { font-weight: 600; letter-spacing: -0.01em; }
+.theme-doc-markdown h2 {
+  margin-top: 3rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--book-rule);
+}
+.theme-doc-markdown h3 { margin-top: 2.2rem; }
+.theme-doc-markdown h4 {
+  font-family: var(--book-font-sans);
+  text-transform: none;
+  margin-top: 1.8rem;
+}
+.theme-doc-markdown ul, .theme-doc-markdown ol { padding-left: 1.4rem; }
+.theme-doc-markdown li + li { margin-top: 0.3rem; }
+.theme-doc-markdown strong { font-weight: 600; }
+
+/* epigraphs and quotations */
+.theme-doc-markdown blockquote {
+  border-left: 2px solid var(--book-accent);
+  color: var(--book-muted);
+  background: none;
+  padding: 0.2rem 0 0.2rem 1.2rem;
+  margin: 1.6rem 0;
+}
+
+/* tables: quiet, numeric friendly */
+.theme-doc-markdown table {
+  display: block;
+  overflow-x: auto;
+  font-family: var(--book-font-sans);
+  font-size: 0.9rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+.theme-doc-markdown table thead tr { border-bottom: 2px solid var(--book-ink); }
+.theme-doc-markdown table th { background: none; font-weight: 600; text-align: left; }
+.theme-doc-markdown table th, .theme-doc-markdown table td {
+  border: none;
+  border-bottom: 1px solid var(--book-rule);
+  padding: 0.5rem 0.8rem;
+}
+.theme-doc-markdown table tr { background: none; }
+
+/* code */
+.theme-doc-markdown pre, .theme-doc-markdown code { font-family: var(--book-font-mono); }
+.theme-doc-markdown div[class*='codeBlockContainer'] {
+  box-shadow: none;
+  border: 1px solid var(--book-rule);
+  font-size: 0.86rem;
+}
+.theme-doc-markdown .language-text code { line-height: 1.55; }
+
+/* admonitions: one restrained style */
+.theme-admonition {
+  font-family: var(--book-font-sans);
+  font-size: 0.95rem;
+  border-radius: 4px;
+  box-shadow: none;
+  border: 1px solid var(--book-rule);
+  border-left-width: 3px;
+  background: var(--book-surface);
+}
+.theme-admonition-note { border-left-color: var(--ifm-color-primary); }
+.theme-admonition-warning, .theme-admonition-caution { border-left-color: var(--book-accent); }
+.theme-admonition-tip { border-left-color: var(--ifm-color-primary); }
+.theme-admonition-danger { border-left-color: var(--book-negative); }
+.theme-admonition [class*='admonitionIcon'] { display: none; }
+.theme-admonition [class*='admonitionHeading'] {
+  text-transform: none;
+  font-size: 0.95rem;
+  letter-spacing: 0;
+}
+
+/* formulas */
+.katex-display { overflow-x: auto; overflow-y: hidden; padding: 0.4rem 0; }
+.katex { font-size: 1.08em; }
+
+/* mermaid diagrams */
+.docusaurus-mermaid-container { overflow-x: auto; text-align: center; margin: 1.5rem 0; }
+
+@media (max-width: 996px) {
+  .theme-doc-markdown { font-size: 1.02rem; }
+  :root { --ifm-h1-font-size: 1.8rem; --ifm-h2-font-size: 1.4rem; --ifm-navbar-height: 4rem; }
+}
+
+/* ===================== Shell: top bar, search, sidebar, TOC ===================== */
+
+/* Top bar */
+.navbar {
+  height: var(--book-topbar-height);
+  box-shadow: none;
+  border-bottom: 1px solid var(--book-rule);
+  background: var(--book-paper);
+  padding: 0 1.5rem;
+}
+.navbar__brand { margin-right: 1.5rem; }
+.navbar__logo { height: 2rem; margin-right: 0.6rem; }
+.navbar__title { font-weight: 700; font-size: 1.05rem; letter-spacing: -0.01em; }
+.navbar__items:not(.navbar__items--right) { flex: 1; }
+.navbar__item.navbar__link { font-weight: 500; color: var(--book-muted); }
+.navbar__item.navbar__link:hover { color: var(--book-ink); }
+.navbar-cta.navbar__link {
+  background: var(--book-ink);
+  color: var(--book-paper);
+  border-radius: 999px;
+  padding: 0.4rem 1rem;
+  margin-left: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.navbar-cta.navbar__link:hover { background: var(--ifm-color-primary-darkest); color: #fff; }
+[data-theme='dark'] .navbar-cta.navbar__link { background: var(--ifm-color-primary); color: #0c1a15; }
+
+/* Search bar: wide pill centred in the top bar */
+.navbar__search, .navbar__items:not(.navbar__items--right) > [class*='navbar__search'],
+.navbar__items:not(.navbar__items--right) > [class*='searchBar'] {
+  margin: 0 auto;
+}
+.navbar__search-input, [class*='searchBar'] input[class*='navbar__search-input'] {
+  width: min(32rem, 40vw) !important;
+  height: 2.6rem;
+  border-radius: 12px;
+  border: 1px solid var(--book-rule);
+  background: var(--book-paper);
+  background-position: 0.85rem center;
+  padding-left: 2.4rem;
+  font-size: 0.92rem;
+  font-family: var(--book-font-sans);
+  color: var(--book-ink);
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.04);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.navbar__search-input:hover { border-color: var(--book-mint-200); }
+.navbar__search-input:focus {
+  outline: none;
+  border-color: var(--ifm-color-primary);
+  box-shadow: 0 0 0 3px var(--book-mint-100);
+}
+
+/* Sidebar */
+.theme-doc-sidebar-container { border-right: 1px solid var(--book-rule) !important; }
+.theme-doc-sidebar-menu.menu__list { padding: 0.75rem 0.5rem 2rem; }
+.menu { padding: 0.5rem 0.75rem !important; font-size: 0.93rem; }
+.menu__list .menu__list { margin-top: 0.15rem; padding-left: 0; }
+/* group headings */
+.theme-doc-sidebar-item-category-level-1 { margin-top: 1.4rem; }
+.theme-doc-sidebar-item-category-level-1:first-child { margin-top: 0.4rem; }
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible > .menu__link,
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible {
+  font-weight: 650;
+  color: var(--book-ink);
+  background: none !important;
+  cursor: default;
+  padding-left: 0.6rem;
+  font-size: 0.9rem;
+}
+.theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible:hover { background: none; }
+/* links */
+.menu__link {
+  border-radius: 8px;
+  padding: 0.42rem 0.6rem;
+  color: color-mix(in srgb, var(--book-ink) 78%, var(--book-paper));
+  line-height: 1.4;
+  transition: background 0.12s, color 0.12s;
+}
+.menu__link:hover { background: var(--book-surface); color: var(--book-ink); }
+.menu__link--active:not(.menu__link--sublist) {
+  background: var(--book-mint-50);
+  color: var(--book-ink);
+  font-weight: 600;
+}
+[data-theme='dark'] .menu__link--active:not(.menu__link--sublist) { background: var(--book-mint-100); }
+
+/* Hide the default synthetic title; our DocItem/Content wrapper renders the header */
+.theme-doc-markdown > header:first-child { display: none; }
+.theme-doc-markdown h2:first-child, .theme-doc-markdown > blockquote:first-child + h2 { border-top: none; }
+
+/* Right column: "On this page" */
+.table-of-contents { font-size: 0.85rem; padding-left: 0; }
+.table-of-contents__link { color: var(--book-muted); display: block; padding: 0.15rem 0 0.15rem 0.9rem; margin-left: -1px; border-left: 2px solid transparent; }
+.table-of-contents__link:hover { color: var(--book-ink); }
+.table-of-contents__link--active { color: var(--book-ink); font-weight: 600; border-left-color: var(--ifm-color-primary); }
+.table-of-contents li { margin: 0.2rem 0; }
+.table-of-contents ul { padding-left: 0.6rem; }
+
+/* Doc layout spacing */
+.theme-doc-markdown { padding-top: 0.5rem; }
+main[class*='docMainContainer'] .container { padding-top: 2.5rem; }
+.pagination-nav__link { border-radius: 10px; }
+.pagination-nav__link:hover { border-color: var(--ifm-color-primary); }
+
+@media (max-width: 996px) {
+  .navbar { padding: 0 0.75rem; }
+  .navbar__title { display: none; }
+  .navbar__search-input, [class*='searchBar'] input[class*='navbar__search-input'] { width: 11rem !important; }
+}
+
+.markdown img {
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  transition: filter 0.3s ease;
+}
+
+.markdown img:hover {
+  filter: blur(0);
+}
