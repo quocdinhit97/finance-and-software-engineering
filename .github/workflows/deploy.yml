@@ -54,6 +54,10 @@ jobs:
 
       - name: Build (all locales)
         run: npm run build
+        env:
+          # GA4 measurement ID (G-XXXXXXXXXX). Set it under Settings > Secrets and
+          # variables > Actions > Variables. When empty, the site is built without analytics.
+          GA_MEASUREMENT_ID: ${{ vars.GA_MEASUREMENT_ID }}
 
       - uses: actions/upload-pages-artifact@v3
         with:
