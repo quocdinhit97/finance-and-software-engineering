@@ -733,5 +733,85 @@
   "sidebar.part.chapters": {
     "message": "Chapters {range}",
     "description": "Chapter range under a part title in the sidebar"
+  },
+  "doc.label.table-of-contents": {
+    "message": "Table of contents",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.introduction/preface": {
+    "message": "Preface",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.glossary/index": {
+    "message": "Glossary",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.products/ch03-product-design": {
+    "message": "3. Designing financial products",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.products/ch04-customer-journey": {
+    "message": "4. The customer journey",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.products/ch05-revenue-portfolio": {
+    "message": "5. Revenue model and portfolio management",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.system/ch06-financial-system-architecture": {
+    "message": "6. Financial system architecture",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.system/ch07-origination": {
+    "message": "7. Loan origination",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.system/ch08-account-management": {
+    "message": "8. Account management and the billing engine",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.system/ch09-billing-cycle": {
+    "message": "9. The billing cycle",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.system/ch10-collections": {
+    "message": "10. Debt management and collections",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.intelligence/ch11-credit-scoring": {
+    "message": "11. Credit scoring",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.intelligence/ch12-risk-based-pricing": {
+    "message": "12. Risk-based pricing",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.intelligence/ch13-behavioral-economics": {
+    "message": "13. Behavioral economics and responsible finance",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.future/ch14-embedded-finance-bnpl": {
+    "message": "14. BNPL and embedded finance",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.future/ch15-ai-future-of-lending": {
+    "message": "15. AI and the future of lending",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.future/ch16-timeless-principles": {
+    "message": "16. Timeless design principles",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.appendices/a-architecture-reference": {
+    "message": "Appendix A. Reference architecture",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.appendices/c-math-reference": {
+    "message": "Appendix C. Financial formulas",
+    "description": "Sidebar and pagination label of an untranslated doc"
+  },
+  "doc.label.appendices/d-regulatory-reference": {
+    "message": "Appendix D. Regulatory reference",
+    "description": "Sidebar and pagination label of an untranslated doc"
   }
 }
