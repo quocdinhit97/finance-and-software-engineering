@@ -18,3 +18,34 @@
 :global(.menu__link--active) .icon {
   color: var(--ifm-color-primary);
 }
+.num {
+  flex: none;
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  margin-top: 0.02rem;
+  border-radius: 50%;
+  background: var(--book-surface);
+  color: var(--book-muted);
+  font-family: var(--book-font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  transition: background 0.15s, color 0.15s;
+}
+:global(.menu__link--active) .num {
+  background: var(--ifm-color-primary);
+  color: #fff;
+}
+[data-theme='dark'] :global(.menu__link--active) .num { color: #0b1a14; }
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

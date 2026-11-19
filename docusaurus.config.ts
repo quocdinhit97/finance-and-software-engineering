@@ -114,7 +114,7 @@ const config: Config = {
       respectPrefersColorScheme: true,
     },
     docs: {
-      sidebar: {hideable: false, autoCollapseCategories: false},
+      sidebar: {hideable: false, autoCollapseCategories: true},
     },
     tableOfContents: {
       minHeadingLevel: 2,

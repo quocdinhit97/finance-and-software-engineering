@@ -246,6 +246,26 @@ body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; 
   font-size: 0.9rem;
 }
 .theme-doc-sidebar-item-category-level-1 > .menu__list-item-collapsible:hover { background: none; }
+/* part rows (collapsible, inside "Nội dung") */
+.book-part { margin-top: 0.15rem; }
+.book-part > .menu__list-item-collapsible > .menu__link {
+  padding: 0.45rem 0.5rem;
+  align-items: center;
+}
+.book-part > .menu__list-item-collapsible > .menu__link--active { background: none; }
+.book-part > .menu__list-item-collapsible:hover { background: var(--book-surface); border-radius: 8px; }
+.book-part > .menu__list-item-collapsible > .menu__link.menu__link--sublist-caret::after {
+  background-size: 1.6rem 1.6rem;
+  opacity: 0.55;
+}
+/* chapters inside a part: indented under the badge, with a guide line */
+.book-part > .menu__list {
+  margin: 0.1rem 0 0.5rem 1.45rem;
+  padding-left: 0.55rem;
+  border-left: 1px solid var(--book-rule);
+}
+.book-part > .menu__list .menu__link { padding: 0.36rem 0.55rem; font-size: 0.9rem; }
+
 /* links */
 .menu__link {
   border-radius: 8px;
@@ -284,14 +304,4 @@ main[class*='docMainContainer'] .container { padding-top: 2.5rem; }
   .navbar { padding: 0 0.75rem; }
   .navbar__title { display: none; }
   .navbar__search-input, [class*='searchBar'] input[class*='navbar__search-input'] { width: 11rem !important; }
-}
-
-.markdown img {
-  border-radius: 16px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-  transition: filter 0.3s ease;
-}
-
-.markdown img:hover {
-  filter: blur(0);
 }
