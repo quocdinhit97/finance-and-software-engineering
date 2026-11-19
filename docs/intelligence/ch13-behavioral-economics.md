@@ -98,9 +98,9 @@ Phương án A: tiết kiệm 12 tháng rồi mua
   Nhưng: phải chờ 12 tháng, và laptop cũ đang làm chậm công việc
 
 Phương án B: vay ngay, trả trong 12 tháng (khoản vay của sách)
-  Lãi suất 18%/năm, phí khởi tạo 1%
-  Tổng tiền lãi: 1,852,957 VNĐ, phí: 185,000 VNĐ
-  Chi phí thêm: 2,037,957 VNĐ, khoảng 11% giá laptop
+  Lãi suất 18%/năm, phí thẩm định 200,000 VNĐ
+  Tổng tiền lãi: 1,852,957 VNĐ, phí: 200,000 VNĐ
+  Chi phí thêm: 2,052,957 VNĐ, khoảng 11% giá laptop
   Đổi lại: có laptop ngay hôm nay
 ```
 

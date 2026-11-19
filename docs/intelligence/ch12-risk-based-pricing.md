@@ -114,7 +114,7 @@ Có một điểm kỹ thuật phải làm đúng trước khi tính: khoản va
 **Giả định chung cho cả ba hạng** (cùng khoản vay chuẩn của sách):
 
 ```text
-Khoản vay: 18,500,000 VNĐ, 12 tháng, trả góp đều, phí khởi tạo 1%
+Khoản vay: 18,500,000 VNĐ, 12 tháng, trả góp đều, phí thẩm định 200,000 VNĐ
 Khoản vay vỡ nợ: trả được 6 kỳ rồi dừng; EAD = dư nợ sau kỳ 6
 LGD: 62%
 
@@ -148,14 +148,14 @@ Dư nợ bình quân của danh mục: 10.15 triệu VNĐ-năm mỗi khoản vay
 4. Lợi nhuận vốn chủ (ROE 18%)        274,109            2.70%
 ─────────────────────────────────────────────────────────────
 Tổng chi phí cần bù                 2,240,012           22.07%
-Trừ phí khởi tạo 1%                  −185,000           −1.82%
+Trừ phí thẩm định                    −200,000           −1.97%
 ─────────────────────────────────────────────────────────────
-Lãi suất hòa vốn (có ROE mục tiêu)                     20.25%
+Lãi suất hòa vốn (có ROE mục tiêu)                     20.10%
 Lãi suất áp dụng                                       21.00%
-Biên                                                   +0.75 điểm
+Biên                                                   +0.90 điểm
 ```
 
-Hai điều đáng chú ý. Chi phí vận hành, không phải tổn thất, là thành phần lớn nhất của Sub-prime: một khoản vay nhỏ, ngắn hạn phải gánh chi phí khởi tạo cố định trên một dư nợ bình quân nhỏ. Và biên của Sub-prime rất mỏng: nếu PD thật là 8% thay vì 6.5%, lãi suất hòa vốn lên 21.16%, tức hạng này lỗ ở mức 21%.
+Hai điều đáng chú ý. Chi phí vận hành, không phải tổn thất, là thành phần lớn nhất của Sub-prime: một khoản vay nhỏ, ngắn hạn phải gánh chi phí khởi tạo cố định trên một dư nợ bình quân nhỏ. Và biên của Sub-prime rất mỏng: nếu PD thật là 8% thay vì 6.5%, lãi suất hòa vốn lên 21.01%, tức hạng này lỗ nhẹ ở mức 21%.
 
 ### Hòa vốn cho từng hạng
 
@@ -170,10 +170,10 @@ Cùng một mô hình mô phỏng cho cả ba hạng, chỉ khác PD và chi ph�
 | Tổn thất dự kiến | 0.58% | 1.76% | 3.86% |
 | Chi phí vận hành | 3.91% | 4.39% | 8.28% |
 | Lợi nhuận vốn chủ | 2.70% | 2.70% | 2.70% |
-| Phí khởi tạo (giảm trừ) | −1.81% | −1.81% | −1.82% |
-| **Lãi suất hòa vốn (có ROE 18%)** | **12.61%** | **14.27%** | **20.25%** |
+| Phí thẩm định (giảm trừ) | −1.96% | −1.96% | −1.97% |
+| **Lãi suất hòa vốn (có ROE 18%)** | **12.46%** | **14.12%** | **20.10%** |
 | Lãi suất áp dụng | 15% | 18% | 21% |
-| Biên vượt ROE mục tiêu | +2.39 | +3.73 | +0.75 |
+| Biên vượt ROE mục tiêu | +2.54 | +3.88 | +0.90 |
 
 Cả ba hạng đều có lãi ở mức giá hiện tại, và Standard có biên tốt nhất. Đây là điều thường gặp: Prime bị cạnh tranh ép giá, Sub-prime bị chi phí vận hành và tổn thất ép biên, còn Standard là phần thân khỏe của danh mục.
 
@@ -182,7 +182,7 @@ Bảng này cũng cho thấy vì sao phải tính ở cấp danh mục chứ kh�
 **Khi nào chấp nhận một hạng có biên âm?** Nếu biên Sub-prime chuyển sang âm (ví dụ vì PD tăng), công ty có thể vẫn giữ hạng này với hai điều kiện: tổng danh mục vẫn có lãi nhờ Prime và Standard, và giá trị vòng đời của khách hàng Sub-prime dương vì một phần trong số họ sẽ trả tốt và "tốt nghiệp" lên Standard. Điều kiện thứ hai phải được đo, không phải giả định: theo dõi tỷ lệ tốt nghiệp, và tăng giá hoặc siết ngưỡng nếu nó thấp hơn mức đã đặt ra.
 
 :::summary[Mục 12.2]
-Lãi suất hòa vốn là tổng của chi phí vốn, tổn thất dự kiến, chi phí vận hành và lợi nhuận vốn chủ, trừ phần phí thu được, tất cả quy về phần trăm dư nợ bình quân mỗi năm. Với các giả định của Vela Finance, hòa vốn của Prime, Standard và Sub-prime lần lượt là 12.61%, 14.27% và 20.25%, nên các mức 15%, 18% và 21% đều có lãi, nhưng biên của Sub-prime rất mỏng và nhạy với PD. Tính ở cấp danh mục, và chỉ chấp nhận trợ giá chéo khi giá trị vòng đời được đo, không phải giả định.
+Lãi suất hòa vốn là tổng của chi phí vốn, tổn thất dự kiến, chi phí vận hành và lợi nhuận vốn chủ, trừ phần phí thu được, tất cả quy về phần trăm dư nợ bình quân mỗi năm. Với các giả định của Vela Finance, hòa vốn của Prime, Standard và Sub-prime lần lượt là 12.46%, 14.12% và 20.10%, nên các mức 15%, 18% và 21% đều có lãi, nhưng biên của Sub-prime rất mỏng và nhạy với PD. Tính ở cấp danh mục, và chỉ chấp nhận trợ giá chéo khi giá trị vòng đời được đo, không phải giả định.
 :::
 
 ## 12.3 Cạnh tranh và độ co giãn giá
@@ -201,18 +201,18 @@ Trị tuyệt đối lớn hơn 1 là co giãn (lượng cầu nhạy với giá
 Hiện tại: Prime 15%, giải ngân 5,000 khoản/tháng
 Độ co giãn ước tính: −1.8
 Lợi nhuận mỗi khoản vay (sau ROE mục tiêu, theo mô hình 12.2):
-  ở 14%: 142,036   ở 15%: 244,714   ở 16%: 347,691 VNĐ
+  ở 14%: 157,036   ở 15%: 259,714   ở 16%: 362,691 VNĐ
 
 Phương án A: hạ xuống 14% (−6.67%)
   Lượng: 5,000 × (1 + 1.8 × 6.67%) = 5,600 khoản
-  Lợi nhuận: 5,600 × 142,036 = 795 triệu VNĐ/tháng
+  Lợi nhuận: 5,600 × 157,036 = 879 triệu VNĐ/tháng
 
 Hiện tại: 15%
-  Lợi nhuận: 5,000 × 244,714 = 1,224 triệu VNĐ/tháng
+  Lợi nhuận: 5,000 × 259,714 = 1,299 triệu VNĐ/tháng
 
 Phương án B: tăng lên 16% (+6.67%)
   Lượng: 5,000 × (1 − 1.8 × 6.67%) = 4,400 khoản
-  Lợi nhuận: 4,400 × 347,691 = 1,530 triệu VNĐ/tháng
+  Lợi nhuận: 4,400 × 362,691 = 1,596 triệu VNĐ/tháng
 ```
 
 Trên giấy, tăng giá có lợi hơn dù mất 600 khoản mỗi tháng. Nhưng có ba lý do để thận trọng. Độ co giãn chỉ đúng quanh mức giá đã đo; xa hơn, khách hàng có thể bỏ đi hàng loạt khi đối thủ rẻ hơn rõ rệt. Những khách hàng ở lại sau khi tăng giá thường là những người ít lựa chọn hơn, tức rủi ro hơn, nên PD của Prime có thể tăng và xóa mất phần lợi. Và vị thế thị trường, hình ảnh thương hiệu là những chi phí không nằm trong bảng tính tháng này.
@@ -268,7 +268,7 @@ Quyết định (tháng 3/2025):
   Prime: giảm lãi suất từ 15.0% xuống 14.5% vì áp lực cạnh tranh
   Hiệu lực: 1/4/2025
   Lý do: đối thủ ra mắt 14.8%, đơn Prime đang giảm
-  Kiểm tra: hòa vốn của Prime 12.61% → vẫn còn biên ở 14.5%
+  Kiểm tra: hòa vốn của Prime 12.46% → vẫn còn biên ở 14.5%
 ```
 
 **Bước 2: chuyển thành cấu hình biểu phí**
@@ -426,7 +426,7 @@ LPS đã tính XIRR (lãi suất thực tế) cho mỗi kế hoạch trả góp,
 // }
 ```
 
-Điểm quan trọng là trần phải được kiểm tra trên APR (đã gồm phí), không phải lãi suất danh nghĩa. Khoản vay của chị Lan có lãi suất danh nghĩa 18% nhưng APR 19.94%; với một trần 19%, kiểm tra trên lãi suất danh nghĩa sẽ cho qua một khoản vay vi phạm.
+Điểm quan trọng là trần phải được kiểm tra trên APR (đã gồm phí), không phải lãi suất danh nghĩa. Khoản vay của chị Lan có lãi suất danh nghĩa 18% nhưng APR 20.10%; với một trần 20%, kiểm tra trên lãi suất danh nghĩa sẽ cho qua một khoản vay vi phạm.
 
 ### Dấu vết kiểm toán của định giá
 
@@ -460,7 +460,7 @@ Tình huống: khách hàng khiếu nại 18 tháng sau
   Có dấu vết kiểm toán:
     Tra quyết định định giá theo mã đơn vay
     Chứng minh: tại thời điểm phê duyệt, biểu phí nào đang hiệu lực
-    Chứng minh: APR đã công bố là 19.94%
+    Chứng minh: APR đã công bố là 20.10%
     → Chuỗi bằng chứng đầy đủ
 
   Không có dấu vết kiểm toán:
@@ -490,19 +490,19 @@ Kinh tế học của hạng Standard (mô hình 12.2):
   Tổn thất dự kiến:        1.76%
   Chi phí vận hành:        4.39%
   Lợi nhuận vốn chủ:       2.70%
-  Trừ phí khởi tạo:       −1.81%
-  Hòa vốn:                14.27%
-  Lãi suất áp dụng:       18.00% → biên 3.73 điểm phần trăm
+  Trừ phí thẩm định:      −1.96%
+  Hòa vốn:                14.12%
+  Lãi suất áp dụng:       18.00% → biên 3.88 điểm phần trăm
 
 Công bố cho khách hàng:
   Lãi suất danh nghĩa: 18%/năm
-  APR: 19.94%/năm (gồm phí khởi tạo 185,000 VNĐ)
+  APR: 20.10%/năm (gồm phí thẩm định 200,000 VNĐ)
   Khoản trả hằng tháng: 1,696,080 VNĐ (kỳ cuối 1,696,077)
   Tổng tiền lãi: 1,852,957 VNĐ
-  Tổng phải trả: 20,352,957 VNĐ, cộng phí 185,000 VNĐ
+  Tổng phải trả: 20,352,957 VNĐ, cộng phí 200,000 VNĐ
 
 Dấu vết: dựng lại được từ hợp đồng CTM + phiên bản biểu phí.
-Trần lãi suất: VLP chưa kiểm tra; nếu bổ sung, kiểm tra trên APR 19.94%.
+Trần lãi suất: VLP chưa kiểm tra; nếu bổ sung, kiểm tra trên APR 20.10%.
 
 Định giá không phải phỏng đoán. Mỗi con số đều có lý do.
 ```
@@ -590,7 +590,7 @@ Dữ liệu hiện có:
 Yêu cầu:
 (a) Mức giảm 16% có ý nghĩa thống kê không hay nằm trong biến động bình thường?
 (b) Tác động doanh thu của tình hình hiện tại so với trước khi đối thủ ra mắt
-(c) Ba phương án phản ứng, kèm phân tích lãi lỗ cho từng phương án (dùng hòa vốn Prime 12.61% làm sàn)
+(c) Ba phương án phản ứng, kèm phân tích lãi lỗ cho từng phương án (dùng hòa vốn Prime 12.46% làm sàn)
 (d) Khuyến nghị của bạn kèm đánh giá rủi ro
 (e) Dữ liệu nào giúp phân tích của bạn chắc chắn hơn?
 
