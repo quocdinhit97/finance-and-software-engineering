@@ -302,6 +302,31 @@ main[class*='docMainContainer'] .container { padding-top: 2.5rem; }
 
 @media (max-width: 996px) {
   .navbar { padding: 0 0.75rem; }
-  .navbar__title { display: none; }
   .navbar__search-input, [class*='searchBar'] input[class*='navbar__search-input'] { width: 11rem !important; }
+  /* keep the logo and the book name visible on small screens; the name may truncate */
+  .navbar__brand { margin-right: 0.75rem; min-width: 0; flex: 0 1 auto; overflow: hidden; }
+  .navbar__logo { flex: none; }
+  .navbar__title { display: block; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .navbar__items:not(.navbar__items--right) { min-width: 0; }
+  .navbar__items:not(.navbar__items--right) > [class*='searchBar'] { flex: none; margin-left: auto; margin-right: 0; }
+}
+/* Phones: search collapses to an icon button and expands over the book name when focused */
+@media (max-width: 600px) {
+  .navbar__search-input, [class*='searchBar'] input[class*='navbar__search-input'] {
+    width: 2.6rem !important;
+    padding-left: 2.4rem;
+    padding-right: 0;
+    background-position: center;
+    cursor: pointer;
+    transition: width 0.15s;
+  }
+  .navbar__search-input::placeholder { color: transparent; }
+  .navbar__search-input:focus, [class*='searchBar'] input[class*='navbar__search-input']:focus {
+    width: 12rem !important;
+    padding-right: 0.75rem;
+    background-position: 0.85rem center;
+    cursor: text;
+  }
+  .navbar__search-input:focus::placeholder { color: var(--book-muted); }
+  .navbar__inner:has(.navbar__search-input:focus) .navbar__title { display: none; }
 }

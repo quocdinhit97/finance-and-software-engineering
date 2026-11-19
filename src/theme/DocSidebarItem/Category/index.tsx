@@ -156,19 +156,20 @@ function PartLinkLabel({label, items}: {label: string; items: PropSidebarItemCat
   const m = PART_LABEL.exec(label);
   if (!m) return <CategoryLinkLabel label={label} />;
   const range = chapterRange(items);
+  // Badge and chapter range are drawn from data attributes with CSS pseudo-elements, so the
+  // link's text stays the plain label ("Phần I. Nền tảng"); the local search plugin indexes
+  // that text as the breadcrumb of every page in the part.
+  const meta = range
+    ? translate(
+        {id: 'sidebar.part.chapters', message: 'Chương {range}', description: 'Chapter range under a part title in the sidebar'},
+        {range},
+      )
+    : undefined;
   return (
-    <span className={styles.part}>
-      <span className={styles.partBadge} aria-hidden="true">{m[1]}</span>
-      <span className={styles.partText}>
+    <span className={styles.part} data-numeral={m[1]}>
+      <span className={styles.partText} data-meta={meta}>
+        <span className={styles.srOnly}>{label.slice(0, label.length - m[2].length)}</span>
         <span className={styles.partTitle}>{m[2]}</span>
-        {range && (
-          <span className={styles.partMeta}>
-            {translate(
-              {id: 'sidebar.part.chapters', message: 'Chương {range}', description: 'Chapter range under a part title in the sidebar'},
-              {range},
-            )}
-          </span>
-        )}
       </span>
     </span>
   );
