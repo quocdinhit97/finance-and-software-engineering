@@ -9,6 +9,7 @@ import rehypeKatex from 'rehype-katex';
 // BASE_URL in the deploy workflow (website/deploy/deploy.yml).
 const siteUrl = process.env.SITE_URL ?? 'http://localhost:3000';
 const baseUrl = process.env.BASE_URL ?? '/';
+const gaMeasurementId = process.env.GA_MEASUREMENT_ID?.trim() || undefined;
 const organizationName = process.env.GITHUB_OWNER ?? 'example';
 const projectName = process.env.GITHUB_REPO ?? 'kien-truc-tin-dung';
 
@@ -60,7 +61,7 @@ const config: Config = {
     {tagName: 'link', attributes: {rel: 'apple-touch-icon', sizes: '180x180', href: `${baseUrl}img/apple-touch-icon.png`}},
   ],
 
-  clientModules: ['./src/clientModules/mermaidFix.ts'],
+  clientModules: ['./src/clientModules/mermaidFix.ts', './src/clientModules/readingAnalytics.ts'],
 
   themes: [
     '@docusaurus/theme-mermaid',
@@ -97,6 +98,10 @@ const config: Config = {
           breadcrumbs: false,
         },
         blog: false,
+        // Google Analytics 4 via @docusaurus/plugin-google-gtag. Enabled only when the
+        // build has GA_MEASUREMENT_ID (G-XXXXXXXXXX), set as a GitHub Actions repository
+        // variable for the deploy workflow; local builds and `npm start` send nothing.
+        gtag: gaMeasurementId ? {trackingID: gaMeasurementId, anonymizeIP: true} : undefined,
         theme: {
           customCss: ['./src/css/fonts.css', './src/css/custom.css'],
         },
