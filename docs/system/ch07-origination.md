@@ -676,12 +676,12 @@ QCE internal flow:
   1. Load product configuration + eligibility rules
      → Tier STANDARD cho product này: rate = 18%/năm
      → Available tenors: 6, 12, 18, 24 months
-     → Origination fee: 1% (185,000 VNĐ, trừ vào tiền giải ngân)
+     → Phí thẩm định: 200,000 VNĐ (trừ vào tiền giải ngân)
 
   2. Call LPS để tính instalment plan cho mỗi tenor:
      QCE → LPS: POST /api/v3/calculators/instalment-plan/by-offer-code
      LPS → QCE: {annuityAmount: 1,696,080, totalRepayment: 20,352,957,
-                 xirr (APR, gồm phí thẩm định): ≈ 19.94%}
+                 xirr (APR, gồm phí thẩm định): ≈ 20.10%}
 
   3. Apply business rules:
      → Check: DTI (1,696,080 / 22,000,000 = 7.7%) < max 40% → OK
@@ -694,7 +694,7 @@ QCE internal flow:
 QCE → LOS: formatted quote package (InstalmentPlansDto)
 ```
 
-APR 19.94% là IRR của dòng tiền chị Lan thực nhận (18,315,000 VNĐ sau khi trừ phí thẩm định) và thực trả (12 kỳ theo lịch), nhân với 12, theo đúng phương pháp ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending). Như [Chương 12](/docs/intelligence/ch12-risk-based-pricing) sẽ phân tích, LPS tính được XIRR nhưng VLP hiện chưa có bước tự động kiểm tra trần chi phí tín dụng; việc đó đang dựa vào cấu hình sản phẩm.
+APR 20.10% là IRR của dòng tiền chị Lan thực nhận (18,300,000 VNĐ sau khi trừ phí thẩm định) và thực trả (12 kỳ theo lịch), nhân với 12, theo đúng phương pháp ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending). Như [Chương 12](/docs/intelligence/ch12-risk-based-pricing) sẽ phân tích, LPS tính được XIRR nhưng VLP hiện chưa có bước tự động kiểm tra trần chi phí tín dụng; việc đó đang dựa vào cấu hình sản phẩm.
 
 Vì sao cần QCE, thay vì để LOS gọi thẳng LPS:
 
@@ -774,11 +774,11 @@ Cách hóa giải thiên kiến: hiển thị đầy đủ
   ┌─────────────────────────────────────────────┐
   │ Khoản vay: 18,500,000 VNĐ                   │
   │ Kỳ hạn: 12 tháng                            │
-  │ Lãi suất: 18%/năm (APR: 19.94%)             │
+  │ Lãi suất: 18%/năm (APR: 20.10%)             │
   │ Số tiền trả hàng tháng: 1,696,080 VNĐ       │
   │ Tổng tiền phải trả: 20,352,957 VNĐ          │
   │ Tổng lãi phải trả: 1,852,957 VNĐ            │
-  │ Phí thẩm định: 185,000 VNĐ (một lần)        │
+  │ Phí thẩm định: 200,000 VNĐ (một lần)        │
   │ ─────────────────────────────────────────── │
   │ Bạn cần 1,696,080 VNĐ/tháng                 │
   │ (= 7.7% thu nhập hàng tháng của bạn)        │
@@ -1189,7 +1189,7 @@ Bốn phút khởi tạo khoản vay của chị Lan:
           Quy tắc chính sách: PASS
 
 10h15:10  Tính đề nghị vay:
-          QCE → LPS: 18%/năm, PMT 1,696,080 VNĐ/tháng, APR 19.94%
+          QCE → LPS: 18%/năm, PMT 1,696,080 VNĐ/tháng, APR 20.10%
           Phương án thay thế 24 tháng
 
 10h17:00  Chị Lan xem đề nghị và đồng ý

@@ -9,3 +9,6 @@ system/ch09-billing-cycle.md
 system/ch06-financial-system-architecture.md
 system/ch07-origination.md
 system/ch10-collections.md
+intelligence/ch11-credit-scoring.md
+intelligence/ch12-risk-based-pricing.md
+intelligence/ch13-behavioral-economics.md
