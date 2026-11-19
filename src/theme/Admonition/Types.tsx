@@ -10,13 +10,15 @@ interface Props {
 
 function Callout({kind, label, title, children}: Props & {kind: 'summary' | 'story' | 'key'; label: string}) {
   return (
-    <aside className={`${styles.callout} ${styles[kind]}`} aria-label={typeof title === 'string' ? title : label}>
+    // role="note", not <aside>: callouts are part of the text, not page landmarks,
+    // and a page has many of them with the same label.
+    <div role="note" className={`${styles.callout} ${styles[kind]}`} aria-label={typeof title === 'string' ? `${label}: ${title}` : label}>
       <div className={styles.header}>
         <span className={styles.label}>{label}</span>
         {title && <span className={styles.title}>{title}</span>}
       </div>
       <div className={styles.body}>{children}</div>
-    </aside>
+    </div>
   );
 }
 

@@ -1,0 +1,994 @@
+[
+ {
+  "term": "Account Management",
+  "alt": "Vietnamese: quản lý tài khoản",
+  "def": "The part of the system that manages the account lifecycle after the loan is disbursed: tracking balances, calculating interest, processing payments, producing statements. In VLP this is the LAS module.",
+  "anchor": "account-management",
+  "exact": [],
+  "loose": [
+   "Account Management"
+  ]
+ },
+ {
+  "term": "Adverse Selection",
+  "alt": "Vietnamese: lựa chọn bất lợi",
+  "def": "When a product attracts a higher than normal share of risky customers. It happens when price does not distinguish risk: high-risk customers come because the price is cheap relative to their risk, and low-risk customers leave because it is expensive relative to theirs.",
+  "anchor": "adverse-selection",
+  "exact": [],
+  "loose": [
+   "Adverse Selection"
+  ]
+ },
+ {
+  "term": "Affordability Assessment",
+  "alt": "Vietnamese: đánh giá khả năng chi trả",
+  "def": "The process of determining whether a customer can really repay the loan without undue difficulty, as distinct from checking eligibility. It covers income verification, listing existing obligations, a residual income check and a stress test.",
+  "anchor": "affordability-assessment",
+  "exact": [],
+  "loose": [
+   "Affordability Assessment"
+  ]
+ },
+ {
+  "term": "Alternative Data",
+  "alt": "Vietnamese: dữ liệu thay thế",
+  "def": "Data that does not come from a traditional credit bureau: mobile operator data, e-wallet transactions, bill payment history, in-app behaviour. Used to score thin-file customers, and only with explicit consent.",
+  "anchor": "alternative-data",
+  "exact": [],
+  "loose": [
+   "Alternative Data"
+  ]
+ },
+ {
+  "term": "Amortization",
+  "alt": "Vietnamese: trả dần (khấu hao khoản vay)",
+  "def": "Paying down principal over time. With an equal-instalment loan, each instalment contains a portion of principal and a portion of interest; the interest share is largest at the start and the principal share grows over time.",
+  "anchor": "amortization",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "AOS",
+  "alt": "Supplement · Vietnamese: sản phẩm bổ sung",
+  "def": "The module managing add-on products attached to a loan contract (insurance, warranties, payment protection). Lifecycle: INITIAL → REGISTERED → ACTIVE → TERMINATED; activated when LAS emits the FIRST_PRINCIPAL_TX_CHARGED event.",
+  "anchor": "aos",
+  "exact": [
+   "AOS"
+  ],
+  "loose": []
+ },
+ {
+  "term": "APR",
+  "alt": "Annual Percentage Rate · Vietnamese: lãi suất phần trăm năm",
+  "def": "The annual cost of credit, including every mandatory fee rather than just the nominal rate. In this book, APR = the monthly IRR × 12 (no compounding); the compounded measure is the EIR. Lan's loan has a nominal rate of 18% but an APR of 20.10% because of the 200,000 VND appraisal fee.",
+  "anchor": "apr",
+  "exact": [
+   "APR"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Auto-debit",
+  "alt": "Vietnamese: trích nợ tự động",
+  "def": "A mechanism that automatically debits the customer's account on the due date. When direct debit is on by default (customers can turn it off), usage at Vela Finance is 82%, against 45% when customers have to sign up themselves.",
+  "anchor": "auto-debit",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Banking-as-a-Service",
+  "alt": "BaaS · Vietnamese: ngân hàng như một dịch vụ",
+  "def": "A model providing financial infrastructure (licence, core banking, compliance) to third parties via API, so fintechs can build financial products without holding a banking licence themselves.",
+  "anchor": "banking-as-a-service",
+  "exact": [
+   "BaaS"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Behavioral Score",
+  "alt": "Vietnamese: điểm hành vi",
+  "def": "A credit score calculated from behavioural data (app usage, payment habits, mobile operator data) rather than bureau data alone. Especially useful for thin-file customers.",
+  "anchor": "behavioral-score",
+  "exact": [],
+  "loose": [
+   "Behavioral Score"
+  ]
+ },
+ {
+  "term": "β-δ Model",
+  "alt": "Quasi-hyperbolic discounting · Vietnamese: mô hình β-δ",
+  "def": "Laibson's (1997) model of present bias: every future benefit is discounted by an extra factor β < 1, while the present is not; δ is the ordinary time discount factor.",
+  "anchor": "β-δ-model",
+  "exact": [],
+  "loose": [
+   "β-δ Model"
+  ]
+ },
+ {
+  "term": "Billing Cycle",
+  "alt": "Vietnamese: chu kỳ billing",
+  "def": "The monthly loop: interest and fees accrue, EOM creates the instalment and the statement, the payment falls due, the payment is received and matched, and DPD is tracked if it is unpaid.",
+  "anchor": "billing-cycle",
+  "exact": [],
+  "loose": [
+   "Billing Cycle"
+  ]
+ },
+ {
+  "term": "BNPL",
+  "alt": "Buy Now Pay Later · Vietnamese: mua trước trả sau",
+  "def": "A form of credit that lets people buy now and pay in instalments later, usually 3-6 instalments, often at a nominal 0% interest. Revenue comes from merchant fees and, in many markets, from a \"processing fee\" charged to the buyer.",
+  "anchor": "bnpl",
+  "exact": [
+   "BNPL"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Bureau",
+  "alt": "Vietnamese: trung tâm thông tin tín dụng",
+  "def": "An organization that collects and provides credit histories. In Vietnam this is the CIC (National Credit Information Centre); internationally there are Experian, TransUnion and Equifax.",
+  "anchor": "bureau",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "CAC",
+  "alt": "Customer Acquisition Cost · Vietnamese: chi phí thu hút khách hàng",
+  "def": "The total cost of gaining a new customer: marketing, sales, file processing. CAC determines the minimum loan amount for a loan to be profitable.",
+  "anchor": "cac",
+  "exact": [
+   "CAC"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Calibration",
+  "alt": "Vietnamese: hiệu chuẩn mô hình",
+  "def": "Checking whether predicted probabilities match actual rates. For example, customers with 420 points are predicted to have a PD of 2.4%; if their actual default rate is around 2.4%, the model is well calibrated.",
+  "anchor": "calibration",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "CLV",
+  "alt": "Customer Lifetime Value · Vietnamese: giá trị vòng đời khách hàng",
+  "def": "The present value of the net profit a customer brings over the whole relationship: the sum over years of that year's profit times the probability the customer is still there, discounted to the present.",
+  "anchor": "clv",
+  "exact": [
+   "CLV"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Cognitive Load",
+  "alt": "Vietnamese: tải nhận thức",
+  "def": "The mental effort needed to process information and make a decision. High cognitive load pushes people towards System 1 thinking and lowers the quality of financial decisions.",
+  "anchor": "cognitive-load",
+  "exact": [],
+  "loose": [
+   "Cognitive Load"
+  ]
+ },
+ {
+  "term": "Collections",
+  "alt": "Vietnamese: thu hồi nợ",
+  "def": "The process of contacting, negotiating with and recovering debt from overdue customers, from early reminders, payment arrangements and hardship support to litigation or debt sale.",
+  "anchor": "collections",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Commitment Device",
+  "alt": "Vietnamese: cơ chế cam kết",
+  "def": "A mechanism that lets people voluntarily limit their future choices to keep to their present intentions. Examples: a savings lock, a pledge to use a bonus to pay down debt.",
+  "anchor": "commitment-device",
+  "exact": [],
+  "loose": [
+   "Commitment Device"
+  ]
+ },
+ {
+  "term": "Concentration Risk",
+  "alt": "Vietnamese: rủi ro tập trung",
+  "def": "The risk of a portfolio depending too heavily on one sector, one employer or one region. When that point of concentration takes a shock, the whole portfolio is hit at once.",
+  "anchor": "concentration-risk",
+  "exact": [],
+  "loose": [
+   "Concentration Risk"
+  ]
+ },
+ {
+  "term": "ContractService",
+  "alt": "Vietnamese: dịch vụ hợp đồng",
+  "def": "The entity linking an account to a tariff code and version, which determines the interest rate and fees applying to that account.",
+  "anchor": "contractservice",
+  "exact": [
+   "ContractService"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Cost of Funds",
+  "alt": "Vietnamese: chi phí vốn",
+  "def": "What the lender pays to raise the money it lends: bank borrowing costs, bond yields. The equity portion is accounted for through the target ROE. The book's examples use 8.5%/year for the debt portion.",
+  "anchor": "cost-of-funds",
+  "exact": [],
+  "loose": [
+   "Cost of Funds"
+  ]
+ },
+ {
+  "term": "Credit Score",
+  "alt": "Vietnamese: điểm tín dụng",
+  "def": "A single number summarizing a customer's credit risk, calculated from payment history, balances, length of credit history, credit mix and recent inquiries.",
+  "anchor": "credit-score",
+  "exact": [],
+  "loose": [
+   "Credit Score"
+  ]
+ },
+ {
+  "term": "Credit Utilization",
+  "alt": "Vietnamese: tỷ lệ sử dụng hạn mức",
+  "def": "The balance divided by the credit limit. A high ratio is a sign of financial stress; it is one of the components of the FICO score.",
+  "anchor": "credit-utilization",
+  "exact": [],
+  "loose": [
+   "Credit Utilization"
+  ]
+ },
+ {
+  "term": "CurrentBalance",
+  "alt": "Vietnamese: số dư hiện tại",
+  "def": "The LAS entity tracking an account's current balance by type: principal, interest, fees, penalties.",
+  "anchor": "currentbalance",
+  "exact": [
+   "CurrentBalance"
+  ],
+  "loose": []
+ },
+ {
+  "term": "30/360",
+  "alt": "30/360 day count · Vietnamese: quy ước ngày 30/360",
+  "def": "The interest convention used in VLP's examples: every month counts as 30 days and the year as 360, so one full month's interest = balance × annual rate / 12. Unlike Actual/365, which uses actual days. Configured through AnnualRateDayCount.D30_360 in the tariff.",
+  "anchor": "30360",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Dark Pattern",
+  "alt": "Vietnamese: mẫu thiết kế lừa dối",
+  "def": "An interface design that deliberately leads users towards decisions not in their interest: fake countdown timers, hidden fees, hard-to-find decline buttons.",
+  "anchor": "dark-pattern",
+  "exact": [],
+  "loose": [
+   "Dark Pattern"
+  ]
+ },
+ {
+  "term": "Data Drift",
+  "alt": "Vietnamese: drift dữ liệu",
+  "def": "A change over time in the distribution of input data. A PSI above 0.25 is a major change, and the model may no longer be valid.",
+  "anchor": "data-drift",
+  "exact": [],
+  "loose": [
+   "Data Drift"
+  ]
+ },
+ {
+  "term": "Debt Stacking",
+  "alt": "Vietnamese: chồng nợ",
+  "def": "A customer having several BNPL plans or loans with several providers, each of which sees only part of the picture. The real DTI is higher than any single provider knows.",
+  "anchor": "debt-stacking",
+  "exact": [],
+  "loose": [
+   "Debt Stacking"
+  ]
+ },
+ {
+  "term": "Default",
+  "alt": "Vietnamese: vỡ nợ",
+  "def": "Usually defined as DPD 90+ at any point in an observation window (e.g. 24 months). It can be stricter (write-off) or looser (DPD 30+) depending on the purpose.",
+  "anchor": "default",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Delinquency",
+  "alt": "Vietnamese: quá hạn",
+  "def": "The state of a loan that is past due but not yet in default, usually DPD 1-89.",
+  "anchor": "delinquency",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Disparate Impact",
+  "alt": "Vietnamese: tác động bất lợi",
+  "def": "A policy that is neutral in form but affects a protected group disproportionately, even without any intent to discriminate.",
+  "anchor": "disparate-impact",
+  "exact": [],
+  "loose": [
+   "Disparate Impact"
+  ]
+ },
+ {
+  "term": "DPD",
+  "alt": "Days Past Due · Vietnamese: số ngày quá hạn",
+  "def": "The number of days since the due date of the earliest unpaid overdue instalment. DPD 0 means current. A key metric for collections, loan classification and IFRS 9.",
+  "anchor": "dpd",
+  "exact": [
+   "DPD"
+  ],
+  "loose": []
+ },
+ {
+  "term": "DSA",
+  "alt": "Data Source Aggregator",
+  "def": "The module that aggregates data from many internal systems into XML for document generation (contracts, annexes). It is not a disbursement module. Plugin architecture with providers such as AgreementDataSourceProvider and ContractDataSourceProvider.",
+  "anchor": "dsa",
+  "exact": [
+   "DSA"
+  ],
+  "loose": []
+ },
+ {
+  "term": "DTI",
+  "alt": "Debt-to-Income · Vietnamese: tỷ lệ nợ trên thu nhập",
+  "def": "Total monthly debt obligations divided by monthly income. Lan's loan has a DTI of 7.7% (1,696,080 / 22,000,000).",
+  "anchor": "dti",
+  "exact": [
+   "DTI"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Dual-Process Theory",
+  "alt": "Vietnamese: lý thuyết hai hệ tư duy",
+  "def": "Kahneman's framework: System 1 is fast, automatic and intuitive; System 2 is slow, deliberate and logical. Financial decisions are often driven by System 1.",
+  "anchor": "dual-process-theory",
+  "exact": [],
+  "loose": [
+   "Dual-Process Theory"
+  ]
+ },
+ {
+  "term": "EAD",
+  "alt": "Exposure at Default · Vietnamese: dư nợ tại thời điểm vỡ nợ",
+  "def": "The amount still owed when the customer defaults. For an instalment loan, EAD is usually the remaining principal balance at that point, which is less than the original loan amount.",
+  "anchor": "ead",
+  "exact": [
+   "EAD"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Early Warning System",
+  "alt": "Vietnamese: hệ thống cảnh báo sớm",
+  "def": "A system that detects customers at risk of not repaying before DPD appears, so intervention can start early, in tiers from a gentle reminder to hardship support.",
+  "anchor": "early-warning-system",
+  "exact": [],
+  "loose": [
+   "Early Warning System"
+  ]
+ },
+ {
+  "term": "Effective Interest Rate",
+  "alt": "EIR · Vietnamese: lãi suất thực tế",
+  "def": "The compounded annual rate corresponding to the periodic IRR: EIR = (1 + monthly IRR)^12 − 1. Always higher than the APR (= monthly IRR × 12) when the IRR is positive.",
+  "anchor": "effective-interest-rate",
+  "exact": [
+   "EIR"
+  ],
+  "loose": [
+   "Effective Interest Rate"
+  ]
+ },
+ {
+  "term": "EL",
+  "alt": "Expected Loss · Vietnamese: tổn thất dự kiến",
+  "def": "EL = PD × LGD × EAD. The average expected loss, built into the product price: it is a priced-in cost, not a risk.",
+  "anchor": "el",
+  "exact": [
+   "EL"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Embedded Finance",
+  "alt": "Vietnamese: tài chính nhúng",
+  "def": "Integrating financial products into non-financial platforms, so customers use credit in context (at checkout, when booking a service) without switching to a financial app.",
+  "anchor": "embedded-finance",
+  "exact": [],
+  "loose": [
+   "Embedded Finance"
+  ]
+ },
+ {
+  "term": "EMI",
+  "alt": "Equated Monthly Instalment · Vietnamese: khoản trả góp đều hằng tháng",
+  "def": "The fixed amount paid each month, consisting of a portion of principal and a portion of interest, calculated with the PMT formula. Lan's loan has an EMI of 1,696,080 VND.",
+  "anchor": "emi",
+  "exact": [
+   "EMI"
+  ],
+  "loose": []
+ },
+ {
+  "term": "EOM",
+  "alt": "End of Month · Vietnamese: xử lý cuối tháng",
+  "def": "The end-of-period batch job: calculating interest, creating instalments, charging fees, generating statement data, updating balances. In VLP it runs in parallel by partition.",
+  "anchor": "eom",
+  "exact": [
+   "EOM"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Feature Drift",
+  "alt": "Vietnamese: drift của biến đầu vào",
+  "def": "A form of data drift: the distribution of an input feature changes over time, measured by the PSI of each feature.",
+  "anchor": "feature-drift",
+  "exact": [],
+  "loose": [
+   "Feature Drift"
+  ]
+ },
+ {
+  "term": "Feature Engineering",
+  "alt": "Vietnamese: xây dựng biến đầu vào",
+  "def": "Turning raw data into features suitable for a model: WOE transformations, ratios, time windows.",
+  "anchor": "feature-engineering",
+  "exact": [],
+  "loose": [
+   "Feature Engineering"
+  ]
+ },
+ {
+  "term": "Feature Store",
+  "alt": "Vietnamese: kho biến đầu vào",
+  "def": "Infrastructure for computing, storing and serving input features to models: centralized, versioned, point-in-time correct, consistent between training and serving.",
+  "anchor": "feature-store",
+  "exact": [],
+  "loose": [
+   "Feature Store"
+  ]
+ },
+ {
+  "term": "FICO Score",
+  "alt": "Vietnamese: điểm FICO",
+  "def": "The most widely used credit score in the US, from the Fair Isaac Corporation, on a 300-850 scale. Five groups of factors: payment history 35%, amounts owed 30%, length of history 15%, credit mix 10%, new credit 10%.",
+  "anchor": "fico-score",
+  "exact": [
+   "FICO"
+  ],
+  "loose": [
+   "FICO Score"
+  ]
+ },
+ {
+  "term": "Fraud",
+  "alt": "Vietnamese: gian lận",
+  "def": "Deliberately giving false information to obtain credit. Forms include application fraud, identity theft, synthetic identities, velocity fraud and AI-generated documents.",
+  "anchor": "fraud",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Gini Coefficient",
+  "alt": "Vietnamese: hệ số Gini",
+  "def": "A measure of a credit model's discriminatory power: Gini = 2 × AUROC − 1, on a 0-1 scale. Above 0.45 is usually considered acceptable, above 0.60 good. Gini measures ranking ability, not the percentage of defaults explained.",
+  "anchor": "gini-coefficient",
+  "exact": [
+   "Gini"
+  ],
+  "loose": [
+   "Gini Coefficient"
+  ]
+ },
+ {
+  "term": "Grace Period",
+  "alt": "Vietnamese: thời gian ân hạn",
+  "def": "A period after the due date during which payment is still accepted without a late fee. Its length is a product configuration parameter.",
+  "anchor": "grace-period",
+  "exact": [],
+  "loose": [
+   "Grace Period"
+  ]
+ },
+ {
+  "term": "Hallucination",
+  "alt": "Vietnamese: bịa thông tin (của LLM)",
+  "def": "When an LLM produces content that is wrong but sounds convincing. Especially dangerous in finance (wrong figures, wrong policies). Mitigated with RAG and the rule that every number must come from the database.",
+  "anchor": "hallucination",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Hardship Program",
+  "alt": "Vietnamese: chương trình hỗ trợ khó khăn",
+  "def": "Solutions for customers in financial difficulty: payment holidays, term extensions, temporary rate reductions. The aim is to help the customer cure and keep the relationship, rather than collecting at any cost.",
+  "anchor": "hardship-program",
+  "exact": [],
+  "loose": [
+   "Hardship Program"
+  ]
+ },
+ {
+  "term": "Hyperbolic Discounting",
+  "alt": "Vietnamese: chiết khấu hyperbol",
+  "def": "The tendency to overweight short-term benefits and costs relative to long-term ones. It explains why people \"always plan to start saving next month\". See the β-δ Model.",
+  "anchor": "hyperbolic-discounting",
+  "exact": [],
+  "loose": [
+   "Hyperbolic Discounting"
+  ]
+ },
+ {
+  "term": "Idempotency",
+  "alt": "Vietnamese: tính lũy đẳng",
+  "def": "Performing an operation once or many times gives the same result. Mandatory for payment APIs and batch jobs to avoid duplicate charges or disbursements.",
+  "anchor": "idempotency",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "IFRS 9",
+  "alt": "International Financial Reporting Standard 9 · Vietnamese: chuẩn mực báo cáo tài chính quốc tế số 9",
+  "def": "The accounting standard for financial instruments, requiring provisions based on expected credit loss (ECL) in three stages: Stage 1 (performing, 12-month ECL), Stage 2 (significant increase in credit risk, lifetime ECL), Stage 3 (credit-impaired, lifetime ECL).",
+  "anchor": "ifrs-9",
+  "exact": [
+   "IFRS 9"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Infinispan",
+  "alt": "Vietnamese: bộ nhớ đệm phân tán Infinispan",
+  "def": "A distributed in-memory cache. In VLP, LOS uses embedded Infinispan to hold workflow state between asynchronous steps, with 7 named caches: zeebeChooseOfferCache, chooseOfferCache, loanPurposeCache, generateAgreementCache, signAgreementCache, rejectSupplementCache, cancelSupplementCache.",
+  "anchor": "infinispan",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Information Value",
+  "alt": "IV · Vietnamese: giá trị thông tin",
+  "def": "A measure of a variable's predictive power in credit scoring. IV < 0.02: no value; 0.02-0.10: weak; 0.10-0.30: medium; > 0.30: strong; > 0.50: suspiciously strong, check for data leakage.",
+  "anchor": "information-value",
+  "exact": [],
+  "loose": [
+   "Information Value"
+  ]
+ },
+ {
+  "term": "InstalmentSummary",
+  "alt": "Vietnamese: tổng hợp kỳ trả góp",
+  "def": "A denormalized aggregate entity in LAS summarizing an account's instalment plan. It may only be refreshed after every child instalment has been saved (see bug VLP-670 in Chapter 16).",
+  "anchor": "instalmentsummary",
+  "exact": [
+   "InstalmentSummary"
+  ],
+  "loose": []
+ },
+ {
+  "term": "IRR",
+  "alt": "Internal Rate of Return · Vietnamese: tỷ suất hoàn vốn nội bộ",
+  "def": "The discount rate at which the net present value of all cash flows is zero. Used to calculate the APR and EIR from the cash the customer actually receives and pays.",
+  "anchor": "irr",
+  "exact": [
+   "IRR"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Judgmental Lending",
+  "alt": "Vietnamese: cho vay theo phán đoán",
+  "def": "Traditional lending based on a loan officer's judgement: inconsistent, unscalable, with hidden bias and no audit trail. Gradually replaced by statistical scoring.",
+  "anchor": "judgmental-lending",
+  "exact": [],
+  "loose": [
+   "Judgmental Lending"
+  ]
+ },
+ {
+  "term": "KS Statistic",
+  "alt": "Kolmogorov-Smirnov · Vietnamese: chỉ số Kolmogorov-Smirnov",
+  "def": "The largest gap between the cumulative distributions of good and bad customers by score: KS = max(cumulative %Bad − cumulative %Good). KS > 30% is good.",
+  "anchor": "ks-statistic",
+  "exact": [
+   "KS"
+  ],
+  "loose": [
+   "KS Statistic"
+  ]
+ },
+ {
+  "term": "LGD",
+  "alt": "Loss Given Default · Vietnamese: tỷ lệ tổn thất khi vỡ nợ",
+  "def": "The share of EAD the lender actually loses after recoveries: LGD = 1 − recovery rate. Typically 55-70% for unsecured consumer loans; the book's examples use 62%.",
+  "anchor": "lgd",
+  "exact": [
+   "LGD"
+  ],
+  "loose": []
+ },
+ {
+  "term": "LLM",
+  "alt": "Large Language Model · Vietnamese: mô hình ngôn ngữ lớn",
+  "def": "An AI model trained on very large amounts of text that understands and generates text. In lending: document processing, customer service, knowledge management, always with guardrails against hallucination.",
+  "anchor": "llm",
+  "exact": [
+   "LLM"
+  ],
+  "loose": []
+ },
+ {
+  "term": "LOS",
+  "alt": "Loan Origination Service",
+  "def": "The stateless loan origination orchestrator: it receives the application, calls the modules for checks, scoring and pricing, then creates the contract and account. Uses async controllers and Infinispan, not a BPMN engine, for the main flow.",
+  "anchor": "los",
+  "exact": [
+   "LOS"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Loss Aversion",
+  "alt": "Vietnamese: né tránh mất mát",
+  "def": "Losses hurt more than equal gains please. As estimated by Tversky and Kahneman (1992), λ ≈ 2.25: losing 100,000 feels as bad as gaining about 225,000 feels good. Used when designing payment reminder messages, provided the numbers are true.",
+  "anchor": "loss-aversion",
+  "exact": [],
+  "loose": [
+   "Loss Aversion"
+  ]
+ },
+ {
+  "term": "Mental Accounting",
+  "alt": "Vietnamese: kế toán tâm lý",
+  "def": "The tendency to treat money differently according to its mental \"account\" (salary, bonus, savings). Bonus money is usually spent faster than the same amount of salary (Thaler).",
+  "anchor": "mental-accounting",
+  "exact": [],
+  "loose": [
+   "Mental Accounting"
+  ]
+ },
+ {
+  "term": "Model Risk",
+  "alt": "Vietnamese: rủi ro mô hình",
+  "def": "The risk of using a wrong model, or using a right model wrongly: model errors, implementation errors, misuse. Governed by a three-layer MRM framework: development validation, independent validation, ongoing monitoring.",
+  "anchor": "model-risk",
+  "exact": [],
+  "loose": [
+   "Model Risk"
+  ]
+ },
+ {
+  "term": "Moral Hazard",
+  "alt": "Vietnamese: rủi ro đạo đức",
+  "def": "When shielded from the consequences, people tend to take more risk. In lending: a borrower who has received the money may misuse it; a guaranteed lender may lend too recklessly.",
+  "anchor": "moral-hazard",
+  "exact": [],
+  "loose": [
+   "Moral Hazard"
+  ]
+ },
+ {
+  "term": "Net Interest Margin",
+  "alt": "NIM · Vietnamese: biên lãi ròng",
+  "def": "The difference between interest income from lending and the interest cost of funding, divided by average interest-earning assets. A basic measure of a lender's profitability.",
+  "anchor": "net-interest-margin",
+  "exact": [
+   "NIM"
+  ],
+  "loose": [
+   "Net Interest Margin"
+  ]
+ },
+ {
+  "term": "NPL",
+  "alt": "Non-Performing Loan · Vietnamese: nợ xấu",
+  "def": "In Vietnam, debt in groups 3 to 5 under Circular 31/2024/TT-NHNN, essentially more than 90 days overdue. NPL ratio = NPLs / total loans.",
+  "anchor": "npl",
+  "exact": [
+   "NPL"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Nudge",
+  "alt": "Vietnamese: cú hích",
+  "def": "A small, non-coercive design intervention that steers behaviour in the desired direction. The default option is the most powerful nudge (Thaler and Sunstein, 2008).",
+  "anchor": "nudge",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Open Banking",
+  "alt": "Vietnamese: ngân hàng mở",
+  "def": "A framework letting customers share their financial data with third parties via API with consent, enabling better credit assessment and boosting competition. In Vietnam there is Circular 64/2024/TT-NHNN on Open API.",
+  "anchor": "open-banking",
+  "exact": [],
+  "loose": [
+   "Open Banking"
+  ]
+ },
+ {
+  "term": "Optimism Bias",
+  "alt": "Vietnamese: thiên kiến lạc quan",
+  "def": "The tendency to overestimate the chance of good things and underestimate the chance of bad things happening to oneself. Borrowers underestimate the risk of having difficulty repaying.",
+  "anchor": "optimism-bias",
+  "exact": [],
+  "loose": [
+   "Optimism Bias"
+  ]
+ },
+ {
+  "term": "Payment Holiday",
+  "alt": "Vietnamese: hoãn thanh toán",
+  "def": "Letting the customer pause payments for a number of periods (usually 1-3 months), with due dates moved later. Whether interest keeps accruing or is waived depends on configuration (the payholInterestWaiving flag in VLP).",
+  "anchor": "payment-holiday",
+  "exact": [],
+  "loose": [
+   "Payment Holiday"
+  ]
+ },
+ {
+  "term": "PD",
+  "alt": "Probability of Default · Vietnamese: xác suất vỡ nợ",
+  "def": "The probability that a customer defaults within a given period. PD × LGD × EAD = EL.",
+  "anchor": "pd",
+  "exact": [
+   "PD"
+  ],
+  "loose": []
+ },
+ {
+  "term": "PMT",
+  "alt": "Periodic payment · Vietnamese: khoản trả mỗi kỳ",
+  "def": "The amount paid each period on an equal-instalment loan: PMT = P × r(1+r)^n / ((1+r)^n − 1), where r is the periodic rate. Lan's loan: PMT = 1,696,080 VND, with the final instalment adjusted for rounding to 1,696,077.",
+  "anchor": "pmt",
+  "exact": [
+   "PMT"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Present Bias",
+  "alt": "Vietnamese: thiên kiến hiện tại",
+  "def": "The tendency to overweight immediate benefits and costs relative to the future, leading to too much borrowing and too little saving. See the β-δ Model.",
+  "anchor": "present-bias",
+  "exact": [],
+  "loose": [
+   "Present Bias"
+  ]
+ },
+ {
+  "term": "Propensity Model",
+  "alt": "Vietnamese: mô hình xu hướng",
+  "def": "An ML model estimating how likely a customer is to respond (accept an offer, buy a product). It should be combined with risk so as not to target people who are in a hurry.",
+  "anchor": "propensity-model",
+  "exact": [],
+  "loose": [
+   "Propensity Model"
+  ]
+ },
+ {
+  "term": "Prospect Theory",
+  "alt": "Vietnamese: thuyết triển vọng",
+  "def": "Kahneman and Tversky (1979): people judge outcomes as changes relative to a reference point, not by absolute value, and losses weigh more than equivalent gains.",
+  "anchor": "prospect-theory",
+  "exact": [],
+  "loose": [
+   "Prospect Theory"
+  ]
+ },
+ {
+  "term": "PSI",
+  "alt": "Population Stability Index · Vietnamese: chỉ số ổn định tập khách hàng",
+  "def": "A measure of distribution change between training data and current data. PSI < 0.10: stable; 0.10-0.25: moderate change, monitor closely; > 0.25: major change, review the model.",
+  "anchor": "psi",
+  "exact": [
+   "PSI"
+  ],
+  "loose": []
+ },
+ {
+  "term": "QST",
+  "alt": "Quote Store",
+  "def": "The module that stores and manages the lifecycle of quotes produced by QCE. Its main entity is the SalesQuote with arrangements for amount, interest and fees. LOS calls QST to retrieve quotes; QST publishes CloudEvents via Kafka when a quote changes.",
+  "anchor": "qst",
+  "exact": [
+   "QST"
+  ],
+  "loose": []
+ },
+ {
+  "term": "RAG",
+  "alt": "Retrieval-Augmented Generation",
+  "def": "An architecture combining an LLM with information retrieval: before answering, the system retrieves relevant documents and the LLM answers only from their content. Reduces hallucination, and makes answers consistent and sourced.",
+  "anchor": "rag",
+  "exact": [
+   "RAG"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Risk-Based Pricing",
+  "alt": "Vietnamese: định giá dựa trên rủi ro",
+  "def": "Higher-risk customers pay higher rates, so that the price reflects expected loss. In VLP: Prime 15%, Standard 18%, Sub-prime 21%.",
+  "anchor": "risk-based-pricing",
+  "exact": [],
+  "loose": [
+   "Risk-Based Pricing"
+  ]
+ },
+ {
+  "term": "ROE",
+  "alt": "Return on Equity · Vietnamese: tỷ suất lợi nhuận trên vốn chủ sở hữu",
+  "def": "Profit divided by equity. The target ROE determines the profit component that must be in the interest rate (Chapter 12 uses 18% on 15% equity).",
+  "anchor": "roe",
+  "exact": [
+   "ROE"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Scorecard",
+  "alt": "Vietnamese: thẻ điểm",
+  "def": "The traditional scoring model: logistic regression on WOE-transformed variables, scaled to points with an anchor and a PDO. Easy to explain and favoured by regulators.",
+  "anchor": "scorecard",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "SHAP",
+  "alt": "SHapley Additive exPlanations",
+  "def": "A method of explaining a model's prediction by splitting it into additive contributions from each variable. The basis for generating specific rejection reasons.",
+  "anchor": "shap",
+  "exact": [
+   "SHAP"
+  ],
+  "loose": []
+ },
+ {
+  "term": "SRT",
+  "alt": "Service Router",
+  "def": "A stateless routing module: it receives loan processing requests from LOS and forwards them to the backends (LAS, CTM, AOS, CTS, PDC, ADR, QST, LBS...) through 9 FeignClient connectors, with Resilience4j circuit breakers. It has no database of its own.",
+  "anchor": "srt",
+  "exact": [
+   "SRT"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Stress Test",
+  "alt": "Vietnamese: kiểm tra sức chịu đựng",
+  "def": "Assessing a portfolio or model under adverse scenarios: recession, a spike in unemployment, rising rates. The results determine the capital plan.",
+  "anchor": "stress-test",
+  "exact": [],
+  "loose": [
+   "Stress Test"
+  ]
+ },
+ {
+  "term": "Sub-prime",
+  "alt": "Vietnamese: hạng dưới chuẩn",
+  "def": "The customer segment scoring below the Standard cut-off. In VLP: 340-379 points, 21%/year interest, lower maximum limits.",
+  "anchor": "sub-prime",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Tail Risk",
+  "alt": "Vietnamese: rủi ro đuôi",
+  "def": "The risk of rare, extreme events. Ordinary risk management optimizes for the average; tail risk management focuses on surviving the worst case.",
+  "anchor": "tail-risk",
+  "exact": [],
+  "loose": [
+   "Tail Risk"
+  ]
+ },
+ {
+  "term": "Tariff-Driven Design",
+  "alt": "Vietnamese: thiết kế dựa trên biểu phí",
+  "def": "An architecture in which business rules (rates, fees, limits) live in versioned configuration with effective dates rather than being hard-coded, so they can change without a deployment.",
+  "anchor": "tariff-driven-design",
+  "exact": [],
+  "loose": [
+   "Tariff-Driven Design"
+  ]
+ },
+ {
+  "term": "Thin-File",
+  "alt": "Vietnamese: hồ sơ tín dụng mỏng",
+  "def": "Customers with little or no credit history, who cannot be scored with traditional bureau data. They need alternative data or behavioural scores.",
+  "anchor": "thin-file",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Time Value of Money",
+  "alt": "Vietnamese: giá trị thời gian của tiền",
+  "def": "A dong today is worth more than a dong in the future because it can be invested to earn a return. The foundation of NPV, IRR and the annuity formula.",
+  "anchor": "time-value-of-money",
+  "exact": [],
+  "loose": [
+   "Time Value of Money"
+  ]
+ },
+ {
+  "term": "UL",
+  "alt": "Unexpected Loss · Vietnamese: tổn thất ngoài dự kiến",
+  "def": "The amount by which actual losses can exceed EL. EL is covered by price; UL is covered by capital.",
+  "anchor": "ul",
+  "exact": [
+   "UL"
+  ],
+  "loose": []
+ },
+ {
+  "term": "UNREACHABLE_FUTURE_DATE",
+  "alt": "Vietnamese: ngày canh gác \"không bao giờ tới\"",
+  "def": "A far-future date used for records with no end date, so date range queries stay simple (WHERE validTo >= :today) instead of checking for NULL. In VLP: AccountParameter.validTo and AccountService.endDate use 3000-01-01 (DateUtil.UNREACHABLE_FUTURE_DATE, with NULL in the DB converted by NullDateToFarFutureConverter); PostingUnit.firstPrescribeDate uses 3333-01-01 for \"not yet prescribed\". Two different values for two different purposes, and confusing them is a classic source of query bugs.",
+  "anchor": "unreachable_future_date",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Velocity Fraud",
+  "alt": "Vietnamese: gian lận vận tốc",
+  "def": "Submitting many loan applications to many providers in a short time, before they can see each other's approvals. Detected through recent inquiry counts, shared blacklists and device fingerprinting.",
+  "anchor": "velocity-fraud",
+  "exact": [],
+  "loose": [
+   "Velocity Fraud"
+  ]
+ },
+ {
+  "term": "Vintage Analysis",
+  "alt": "Vietnamese: phân tích theo vintage",
+  "def": "Tracking the performance of groups of loans by disbursement month, for example comparing the DPD 30+ rate after 6 months of the January cohort with February and March. Detects model drift and portfolio quality trends.",
+  "anchor": "vintage-analysis",
+  "exact": [],
+  "loose": [
+   "Vintage Analysis"
+  ]
+ },
+ {
+  "term": "WOE",
+  "alt": "Weight of Evidence · Vietnamese: trọng số bằng chứng",
+  "def": "A transformation for scoring variables: WOE_i = ln(%Bad_i / %Good_i). Negative means the bin leans towards good customers, positive towards bad ones.",
+  "anchor": "woe",
+  "exact": [
+   "WOE"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Write-off",
+  "alt": "Vietnamese: xóa nợ (kế toán)",
+  "def": "The accounting decision to take a loan no longer expected to be recovered off the balance sheet, using the provisions already made. The threshold is a configuration parameter (e.g. DPD 90 for unsecured consumer loans). Write-off is not debt forgiveness: the obligation to repay remains and collection continues.",
+  "anchor": "write-off",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "XGBoost",
+  "alt": "eXtreme Gradient Boosting",
+  "def": "A popular gradient boosting library for tabular data, usually giving high accuracy in credit scoring, handling missing values and training fast.",
+  "anchor": "xgboost",
+  "exact": [
+   "XGBoost"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Zeebe",
+  "alt": "Vietnamese: engine workflow Zeebe",
+  "def": "A BPMN workflow engine (Camunda). In VLP it is used only for scoring in the chooseOffer step (the zeebe-integration profile), not as the main origination orchestrator. POSITIVE/NEGATIVE results are sent back to LOS via RabbitMQ.",
+  "anchor": "zeebe",
+  "exact": [],
+  "loose": []
+ }
+]

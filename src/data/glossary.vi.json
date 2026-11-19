@@ -1,0 +1,1070 @@
+[
+ {
+  "term": "Account Management",
+  "alt": "Quản lý tài khoản",
+  "def": "Phần hệ thống quản lý vòng đời tài khoản sau khi khoản vay được giải ngân: theo dõi số dư, tính lãi, xử lý thanh toán, tạo sao kê. Trong VLP là module LAS.",
+  "anchor": "account-management",
+  "exact": [],
+  "loose": [
+   "Quản lý tài khoản"
+  ]
+ },
+ {
+  "term": "Adverse Selection",
+  "alt": "Lựa chọn bất lợi",
+  "def": "Hiện tượng một sản phẩm thu hút tỷ lệ khách hàng rủi ro cao hơn bình thường. Xảy ra khi giá không phân biệt được rủi ro: khách rủi ro cao tìm đến vì giá rẻ so với rủi ro của họ, khách rủi ro thấp bỏ đi vì giá đắt so với rủi ro của họ.",
+  "anchor": "adverse-selection",
+  "exact": [],
+  "loose": [
+   "Lựa chọn bất lợi"
+  ]
+ },
+ {
+  "term": "Affordability Assessment",
+  "alt": "Đánh giá khả năng chi trả",
+  "def": "Quy trình xác định khách hàng có thực sự trả được khoản vay mà không gặp khó khăn quá mức hay không, khác với kiểm tra đủ điều kiện (eligibility). Gồm xác minh thu nhập, liệt kê nghĩa vụ hiện có, kiểm tra thu nhập còn lại và kiểm tra sức chịu đựng.",
+  "anchor": "affordability-assessment",
+  "exact": [],
+  "loose": [
+   "Đánh giá khả năng chi trả"
+  ]
+ },
+ {
+  "term": "Alternative Data",
+  "alt": "Dữ liệu thay thế",
+  "def": "Dữ liệu không đến từ trung tâm thông tin tín dụng truyền thống: dữ liệu nhà mạng, giao dịch ví điện tử, lịch sử trả hóa đơn, hành vi trong ứng dụng. Dùng để chấm điểm khách hàng thin-file, và chỉ được dùng khi có sự đồng ý rõ ràng.",
+  "anchor": "alternative-data",
+  "exact": [],
+  "loose": [
+   "Dữ liệu thay thế"
+  ]
+ },
+ {
+  "term": "Amortization",
+  "alt": "Trả dần (khấu hao khoản vay)",
+  "def": "Quá trình trả dần nợ gốc theo thời gian. Với khoản vay trả góp đều, mỗi kỳ gồm một phần gốc và một phần lãi; kỳ đầu phần lãi lớn nhất, kỳ sau phần gốc tăng dần.",
+  "anchor": "amortization",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "AOS",
+  "alt": "Supplement, sản phẩm bổ sung",
+  "def": "Module quản lý các sản phẩm bổ sung gắn với hợp đồng vay (bảo hiểm, bảo hành, gói bảo vệ thanh toán). Vòng đời: INITIAL → REGISTERED → ACTIVE → TERMINATED; được kích hoạt khi LAS phát sự kiện FIRST_PRINCIPAL_TX_CHARGED.",
+  "anchor": "aos",
+  "exact": [
+   "AOS"
+  ],
+  "loose": [
+   "sản phẩm bổ sung"
+  ]
+ },
+ {
+  "term": "APR",
+  "alt": "Annual Percentage Rate, lãi suất phần trăm năm",
+  "def": "Chi phí tín dụng tính theo năm, gồm mọi khoản phí bắt buộc chứ không chỉ lãi suất danh nghĩa. Trong sách, APR = IRR theo tháng × 12 (không ghép lãi); chỉ số có ghép lãi là EIR. Khoản vay của chị Lan có lãi suất danh nghĩa 18% nhưng APR 20.10% vì phí thẩm định 200,000 VNĐ.",
+  "anchor": "apr",
+  "exact": [
+   "APR"
+  ],
+  "loose": [
+   "lãi suất phần trăm năm"
+  ]
+ },
+ {
+  "term": "Auto-debit",
+  "alt": "Trích nợ tự động",
+  "def": "Cơ chế tự động trích tiền từ tài khoản của khách hàng vào ngày đến hạn. Khi trích nợ tự động được bật sẵn (khách có thể tắt), tỷ lệ sử dụng ở Vela Finance là 82%, so với 45% khi khách phải tự đăng ký.",
+  "anchor": "auto-debit",
+  "exact": [],
+  "loose": [
+   "Trích nợ tự động"
+  ]
+ },
+ {
+  "term": "Banking-as-a-Service",
+  "alt": "BaaS, ngân hàng như một dịch vụ",
+  "def": "Mô hình cung cấp hạ tầng tài chính (giấy phép, core banking, tuân thủ) qua API cho bên thứ ba, để fintech xây sản phẩm tài chính mà không cần tự có giấy phép ngân hàng.",
+  "anchor": "banking-as-a-service",
+  "exact": [
+   "BaaS"
+  ],
+  "loose": [
+   "ngân hàng như một dịch vụ"
+  ]
+ },
+ {
+  "term": "Behavioral Score",
+  "alt": "Điểm hành vi",
+  "def": "Điểm tín dụng tính từ dữ liệu hành vi (cách dùng ứng dụng, thói quen thanh toán, dữ liệu nhà mạng) thay vì chỉ dữ liệu trung tâm tín dụng. Đặc biệt hữu ích cho khách hàng thin-file.",
+  "anchor": "behavioral-score",
+  "exact": [],
+  "loose": [
+   "Điểm hành vi"
+  ]
+ },
+ {
+  "term": "β-δ Model",
+  "alt": "Mô hình β-δ (chiết khấu gần hyperbol)",
+  "def": "Mô hình của Laibson (1997) mô tả thiên kiến hiện tại: mọi lợi ích tương lai bị chiết khấu thêm một hệ số β < 1, còn hiện tại thì không; δ là hệ số chiết khấu thời gian thông thường.",
+  "anchor": "β-δ-model",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Billing Cycle",
+  "alt": "Chu kỳ billing",
+  "def": "Vòng lặp hằng tháng: lãi và phí phát sinh, EOM tạo kỳ trả nợ và sao kê, đến hạn thanh toán, nhận và ghép thanh toán, theo dõi DPD nếu chưa trả.",
+  "anchor": "billing-cycle",
+  "exact": [],
+  "loose": [
+   "Chu kỳ billing"
+  ]
+ },
+ {
+  "term": "BNPL",
+  "alt": "Buy Now Pay Later, mua trước trả sau",
+  "def": "Hình thức tín dụng cho phép mua ngay và trả góp sau, thường 3-6 kỳ, thường 0% lãi danh nghĩa. Doanh thu đến từ phí người bán, và ở nhiều thị trường còn từ \"phí xử lý\" thu của người mua.",
+  "anchor": "bnpl",
+  "exact": [
+   "BNPL"
+  ],
+  "loose": [
+   "mua trước trả sau"
+  ]
+ },
+ {
+  "term": "Bureau",
+  "alt": "Trung tâm thông tin tín dụng",
+  "def": "Tổ chức thu thập và cung cấp lịch sử tín dụng. Ở Việt Nam là CIC (Trung tâm Thông tin tín dụng Quốc gia); trên thế giới có Experian, TransUnion, Equifax.",
+  "anchor": "bureau",
+  "exact": [],
+  "loose": [
+   "Trung tâm thông tin tín dụng"
+  ]
+ },
+ {
+  "term": "CAC",
+  "alt": "Customer Acquisition Cost, chi phí thu hút khách hàng",
+  "def": "Tổng chi phí để có một khách hàng mới: marketing, bán hàng, xử lý hồ sơ. CAC quyết định số tiền vay tối thiểu để một khoản vay có lãi.",
+  "anchor": "cac",
+  "exact": [
+   "CAC"
+  ],
+  "loose": [
+   "chi phí thu hút khách hàng"
+  ]
+ },
+ {
+  "term": "Calibration",
+  "alt": "Hiệu chuẩn mô hình",
+  "def": "Kiểm tra xác suất dự báo có khớp với tỷ lệ thực tế không. Ví dụ: những khách hàng 420 điểm được dự báo PD 2.4%; nếu tỷ lệ vỡ nợ thực tế của họ khoảng 2.4%, mô hình hiệu chuẩn tốt.",
+  "anchor": "calibration",
+  "exact": [],
+  "loose": [
+   "Hiệu chuẩn mô hình"
+  ]
+ },
+ {
+  "term": "CLV",
+  "alt": "Customer Lifetime Value, giá trị vòng đời khách hàng",
+  "def": "Giá trị hiện tại của lợi nhuận ròng mà một khách hàng mang lại trong suốt mối quan hệ: tổng theo từng năm của lợi nhuận năm đó nhân xác suất khách còn ở lại, chiết khấu về hiện tại.",
+  "anchor": "clv",
+  "exact": [
+   "CLV"
+  ],
+  "loose": [
+   "giá trị vòng đời khách hàng"
+  ]
+ },
+ {
+  "term": "Cognitive Load",
+  "alt": "Tải nhận thức",
+  "def": "Lượng nỗ lực trí óc cần để xử lý thông tin và ra quyết định. Tải nhận thức cao đẩy người ta sang tư duy Hệ 1 và làm giảm chất lượng quyết định tài chính.",
+  "anchor": "cognitive-load",
+  "exact": [],
+  "loose": [
+   "Tải nhận thức"
+  ]
+ },
+ {
+  "term": "Collections",
+  "alt": "Thu hồi nợ",
+  "def": "Quy trình liên hệ, thương lượng và thu hồi nợ từ khách hàng quá hạn, từ nhắc nhở sớm, thỏa thuận thanh toán, hỗ trợ khó khăn đến khởi kiện hoặc bán nợ.",
+  "anchor": "collections",
+  "exact": [],
+  "loose": [
+   "Thu hồi nợ"
+  ]
+ },
+ {
+  "term": "Commitment Device",
+  "alt": "Cơ chế cam kết",
+  "def": "Cơ chế cho phép người ta tự nguyện giới hạn lựa chọn tương lai để giữ đúng ý định hiện tại. Ví dụ: khóa tiết kiệm, cam kết dùng tiền thưởng để trả bớt nợ.",
+  "anchor": "commitment-device",
+  "exact": [],
+  "loose": [
+   "Cơ chế cam kết"
+  ]
+ },
+ {
+  "term": "Concentration Risk",
+  "alt": "Rủi ro tập trung",
+  "def": "Rủi ro khi danh mục phụ thuộc quá nhiều vào một ngành, một chủ lao động hay một vùng. Khi điểm tập trung đó gặp cú sốc, cả danh mục bị ảnh hưởng cùng lúc.",
+  "anchor": "concentration-risk",
+  "exact": [],
+  "loose": [
+   "Rủi ro tập trung"
+  ]
+ },
+ {
+  "term": "ContractService",
+  "alt": "Dịch vụ hợp đồng",
+  "def": "Thực thể nối tài khoản với mã và phiên bản biểu phí, xác định lãi suất và phí áp dụng cho tài khoản đó.",
+  "anchor": "contractservice",
+  "exact": [
+   "ContractService"
+  ],
+  "loose": [
+   "Dịch vụ hợp đồng"
+  ]
+ },
+ {
+  "term": "Cost of Funds",
+  "alt": "Chi phí vốn",
+  "def": "Chi phí bên cho vay phải trả để huy động vốn cho vay: lãi vay ngân hàng, lợi suất trái phiếu. Phần vốn chủ sở hữu được tính qua ROE mục tiêu. Các ví dụ trong sách dùng 8.5%/năm cho phần nợ.",
+  "anchor": "cost-of-funds",
+  "exact": [],
+  "loose": [
+   "Chi phí vốn"
+  ]
+ },
+ {
+  "term": "Credit Score",
+  "alt": "Điểm tín dụng",
+  "def": "Con số tổng hợp phản ánh mức rủi ro tín dụng của một khách hàng, tính từ lịch sử thanh toán, dư nợ, độ dài lịch sử tín dụng, cơ cấu tín dụng và số lần tra cứu gần đây.",
+  "anchor": "credit-score",
+  "exact": [],
+  "loose": [
+   "Điểm tín dụng"
+  ]
+ },
+ {
+  "term": "Credit Utilization",
+  "alt": "Tỷ lệ sử dụng hạn mức",
+  "def": "Dư nợ chia cho hạn mức tín dụng. Tỷ lệ cao là tín hiệu căng thẳng tài chính; đây là một thành phần của điểm FICO.",
+  "anchor": "credit-utilization",
+  "exact": [],
+  "loose": [
+   "Tỷ lệ sử dụng hạn mức"
+  ]
+ },
+ {
+  "term": "CurrentBalance",
+  "alt": "Số dư hiện tại",
+  "def": "Thực thể trong LAS theo dõi số dư hiện tại của tài khoản theo từng loại: gốc, lãi, phí, phạt.",
+  "anchor": "currentbalance",
+  "exact": [
+   "CurrentBalance"
+  ],
+  "loose": [
+   "Số dư hiện tại"
+  ]
+ },
+ {
+  "term": "30/360",
+  "alt": "Quy ước ngày 30/360",
+  "def": "Quy ước tính lãi dùng trong các ví dụ của VLP: mọi tháng tính là 30 ngày, năm 360 ngày, nên lãi một kỳ đủ tháng = dư nợ × lãi suất năm / 12. Khác với Actual/365 dùng số ngày thực tế. Được cấu hình qua AnnualRateDayCount.D30_360 trong biểu phí.",
+  "anchor": "30360",
+  "exact": [],
+  "loose": [
+   "Quy ước ngày 30/360"
+  ]
+ },
+ {
+  "term": "Dark Pattern",
+  "alt": "Mẫu thiết kế lừa dối",
+  "def": "Thiết kế giao diện có chủ đích dẫn người dùng đến quyết định không vì lợi ích của họ: đồng hồ đếm ngược giả, phí ẩn, nút từ chối khó tìm.",
+  "anchor": "dark-pattern",
+  "exact": [],
+  "loose": [
+   "Mẫu thiết kế lừa dối"
+  ]
+ },
+ {
+  "term": "Data Drift",
+  "alt": "Drift dữ liệu",
+  "def": "Phân phối của dữ liệu đầu vào thay đổi theo thời gian. PSI > 0.25 là thay đổi lớn, mô hình có thể không còn đúng.",
+  "anchor": "data-drift",
+  "exact": [],
+  "loose": [
+   "Drift dữ liệu"
+  ]
+ },
+ {
+  "term": "Debt Stacking",
+  "alt": "Chồng nợ",
+  "def": "Khách hàng có nhiều khoản BNPL hay khoản vay ở nhiều bên, mỗi bên chỉ thấy một phần. DTI thật cao hơn mức mà bất kỳ bên nào biết.",
+  "anchor": "debt-stacking",
+  "exact": [],
+  "loose": [
+   "Chồng nợ"
+  ]
+ },
+ {
+  "term": "Default",
+  "alt": "Vỡ nợ",
+  "def": "Thường định nghĩa là DPD 90+ bất kỳ lúc nào trong một cửa sổ quan sát (ví dụ 24 tháng). Có thể chặt hơn (write-off) hoặc lỏng hơn (DPD 30+) tùy mục đích.",
+  "anchor": "default",
+  "exact": [],
+  "loose": [
+   "Vỡ nợ"
+  ]
+ },
+ {
+  "term": "Delinquency",
+  "alt": "Quá hạn",
+  "def": "Trạng thái khoản vay đã quá hạn thanh toán nhưng chưa đến mức vỡ nợ, thường là DPD 1-89.",
+  "anchor": "delinquency",
+  "exact": [],
+  "loose": [
+   "Quá hạn"
+  ]
+ },
+ {
+  "term": "Disparate Impact",
+  "alt": "Tác động bất lợi",
+  "def": "Một chính sách trung lập về hình thức nhưng ảnh hưởng không cân xứng đến một nhóm được bảo vệ, kể cả khi không có ý định phân biệt đối xử.",
+  "anchor": "disparate-impact",
+  "exact": [],
+  "loose": [
+   "Tác động bất lợi"
+  ]
+ },
+ {
+  "term": "DPD",
+  "alt": "Days Past Due, số ngày quá hạn",
+  "def": "Số ngày kể từ ngày đến hạn của kỳ quá hạn sớm nhất chưa được thanh toán. DPD 0 là đúng hạn. Là chỉ số then chốt của collections, phân loại nợ và IFRS 9.",
+  "anchor": "dpd",
+  "exact": [
+   "DPD"
+  ],
+  "loose": [
+   "số ngày quá hạn"
+  ]
+ },
+ {
+  "term": "DSA",
+  "alt": "Data Source Aggregator",
+  "def": "Module tổng hợp dữ liệu từ nhiều hệ thống nội bộ thành XML để sinh tài liệu (hợp đồng, phụ lục). Không phải module giải ngân. Kiến trúc dạng plugin với các provider như AgreementDataSourceProvider, ContractDataSourceProvider.",
+  "anchor": "dsa",
+  "exact": [
+   "DSA"
+  ],
+  "loose": []
+ },
+ {
+  "term": "DTI",
+  "alt": "Debt-to-Income, tỷ lệ nợ trên thu nhập",
+  "def": "Tổng nghĩa vụ trả nợ hằng tháng chia cho thu nhập hằng tháng. Khoản vay của chị Lan có DTI 7.7% (1,696,080 / 22,000,000).",
+  "anchor": "dti",
+  "exact": [
+   "DTI"
+  ],
+  "loose": [
+   "tỷ lệ nợ trên thu nhập"
+  ]
+ },
+ {
+  "term": "Dual-Process Theory",
+  "alt": "Lý thuyết hai hệ tư duy",
+  "def": "Khung của Kahneman: Hệ 1 nhanh, tự động, cảm tính; Hệ 2 chậm, có chủ đích, logic. Quyết định tài chính thường do Hệ 1 dẫn dắt.",
+  "anchor": "dual-process-theory",
+  "exact": [],
+  "loose": [
+   "Lý thuyết hai hệ tư duy"
+  ]
+ },
+ {
+  "term": "EAD",
+  "alt": "Exposure at Default, dư nợ tại thời điểm vỡ nợ",
+  "def": "Số tiền còn phải trả khi khách hàng vỡ nợ. Với khoản vay trả góp, EAD thường là dư nợ gốc còn lại tại thời điểm đó, nhỏ hơn số tiền vay ban đầu.",
+  "anchor": "ead",
+  "exact": [
+   "EAD"
+  ],
+  "loose": [
+   "dư nợ tại thời điểm vỡ nợ"
+  ]
+ },
+ {
+  "term": "Early Warning System",
+  "alt": "Hệ thống cảnh báo sớm",
+  "def": "Hệ thống phát hiện khách hàng có nguy cơ không trả được nợ trước khi DPD xuất hiện, để can thiệp sớm theo các tầng từ nhắc nhẹ đến hỗ trợ khó khăn.",
+  "anchor": "early-warning-system",
+  "exact": [],
+  "loose": [
+   "Hệ thống cảnh báo sớm"
+  ]
+ },
+ {
+  "term": "Effective Interest Rate",
+  "alt": "EIR, lãi suất thực tế",
+  "def": "Lãi suất năm có ghép lãi tương ứng với IRR theo kỳ: EIR = (1 + IRR tháng)^12 − 1. Luôn cao hơn APR (= IRR tháng × 12) khi IRR dương.",
+  "anchor": "effective-interest-rate",
+  "exact": [
+   "EIR"
+  ],
+  "loose": [
+   "lãi suất thực tế"
+  ]
+ },
+ {
+  "term": "EL",
+  "alt": "Expected Loss, tổn thất dự kiến",
+  "def": "EL = PD × LGD × EAD. Tổn thất bình quân dự kiến, được tính vào giá sản phẩm: đó là một chi phí đã định giá, không phải rủi ro.",
+  "anchor": "el",
+  "exact": [
+   "EL"
+  ],
+  "loose": [
+   "tổn thất dự kiến"
+  ]
+ },
+ {
+  "term": "Embedded Finance",
+  "alt": "Tài chính nhúng",
+  "def": "Tích hợp sản phẩm tài chính vào nền tảng phi tài chính, để khách hàng dùng tín dụng ngay trong ngữ cảnh (bước thanh toán, đặt dịch vụ) mà không rời sang ứng dụng tài chính.",
+  "anchor": "embedded-finance",
+  "exact": [],
+  "loose": [
+   "Tài chính nhúng"
+  ]
+ },
+ {
+  "term": "EMI",
+  "alt": "Equated Monthly Instalment, khoản trả góp đều hằng tháng",
+  "def": "Khoản tiền cố định trả mỗi tháng, gồm một phần gốc và một phần lãi, tính bằng công thức PMT. Khoản vay của chị Lan có EMI 1,696,080 VNĐ.",
+  "anchor": "emi",
+  "exact": [
+   "EMI"
+  ],
+  "loose": [
+   "khoản trả góp đều hằng tháng"
+  ]
+ },
+ {
+  "term": "EOM",
+  "alt": "End of Month, xử lý cuối tháng",
+  "def": "Job batch cuối kỳ: tính lãi, tạo kỳ trả nợ, tính phí, sinh dữ liệu sao kê, cập nhật số dư. Trong VLP chạy song song theo partition.",
+  "anchor": "eom",
+  "exact": [
+   "EOM"
+  ],
+  "loose": [
+   "xử lý cuối tháng"
+  ]
+ },
+ {
+  "term": "Feature Drift",
+  "alt": "Drift của biến đầu vào",
+  "def": "Một dạng drift dữ liệu: phân phối của một biến đầu vào thay đổi theo thời gian, đo bằng PSI của từng biến.",
+  "anchor": "feature-drift",
+  "exact": [],
+  "loose": [
+   "Drift của biến đầu vào"
+  ]
+ },
+ {
+  "term": "Feature Engineering",
+  "alt": "Xây dựng biến đầu vào",
+  "def": "Chuyển dữ liệu thô thành biến phù hợp cho mô hình: biến đổi WOE, tỷ lệ, cửa sổ thời gian.",
+  "anchor": "feature-engineering",
+  "exact": [],
+  "loose": [
+   "Xây dựng biến đầu vào"
+  ]
+ },
+ {
+  "term": "Feature Store",
+  "alt": "Kho biến đầu vào",
+  "def": "Hạ tầng tính, lưu và phục vụ biến đầu vào cho các mô hình: tập trung, có phiên bản, đúng tại thời điểm, nhất quán giữa huấn luyện và phục vụ.",
+  "anchor": "feature-store",
+  "exact": [],
+  "loose": [
+   "Kho biến đầu vào"
+  ]
+ },
+ {
+  "term": "FICO Score",
+  "alt": "Điểm FICO",
+  "def": "Mô hình điểm tín dụng phổ biến nhất ở Mỹ, của Fair Isaac Corporation, thang 300-850. Năm nhóm yếu tố: lịch sử thanh toán 35%, số tiền đang nợ 30%, độ dài lịch sử 15%, cơ cấu tín dụng 10%, tín dụng mới 10%.",
+  "anchor": "fico-score",
+  "exact": [
+   "FICO"
+  ],
+  "loose": [
+   "Điểm FICO"
+  ]
+ },
+ {
+  "term": "Fraud",
+  "alt": "Gian lận",
+  "def": "Cố ý cung cấp thông tin sai để được cấp tín dụng. Các dạng: gian lận hồ sơ, đánh cắp danh tính, danh tính tổng hợp, gian lận vận tốc, tài liệu do AI tạo.",
+  "anchor": "fraud",
+  "exact": [],
+  "loose": [
+   "Gian lận"
+  ]
+ },
+ {
+  "term": "Gini Coefficient",
+  "alt": "Hệ số Gini",
+  "def": "Thước đo khả năng phân biệt của mô hình tín dụng: Gini = 2 × AUROC − 1, thang 0-1. Trên 0.45 thường được coi là chấp nhận được, trên 0.60 là tốt. Gini đo khả năng xếp hạng, không phải phần trăm vỡ nợ được giải thích.",
+  "anchor": "gini-coefficient",
+  "exact": [
+   "Gini"
+  ],
+  "loose": [
+   "Hệ số Gini"
+  ]
+ },
+ {
+  "term": "Grace Period",
+  "alt": "Thời gian ân hạn",
+  "def": "Khoảng thời gian sau ngày đến hạn mà thanh toán vẫn được chấp nhận không bị tính phí trễ hạn. Độ dài là tham số cấu hình của sản phẩm.",
+  "anchor": "grace-period",
+  "exact": [],
+  "loose": [
+   "Thời gian ân hạn"
+  ]
+ },
+ {
+  "term": "Hallucination",
+  "alt": "Bịa thông tin (của LLM)",
+  "def": "Khi LLM sinh ra nội dung sai nhưng nghe thuyết phục. Đặc biệt nguy hiểm trong tài chính (số liệu sai, chính sách sai). Giảm thiểu bằng RAG và quy tắc: mọi con số phải lấy từ cơ sở dữ liệu.",
+  "anchor": "hallucination",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Hardship Program",
+  "alt": "Chương trình hỗ trợ khó khăn",
+  "def": "Các giải pháp cho khách hàng gặp khó khăn tài chính: hoãn thanh toán, kéo dài kỳ hạn, giảm lãi tạm thời. Mục tiêu là giúp khách cure và giữ quan hệ, thay vì thu nợ bằng mọi giá.",
+  "anchor": "hardship-program",
+  "exact": [],
+  "loose": [
+   "Chương trình hỗ trợ khó khăn"
+  ]
+ },
+ {
+  "term": "Hyperbolic Discounting",
+  "alt": "Chiết khấu hyperbol",
+  "def": "Xu hướng coi trọng lợi ích và chi phí ngắn hạn quá mức so với dài hạn. Giải thích vì sao người ta \"luôn định tiết kiệm từ tháng sau\". Xem Mô hình β-δ.",
+  "anchor": "hyperbolic-discounting",
+  "exact": [],
+  "loose": [
+   "Chiết khấu hyperbol"
+  ]
+ },
+ {
+  "term": "Idempotency",
+  "alt": "Tính lũy đẳng",
+  "def": "Thực hiện một thao tác một lần hay nhiều lần đều cho cùng kết quả. Bắt buộc với API thanh toán và job batch để tránh thu hay giải ngân trùng.",
+  "anchor": "idempotency",
+  "exact": [],
+  "loose": [
+   "Tính lũy đẳng"
+  ]
+ },
+ {
+  "term": "IFRS 9",
+  "alt": "Chuẩn mực báo cáo tài chính quốc tế số 9",
+  "def": "Chuẩn mực kế toán cho công cụ tài chính, yêu cầu dự phòng theo tổn thất tín dụng dự kiến (ECL) qua ba stage: Stage 1 (bình thường, ECL 12 tháng), Stage 2 (rủi ro tín dụng tăng đáng kể, ECL toàn thời hạn), Stage 3 (suy giảm giá trị tín dụng, ECL toàn thời hạn).",
+  "anchor": "ifrs-9",
+  "exact": [
+   "IFRS 9"
+  ],
+  "loose": [
+   "Chuẩn mực báo cáo tài chính quốc tế số 9"
+  ]
+ },
+ {
+  "term": "Infinispan",
+  "alt": "Bộ nhớ đệm phân tán Infinispan",
+  "def": "Cache phân tán trong bộ nhớ. Trong VLP, LOS dùng Infinispan nhúng để giữ trạng thái workflow giữa các bước bất đồng bộ, với 7 cache có tên: zeebeChooseOfferCache, chooseOfferCache, loanPurposeCache, generateAgreementCache, signAgreementCache, rejectSupplementCache, cancelSupplementCache.",
+  "anchor": "infinispan",
+  "exact": [],
+  "loose": [
+   "Bộ nhớ đệm phân tán Infinispan"
+  ]
+ },
+ {
+  "term": "Information Value",
+  "alt": "Giá trị thông tin, IV",
+  "def": "Thước đo sức dự báo của một biến trong chấm điểm tín dụng. IV < 0.02: không có giá trị; 0.02-0.10: yếu; 0.10-0.30: trung bình; > 0.30: mạnh; > 0.50: mạnh bất thường, nên kiểm tra rò rỉ dữ liệu.",
+  "anchor": "information-value",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "InstalmentSummary",
+  "alt": "Tổng hợp kỳ trả góp",
+  "def": "Thực thể tổng hợp phi chuẩn hóa trong LAS, tóm tắt kế hoạch trả góp của một tài khoản. Chỉ được làm mới sau khi mọi kỳ trả nợ con đã được lưu (xem lỗi VLP-670 ở Chương 16).",
+  "anchor": "instalmentsummary",
+  "exact": [
+   "InstalmentSummary"
+  ],
+  "loose": [
+   "Tổng hợp kỳ trả góp"
+  ]
+ },
+ {
+  "term": "IRR",
+  "alt": "Internal Rate of Return, tỷ suất hoàn vốn nội bộ",
+  "def": "Lãi suất chiết khấu làm giá trị hiện tại ròng của mọi dòng tiền bằng 0. Dùng để tính APR và EIR từ dòng tiền thực nhận và thực trả của khách hàng.",
+  "anchor": "irr",
+  "exact": [
+   "IRR"
+  ],
+  "loose": [
+   "tỷ suất hoàn vốn nội bộ"
+  ]
+ },
+ {
+  "term": "Judgmental Lending",
+  "alt": "Cho vay theo phán đoán",
+  "def": "Cách cho vay truyền thống dựa trên phán đoán của nhân viên tín dụng: không nhất quán, không mở rộng được, có thiên lệch ngầm và không có dấu vết kiểm toán. Đã được thay thế dần bằng chấm điểm thống kê.",
+  "anchor": "judgmental-lending",
+  "exact": [],
+  "loose": [
+   "Cho vay theo phán đoán"
+  ]
+ },
+ {
+  "term": "KS Statistic",
+  "alt": "Chỉ số Kolmogorov-Smirnov",
+  "def": "Khoảng cách lớn nhất giữa phân phối lũy kế của khách hàng tốt và xấu theo điểm: KS = max(%Xấu lũy kế − %Tốt lũy kế). KS > 30% là tốt.",
+  "anchor": "ks-statistic",
+  "exact": [
+   "KS"
+  ],
+  "loose": [
+   "Chỉ số Kolmogorov-Smirnov"
+  ]
+ },
+ {
+  "term": "LGD",
+  "alt": "Loss Given Default, tỷ lệ tổn thất khi vỡ nợ",
+  "def": "Phần EAD bên cho vay thực sự mất sau khi thu hồi: LGD = 1 − tỷ lệ thu hồi. Khoản vay tiêu dùng không bảo đảm thường 55-70%; các ví dụ trong sách dùng 62%.",
+  "anchor": "lgd",
+  "exact": [
+   "LGD"
+  ],
+  "loose": [
+   "tỷ lệ tổn thất khi vỡ nợ"
+  ]
+ },
+ {
+  "term": "LLM",
+  "alt": "Large Language Model, mô hình ngôn ngữ lớn",
+  "def": "Mô hình AI huấn luyện trên lượng văn bản rất lớn, hiểu và sinh văn bản. Trong cho vay: xử lý hồ sơ, chăm sóc khách hàng, quản lý tri thức, luôn kèm rào chắn chống bịa thông tin.",
+  "anchor": "llm",
+  "exact": [
+   "LLM"
+  ],
+  "loose": [
+   "mô hình ngôn ngữ lớn"
+  ]
+ },
+ {
+  "term": "LOS",
+  "alt": "Loan Origination Service",
+  "def": "Module điều phối khởi tạo khoản vay, không trạng thái: nhận đơn, gọi các module kiểm tra, chấm điểm, tính giá, rồi tạo hợp đồng và tài khoản. Dùng controller bất đồng bộ và Infinispan, không dùng engine BPMN cho luồng chính.",
+  "anchor": "los",
+  "exact": [
+   "LOS"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Loss Aversion",
+  "alt": "Né tránh mất mát",
+  "def": "Mất mát gây khó chịu nhiều hơn niềm vui của một khoản được có cùng giá trị. Theo ước lượng của Tversky và Kahneman (1992), λ ≈ 2.25: mất 100,000 khó chịu tương đương niềm vui khi được khoảng 225,000. Dùng khi thiết kế thông điệp nhắc nợ, với điều kiện con số đúng sự thật.",
+  "anchor": "loss-aversion",
+  "exact": [],
+  "loose": [
+   "Né tránh mất mát"
+  ]
+ },
+ {
+  "term": "Mental Accounting",
+  "alt": "Kế toán tâm lý",
+  "def": "Xu hướng đối xử với tiền khác nhau tùy \"ngăn\" tâm lý của nó (lương, thưởng, tiết kiệm). Tiền thưởng thường được tiêu nhanh hơn tiền lương cùng số tiền (Thaler).",
+  "anchor": "mental-accounting",
+  "exact": [],
+  "loose": [
+   "Kế toán tâm lý"
+  ]
+ },
+ {
+  "term": "Model Risk",
+  "alt": "Rủi ro mô hình",
+  "def": "Rủi ro từ việc dùng mô hình sai, hoặc dùng mô hình đúng sai cách: lỗi mô hình, lỗi hiện thực, dùng sai mục đích. Được quản trị bằng khung MRM ba tầng: thẩm định khi phát triển, thẩm định độc lập, giám sát liên tục.",
+  "anchor": "model-risk",
+  "exact": [],
+  "loose": [
+   "Rủi ro mô hình"
+  ]
+ },
+ {
+  "term": "Moral Hazard",
+  "alt": "Rủi ro đạo đức",
+  "def": "Khi được bảo vệ khỏi hậu quả, người ta có xu hướng chấp nhận rủi ro nhiều hơn. Trong cho vay: người vay đã nhận tiền có thể dùng sai mục đích; bên cho vay được bảo lãnh có thể cho vay quá mạo hiểm.",
+  "anchor": "moral-hazard",
+  "exact": [],
+  "loose": [
+   "Rủi ro đạo đức"
+  ]
+ },
+ {
+  "term": "Net Interest Margin",
+  "alt": "NIM, biên lãi ròng",
+  "def": "Chênh lệch giữa thu nhập lãi từ cho vay và chi phí lãi của nguồn vốn, chia cho tài sản sinh lãi bình quân. Thước đo cơ bản về khả năng sinh lời của bên cho vay.",
+  "anchor": "net-interest-margin",
+  "exact": [
+   "NIM"
+  ],
+  "loose": [
+   "biên lãi ròng"
+  ]
+ },
+ {
+  "term": "NPL",
+  "alt": "Non-Performing Loan, nợ xấu",
+  "def": "Ở Việt Nam là nợ nhóm 3 đến nhóm 5 theo Thông tư 31/2024/TT-NHNN, về cơ bản là quá hạn trên 90 ngày. Tỷ lệ nợ xấu = nợ xấu / tổng dư nợ.",
+  "anchor": "npl",
+  "exact": [
+   "NPL"
+  ],
+  "loose": [
+   "nợ xấu"
+  ]
+ },
+ {
+  "term": "Nudge",
+  "alt": "Cú hích",
+  "def": "Can thiệp thiết kế nhỏ, không ép buộc, nhưng hướng hành vi theo chiều mong muốn. Lựa chọn mặc định là cú hích mạnh nhất (Thaler và Sunstein, 2008).",
+  "anchor": "nudge",
+  "exact": [],
+  "loose": [
+   "Cú hích"
+  ]
+ },
+ {
+  "term": "Open Banking",
+  "alt": "Ngân hàng mở",
+  "def": "Khung cho phép khách hàng chia sẻ dữ liệu tài chính với bên thứ ba qua API khi đồng ý, giúp đánh giá tín dụng tốt hơn và thúc đẩy cạnh tranh. Ở Việt Nam có Thông tư 64/2024/TT-NHNN về Open API.",
+  "anchor": "open-banking",
+  "exact": [],
+  "loose": [
+   "Ngân hàng mở"
+  ]
+ },
+ {
+  "term": "Optimism Bias",
+  "alt": "Thiên kiến lạc quan",
+  "def": "Xu hướng đánh giá quá cao khả năng điều tốt và quá thấp khả năng điều xấu xảy ra với chính mình. Người vay đánh giá thấp rủi ro gặp khó khăn khi trả nợ.",
+  "anchor": "optimism-bias",
+  "exact": [],
+  "loose": [
+   "Thiên kiến lạc quan"
+  ]
+ },
+ {
+  "term": "Payment Holiday",
+  "alt": "Hoãn thanh toán",
+  "def": "Cho khách hàng tạm ngừng thanh toán trong một số kỳ (thường 1-3 tháng), ngày đến hạn được dời về sau. Lãi có tiếp tục tích lũy hay được miễn tùy cấu hình (cờ payholInterestWaiving trong VLP).",
+  "anchor": "payment-holiday",
+  "exact": [],
+  "loose": [
+   "Hoãn thanh toán"
+  ]
+ },
+ {
+  "term": "PD",
+  "alt": "Probability of Default, xác suất vỡ nợ",
+  "def": "Xác suất một khách hàng vỡ nợ trong một khoảng thời gian xác định. PD × LGD × EAD = EL.",
+  "anchor": "pd",
+  "exact": [
+   "PD"
+  ],
+  "loose": [
+   "xác suất vỡ nợ"
+  ]
+ },
+ {
+  "term": "PMT",
+  "alt": "Khoản trả mỗi kỳ",
+  "def": "Số tiền trả mỗi kỳ của khoản vay trả góp đều: PMT = P × r(1+r)^n / ((1+r)^n − 1), với r là lãi suất kỳ. Khoản vay của chị Lan: PMT = 1,696,080 VNĐ, kỳ cuối điều chỉnh làm tròn còn 1,696,077.",
+  "anchor": "pmt",
+  "exact": [
+   "PMT"
+  ],
+  "loose": [
+   "Khoản trả mỗi kỳ"
+  ]
+ },
+ {
+  "term": "Present Bias",
+  "alt": "Thiên kiến hiện tại",
+  "def": "Xu hướng coi trọng lợi ích và chi phí trước mắt quá mức so với tương lai, dẫn đến vay quá nhiều và tiết kiệm quá ít. Xem Mô hình β-δ.",
+  "anchor": "present-bias",
+  "exact": [],
+  "loose": [
+   "Thiên kiến hiện tại"
+  ]
+ },
+ {
+  "term": "Propensity Model",
+  "alt": "Mô hình xu hướng",
+  "def": "Mô hình ML ước lượng khả năng một khách hàng phản hồi (nhận đề nghị, mua sản phẩm). Nên kết hợp với rủi ro để không nhắm vào người đang gấp.",
+  "anchor": "propensity-model",
+  "exact": [],
+  "loose": [
+   "Mô hình xu hướng"
+  ]
+ },
+ {
+  "term": "Prospect Theory",
+  "alt": "Thuyết triển vọng",
+  "def": "Kahneman và Tversky (1979): người ta đánh giá kết quả theo sự thay đổi so với một điểm tham chiếu, không theo giá trị tuyệt đối, và mất mát có sức nặng lớn hơn khoản được tương đương.",
+  "anchor": "prospect-theory",
+  "exact": [],
+  "loose": [
+   "Thuyết triển vọng"
+  ]
+ },
+ {
+  "term": "PSI",
+  "alt": "Population Stability Index, chỉ số ổn định tập khách hàng",
+  "def": "Thước đo thay đổi phân phối giữa dữ liệu huấn luyện và dữ liệu hiện tại. PSI < 0.10: ổn định; 0.10-0.25: thay đổi vừa, theo dõi sát; > 0.25: thay đổi lớn, cần xem lại mô hình.",
+  "anchor": "psi",
+  "exact": [
+   "PSI"
+  ],
+  "loose": [
+   "chỉ số ổn định tập khách hàng"
+  ]
+ },
+ {
+  "term": "QST",
+  "alt": "Quote Store",
+  "def": "Module lưu và quản lý vòng đời báo giá do QCE tạo ra. Thực thể chính là SalesQuote với các arrangement về số tiền, lãi, phí. LOS gọi QST để lấy báo giá; QST publish sự kiện CloudEvents qua Kafka khi báo giá thay đổi.",
+  "anchor": "qst",
+  "exact": [
+   "QST"
+  ],
+  "loose": []
+ },
+ {
+  "term": "RAG",
+  "alt": "Retrieval-Augmented Generation",
+  "def": "Kiến trúc kết hợp LLM với truy xuất thông tin: trước khi trả lời, hệ thống lấy ra tài liệu liên quan và LLM chỉ trả lời từ nội dung đó. Giảm bịa thông tin, nhất quán và có nguồn.",
+  "anchor": "rag",
+  "exact": [
+   "RAG"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Risk-Based Pricing",
+  "alt": "Định giá dựa trên rủi ro",
+  "def": "Khách hàng rủi ro cao hơn trả lãi suất cao hơn, để giá phản ánh tổn thất dự kiến. Ở VLP: Prime 15%, Standard 18%, Sub-prime 21%.",
+  "anchor": "risk-based-pricing",
+  "exact": [],
+  "loose": [
+   "Định giá dựa trên rủi ro"
+  ]
+ },
+ {
+  "term": "ROE",
+  "alt": "Return on Equity, tỷ suất lợi nhuận trên vốn chủ sở hữu",
+  "def": "Lợi nhuận chia cho vốn chủ sở hữu. ROE mục tiêu quyết định phần lợi nhuận phải có trong lãi suất (Chương 12 dùng 18% trên 15% vốn chủ).",
+  "anchor": "roe",
+  "exact": [
+   "ROE"
+  ],
+  "loose": [
+   "tỷ suất lợi nhuận trên vốn chủ sở hữu"
+  ]
+ },
+ {
+  "term": "Scorecard",
+  "alt": "Thẻ điểm",
+  "def": "Mô hình chấm điểm truyền thống: hồi quy logistic trên các biến đã biến đổi WOE, quy đổi sang điểm bằng điểm neo và PDO. Dễ giải thích, được cơ quan quản lý ưa chuộng.",
+  "anchor": "scorecard",
+  "exact": [],
+  "loose": [
+   "Thẻ điểm"
+  ]
+ },
+ {
+  "term": "SHAP",
+  "alt": "SHapley Additive exPlanations",
+  "def": "Phương pháp giải thích dự đoán của mô hình bằng cách chia dự đoán thành phần đóng góp cộng được của từng biến. Là cơ sở để tạo lý do từ chối cụ thể.",
+  "anchor": "shap",
+  "exact": [
+   "SHAP"
+  ],
+  "loose": []
+ },
+ {
+  "term": "SRT",
+  "alt": "Service Router",
+  "def": "Module định tuyến không trạng thái: nhận yêu cầu xử lý khoản vay từ LOS và chuyển đến các backend (LAS, CTM, AOS, CTS, PDC, ADR, QST, LBS...) qua 9 connector FeignClient, có circuit breaker Resilience4j. Không có cơ sở dữ liệu riêng.",
+  "anchor": "srt",
+  "exact": [
+   "SRT"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Stress Test",
+  "alt": "Kiểm tra sức chịu đựng",
+  "def": "Đánh giá danh mục hoặc mô hình trong kịch bản bất lợi: suy thoái, thất nghiệp tăng vọt, lãi suất tăng. Kết quả quyết định kế hoạch vốn.",
+  "anchor": "stress-test",
+  "exact": [],
+  "loose": [
+   "Kiểm tra sức chịu đựng"
+  ]
+ },
+ {
+  "term": "Sub-prime",
+  "alt": "Hạng dưới chuẩn",
+  "def": "Phân khúc khách hàng có điểm dưới ngưỡng Standard. Ở VLP là 340-379 điểm, lãi suất 21%/năm, hạn mức tối đa thấp hơn.",
+  "anchor": "sub-prime",
+  "exact": [],
+  "loose": [
+   "Hạng dưới chuẩn"
+  ]
+ },
+ {
+  "term": "Tail Risk",
+  "alt": "Rủi ro đuôi",
+  "def": "Rủi ro của các sự kiện hiếm và cực đoan. Quản trị rủi ro thông thường tối ưu cho trung bình; quản trị rủi ro đuôi tập trung vào khả năng sống sót trong trường hợp xấu nhất.",
+  "anchor": "tail-risk",
+  "exact": [],
+  "loose": [
+   "Rủi ro đuôi"
+  ]
+ },
+ {
+  "term": "Tariff-Driven Design",
+  "alt": "Thiết kế dựa trên biểu phí",
+  "def": "Kiến trúc trong đó quy tắc kinh doanh (lãi suất, phí, giới hạn) nằm trong cấu hình có phiên bản và ngày hiệu lực, không viết cứng trong code, nên thay đổi được mà không cần triển khai.",
+  "anchor": "tariff-driven-design",
+  "exact": [],
+  "loose": [
+   "Thiết kế dựa trên biểu phí"
+  ]
+ },
+ {
+  "term": "Thin-File",
+  "alt": "Hồ sơ tín dụng mỏng",
+  "def": "Khách hàng có ít hoặc không có lịch sử tín dụng, không chấm điểm được bằng dữ liệu trung tâm tín dụng truyền thống. Cần dữ liệu thay thế hoặc điểm hành vi.",
+  "anchor": "thin-file",
+  "exact": [],
+  "loose": [
+   "Hồ sơ tín dụng mỏng"
+  ]
+ },
+ {
+  "term": "Time Value of Money",
+  "alt": "Giá trị thời gian của tiền",
+  "def": "Một đồng hôm nay có giá trị hơn một đồng trong tương lai vì có thể đầu tư sinh lời. Là nền tảng của NPV, IRR và công thức niên kim.",
+  "anchor": "time-value-of-money",
+  "exact": [],
+  "loose": [
+   "Giá trị thời gian của tiền"
+  ]
+ },
+ {
+  "term": "UL",
+  "alt": "Unexpected Loss, tổn thất ngoài dự kiến",
+  "def": "Mức tổn thất thực tế có thể vượt EL. EL được bù bằng giá; UL được bù bằng vốn.",
+  "anchor": "ul",
+  "exact": [
+   "UL"
+  ],
+  "loose": [
+   "tổn thất ngoài dự kiến"
+  ]
+ },
+ {
+  "term": "UNREACHABLE_FUTURE_DATE",
+  "alt": "Ngày canh gác \"không bao giờ tới\"",
+  "def": "Giá trị ngày rất xa dùng cho bản ghi chưa có ngày kết thúc, để truy vấn khoảng ngày đơn giản (WHERE validTo >= :today) thay vì kiểm tra NULL. Trong VLP: AccountParameter.validTo và AccountService.endDate dùng 3000-01-01 (DateUtil.UNREACHABLE_FUTURE_DATE, NULL trong DB được đổi qua NullDateToFarFutureConverter); PostingUnit.firstPrescribeDate dùng 3333-01-01 cho \"chưa prescribe\". Hai giá trị khác nhau cho hai mục đích khác nhau, và nhầm lẫn giữa chúng là nguồn lỗi truy vấn kinh điển.",
+  "anchor": "unreachable_future_date",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "Velocity Fraud",
+  "alt": "Gian lận vận tốc",
+  "def": "Nộp nhiều đơn vay cho nhiều bên trong thời gian ngắn, trước khi các bên kịp thấy phê duyệt của nhau. Phát hiện bằng số lần tra cứu gần đây, danh sách đen dùng chung, dấu vân tay thiết bị.",
+  "anchor": "velocity-fraud",
+  "exact": [],
+  "loose": [
+   "Gian lận vận tốc"
+  ]
+ },
+ {
+  "term": "Vintage Analysis",
+  "alt": "Phân tích theo vintage",
+  "def": "Theo dõi hiệu quả của các nhóm khoản vay theo tháng giải ngân, ví dụ so tỷ lệ DPD 30+ sau 6 tháng của nhóm tháng 1 với tháng 2, tháng 3. Phát hiện drift của mô hình và xu hướng chất lượng danh mục.",
+  "anchor": "vintage-analysis",
+  "exact": [],
+  "loose": [
+   "Phân tích theo vintage"
+  ]
+ },
+ {
+  "term": "WOE",
+  "alt": "Weight of Evidence, trọng số bằng chứng",
+  "def": "Biến đổi cho biến chấm điểm: WOE_i = ln(%Vỡ nợ_i / %Tốt_i). Âm là bin nghiêng về khách tốt, dương là nghiêng về khách xấu.",
+  "anchor": "woe",
+  "exact": [
+   "WOE"
+  ],
+  "loose": [
+   "trọng số bằng chứng"
+  ]
+ },
+ {
+  "term": "Write-off",
+  "alt": "Xóa nợ (kế toán)",
+  "def": "Quyết định kế toán đưa khoản vay không còn kỳ vọng thu hồi ra khỏi bảng cân đối, dùng dự phòng đã trích. Ngưỡng là tham số cấu hình (ví dụ DPD 90 với vay tiêu dùng không bảo đảm). Write-off không phải tha nợ: nghĩa vụ trả nợ vẫn còn và việc thu hồi vẫn tiếp tục.",
+  "anchor": "write-off",
+  "exact": [],
+  "loose": []
+ },
+ {
+  "term": "XGBoost",
+  "alt": "eXtreme Gradient Boosting",
+  "def": "Thư viện gradient boosting phổ biến cho dữ liệu dạng bảng, thường cho độ chính xác cao trong chấm điểm tín dụng, xử lý được giá trị thiếu, huấn luyện nhanh.",
+  "anchor": "xgboost",
+  "exact": [
+   "XGBoost"
+  ],
+  "loose": []
+ },
+ {
+  "term": "Zeebe",
+  "alt": "Engine workflow Zeebe",
+  "def": "Engine workflow BPMN (Camunda). Trong VLP chỉ dùng cho chấm điểm ở bước chooseOffer (profile zeebe-integration), không phải bộ điều phối chính của khởi tạo. Kết quả POSITIVE/NEGATIVE được gửi về LOS qua RabbitMQ.",
+  "anchor": "zeebe",
+  "exact": [],
+  "loose": []
+ }
+]

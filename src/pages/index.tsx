@@ -4,6 +4,7 @@ import Layout from '@theme/Layout';
 import Translate, {translate} from '@docusaurus/Translate';
 import styles from './index.module.css';
 import useBaseUrl from '@docusaurus/useBaseUrl';
+import ContinueReading from '@site/src/components/ContinueReading';
 
 interface Part {
   numeral: string;
@@ -100,12 +101,13 @@ export default function Home(): ReactNode {
               <Translate id="home.ctaToc">Mở mục lục</Translate>
             </Link>
           </div>
+          <ContinueReading />
         </header>
 
         <div className={styles.imageWrapper}>
           <img 
             src={useBaseUrl('/img/introduce.png')} 
-            alt="Kiến Thức Tài Chính và Công Nghệ Tài Chính" 
+            alt={translate({id: 'home.image.alt', message: 'Kiến thức tài chính và công nghệ tài chính'})}
             loading="lazy"
           />
         </div>
