@@ -12,3 +12,6 @@ system/ch10-collections.md
 intelligence/ch11-credit-scoring.md
 intelligence/ch12-risk-based-pricing.md
 intelligence/ch13-behavioral-economics.md
+future/ch14-embedded-finance-bnpl.md
+future/ch15-ai-future-of-lending.md
+future/ch16-timeless-principles.md
