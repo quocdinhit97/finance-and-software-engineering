@@ -1,0 +1,29 @@
+.card {
+  margin: 2rem 0 0;
+  padding: 1rem 1.2rem;
+  border: 1px solid color-mix(in srgb, var(--ifm-color-primary) 35%, var(--book-rule));
+  border-left: 4px solid var(--ifm-color-primary);
+  border-radius: 0 8px 8px 0;
+  background: color-mix(in srgb, var(--ifm-color-primary) 5%, var(--book-paper));
+}
+.label {
+  margin: 0 0 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ifm-color-primary);
+}
+.link { display: block; color: var(--book-ink); }
+.link:hover { color: var(--ifm-color-primary); text-decoration: none; }
+.title { display: block; font-weight: 650; font-size: 1.1rem; line-height: 1.4; }
+.section { display: block; color: var(--book-muted); font-size: 0.95rem; }
+.progress {
+  margin: 0.7rem 0 0.3rem;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--book-rule);
+  overflow: hidden;
+}
+.progress span { display: block; height: 100%; background: var(--ifm-color-primary); }
+.meta { margin: 0; font-size: 0.82rem; color: var(--book-muted); }

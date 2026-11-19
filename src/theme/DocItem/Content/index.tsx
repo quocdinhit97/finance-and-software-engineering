@@ -6,7 +6,9 @@ import {useDoc, useDocsSidebar} from '@docusaurus/plugin-content-docs/client';
 import type {PropSidebarItem} from '@docusaurus/plugin-content-docs';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Translate, {translate} from '@docusaurus/Translate';
-import {Clock} from 'lucide-react';
+import {Clock, Printer} from 'lucide-react';
+import ReadingProgress from '@site/src/components/ReadingProgress';
+import {sendEvent} from '@site/src/lib/analytics';
 import styles from './styles.module.css';
 
 type Props = WrapperProps<typeof ContentType>;
@@ -44,8 +46,15 @@ export default function ContentWrapper(props: Props): ReactNode {
   const untranslated = i18n.currentLocale !== i18n.defaultLocale && fm.lang !== i18n.currentLocale;
   const section = sidebar ? findGroupLabel(sidebar.items, metadata.permalink) : undefined;
 
+  const isChapter = fm.chapter !== undefined;
+  const onPrint = () => {
+    sendEvent('print_chapter', {chapter: fm.chapter});
+    window.print();
+  };
+
   return (
     <>
+      {isChapter && <ReadingProgress />}
       <header className={styles.header}>
         {section && <p className={styles.eyebrow}>{section}</p>}
         <h1 className={styles.title}>{metadata.title}</h1>
@@ -62,6 +71,14 @@ export default function ContentWrapper(props: Props): ReactNode {
               <span className={styles.time}>
                 <Clock size={14} strokeWidth={1.8} aria-hidden="true" />
                 {translate({id: 'book.readingTime', message: 'Khoảng {m} phút đọc'}, {m: String(fm.reading_time)})}
+              </span>
+            )}
+            {isChapter && (
+              <span className={`${styles.printItem} print-hide`}>
+                <button type="button" className={styles.print} onClick={onPrint}>
+                  <Printer size={14} strokeWidth={1.8} aria-hidden="true" />
+                  <Translate id="book.print">In hoặc lưu PDF</Translate>
+                </button>
               </span>
             )}
           </p>

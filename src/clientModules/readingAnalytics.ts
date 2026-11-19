@@ -11,6 +11,10 @@
  *   read_complete  { engaged_seconds, page_path, page_title, page_locale }
  *     Sent once per page view when the reader reaches the end of the article
  *     after at least MIN_READ_SECONDS of visible time, to tell reading from skimming.
+ *   read_section   { section_id, section_index, section_count, section_title, engaged_seconds, ... }
+ *     Sent once per H2 section per page view when its heading passes the upper
+ *     half of the viewport. Counting events per section_index shows where in a
+ *     chapter readers stop (see ANALYTICS.md).
  *
  * engaged_seconds counts only time while the tab is visible. Nothing is sent
  * when gtag is absent (local builds, `npm start`, or no GA_MEASUREMENT_ID).
@@ -36,6 +40,7 @@ function gtag(): Gtag | undefined {
 
 function track(pathname: string): () => void {
   const sent = new Set<number>();
+  const sectionsSent = new Set<string>();
   let completeSent = false;
   let engagedMs = 0;
   let visibleSince = document.visibilityState === 'visible' ? performance.now() : null;
@@ -66,6 +71,18 @@ function track(pathname: string): () => void {
         send('event', 'read_progress', {...baseParams(), percent: t});
       }
     }
+    const headings = Array.from(article.querySelectorAll<HTMLElement>('h2[id]'));
+    headings.forEach((h, index) => {
+      if (sectionsSent.has(h.id) || h.getBoundingClientRect().top > window.innerHeight * 0.5) return;
+      sectionsSent.add(h.id);
+      send('event', 'read_section', {
+        ...baseParams(),
+        section_id: h.id,
+        section_index: index + 1,
+        section_count: headings.length,
+        section_title: (h.textContent ?? '').replace(/[#\u200b]/g, '').trim().slice(0, 100),
+      });
+    });
     if (sent.has(100) && !completeSent && engagedSeconds() >= MIN_READ_SECONDS) {
       completeSent = true;
       send('event', 'read_complete', baseParams());

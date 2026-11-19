@@ -11,8 +11,8 @@
     "clear": "docusaurus clear",
     "typecheck": "tsc",
     "check:content": "node scripts/check-content.mjs",
-    "prestart": "node scripts/copy-katex.mjs",
-    "prebuild": "node scripts/copy-katex.mjs",
+    "prestart": "node scripts/copy-katex.mjs && node scripts/build-glossary-data.mjs",
+    "prebuild": "node scripts/copy-katex.mjs && node scripts/build-glossary-data.mjs",
     "transform": "python3 scripts/transform.py ../ && python3 scripts/build_toc.py"
   },
   "dependencies": {

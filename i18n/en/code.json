@@ -733,5 +733,21 @@
   "sidebar.part.chapters": {
     "message": "Chapters {range}",
     "description": "Chapter range under a part title in the sidebar"
+  },
+  "book.print": {
+    "message": "Print or save as PDF",
+    "description": "Button in the chapter header that opens the browser print dialog"
+  },
+  "home.continue.label": {
+    "message": "Continue where you left off",
+    "description": "Home page card for returning readers"
+  },
+  "home.continue.percent": {
+    "message": "About {percent}% of the chapter read",
+    "description": "Home page card, reading progress"
+  },
+  "home.image.alt": {
+    "message": "Finance and financial technology knowledge",
+    "description": "Alt text of the home page illustration"
   }
 }

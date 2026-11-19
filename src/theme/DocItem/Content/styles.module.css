@@ -50,3 +50,16 @@
   margin-bottom: 1.5rem;
   border-radius: 6px;
 }
+.printItem { display: inline-flex; }
+.print {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+}
+.print:hover { text-decoration: underline; }
