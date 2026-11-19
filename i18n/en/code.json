@@ -746,26 +746,6 @@
     "message": "Glossary",
     "description": "Sidebar and pagination label of an untranslated doc"
   },
-  "doc.label.system/ch06-financial-system-architecture": {
-    "message": "6. Financial system architecture",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.system/ch07-origination": {
-    "message": "7. Loan origination",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.system/ch08-account-management": {
-    "message": "8. Account management and the billing engine",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.system/ch09-billing-cycle": {
-    "message": "9. The billing cycle",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.system/ch10-collections": {
-    "message": "10. Debt management and collections",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
   "doc.label.intelligence/ch11-credit-scoring": {
     "message": "11. Credit scoring",
     "description": "Sidebar and pagination label of an untranslated doc"
