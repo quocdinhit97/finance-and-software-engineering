@@ -15,3 +15,6 @@ intelligence/ch13-behavioral-economics.md
 future/ch14-embedded-finance-bnpl.md
 future/ch15-ai-future-of-lending.md
 future/ch16-timeless-principles.md
+appendices/d-regulatory-reference.md
+appendices/a-architecture-reference.md
+glossary/index.md
