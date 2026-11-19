@@ -1,564 +1,415 @@
 ---
-title: "Chương 11. Credit Scoring: Từ lý thuyết đến Production"
-sidebar_label: "11. Credit Scoring: Từ lý thuyết đến Production"
+title: "Chương 11. Chấm điểm tín dụng: từ lý thuyết đến vận hành"
+sidebar_label: "11. Chấm điểm tín dụng"
 sidebar_position: 1
 chapter: 11
 subtitle: "Credit Scoring: From Theory to Production"
 reading_time: 30
+description: "Chấm điểm tín dụng từ thẻ điểm WOE/IV và hồi quy logistic đến gradient boosting và SHAP; đo Gini, KS, PSI; công bằng và giới hạn toán học của nó; quản trị rủi ro mô hình, drift và dữ liệu thay thế cho khách hàng thin-file."
 source_file: "phan-3-chuong-11.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Một model tốt trong tay người không hiểu nó còn nguy hiểm hơn không có model."*
+> *"Một mô hình tốt trong tay người không hiểu nó còn nguy hiểm hơn không có mô hình."*
 >
-> *Nguyên tắc Model Risk Management*
+> *Nguyên tắc quản trị rủi ro mô hình*
 
-## Dẫn nhập: Bốn phút quyết định tương lai
-
-::::story
-Khi chị Lan nộp đơn vay lúc 10h15 sáng và nhận được phê duyệt lúc 10h19, có một quyết định xảy ra trong 4 phút đó mà cô không thấy - và thực ra không ai thấy.
-
-Một model đã nhìn vào 47 features về chị Lan - từ lịch sử tín dụng, thu nhập đã xác minh, đến thời điểm cô nộp đơn và ngay cả cách cô điền form - và cho ra một con số: 420.
-
-Con số đó quyết định: chị Lan có được vay không, bao nhiêu, và với lãi suất nào.
-
-Model đó đúng hay sai? Công bằng hay thiên kiến? Tốt hơn hay tệ hơn model cũ? Khi nào nó sẽ bắt đầu lỗi thời?
-::::
-
-Chương này đi từ nền tảng thống kê của credit scoring, qua các kỹ thuật model hiện đại, đến những vấn đề thực tế mà người ta ít nói đến: explainability, fairness, model drift, và production deployment. Đây là chương mà data scientist, engineer, và business analyst đều cần đọc - với những góc nhìn khác nhau.
-
-## 11.1 Lịch sử và Evolution của Credit Scoring
-
-### Từ Judgmental đến Statistical
+## Dẫn nhập: bốn phút quyết định
 
 ::::story
-Năm 1950, anh Bình muốn vay tiền mua nhà. Anh đến ngân hàng, ngồi đối diện với loan officer - ông Hùng, đã làm 20 năm. Ông Hùng nhìn anh Bình, hỏi vài câu về công việc, gia đình, ý định sử dụng tiền vay - rồi quyết định.
+Chị Lan nộp đơn vay lúc 10 giờ 15 và nhận được phê duyệt lúc 10 giờ 19. Trong bốn phút đó có một quyết định mà chị không nhìn thấy, và thực ra không ai nhìn thấy.
 
-Đây là **judgmental lending** - phán đoán dựa trên kinh nghiệm và trực giác con người.
+Một mô hình đã xem 47 biến đầu vào về chị Lan, từ lịch sử tín dụng, thu nhập đã xác minh, đến thời điểm chị nộp đơn và cả cách chị điền biểu mẫu, rồi cho ra một con số: 420.
+
+Con số đó quyết định chị Lan có được vay hay không, được vay bao nhiêu và với lãi suất nào.
+
+Mô hình đó đúng hay sai? Công bằng hay thiên lệch? Tốt hơn hay tệ hơn mô hình cũ? Khi nào nó bắt đầu lỗi thời?
 ::::
 
-**Vấn đề với judgmental lending:**
+Chương này đi từ nền tảng thống kê của chấm điểm tín dụng *(credit scoring)*, qua các kỹ thuật mô hình hiện đại, đến những vấn đề ít được nói đến khi vận hành thật: khả năng giải thích, tính công bằng, drift của mô hình và triển khai. Nhà khoa học dữ liệu, kỹ sư và chuyên viên phân tích nghiệp vụ đều cần đọc chương này, mỗi người với một góc nhìn riêng.
 
-```text
-Vấn đề 1: Không consistent
-  Ông Hùng có thể approve anh Bình nhưng reject anh Cường
-  với cùng profile — tùy thuộc vào tâm trạng buổi sáng.
+## 11.1 Lịch sử của chấm điểm tín dụng
 
-Vấn đề 2: Bias tiềm ẩn
-  Ông Hùng có thể unconsciously prefer người cùng quê,
-  cùng trường, hoặc có cùng phong cách nói chuyện.
+### Từ phán đoán đến thống kê
 
-Vấn đề 3: Không scale được
-  1 loan officer xử lý 10-20 hồ sơ/ngày
-  Với 10,000 đơn/ngày: cần 500-1,000 loan officers
+::::story
+Năm 1950, anh Bình muốn vay tiền mua nhà. Anh đến ngân hàng, ngồi đối diện với nhân viên tín dụng là ông Phúc, người đã làm nghề hai mươi năm. Ông Phúc nhìn anh Bình, hỏi vài câu về công việc, gia đình, mục đích sử dụng tiền vay, rồi quyết định.
 
-Vấn đề 4: Không có audit trail
-  "Tại sao reject anh Bình?" — "Cảm giác không ổn"
-  → Không thể defend legally, không thể improve
-```
+Đó là cho vay theo phán đoán *(judgmental lending)*: quyết định dựa trên kinh nghiệm và trực giác của con người.
+::::
 
-**Statistical scoring - bước đột phá:**
+Cách làm này có bốn vấn đề:
+
+| Vấn đề | Biểu hiện |
+|---|---|
+| Không nhất quán | Ông Phúc có thể duyệt anh Bình nhưng từ chối anh Cường có hồ sơ tương tự, tùy tâm trạng buổi sáng |
+| Thiên lệch ngầm | Ông Phúc có thể vô thức ưu ái người cùng quê, cùng trường, hoặc có cách nói chuyện giống mình |
+| Không mở rộng được | Một nhân viên xử lý 10-20 hồ sơ mỗi ngày; 10,000 đơn mỗi ngày cần 500-1,000 người |
+| Không có dấu vết kiểm toán | "Vì sao từ chối anh Bình?" "Cảm thấy không ổn." Không thể bảo vệ trước pháp luật, cũng không thể cải tiến |
+
+**Chấm điểm thống kê, bước đột phá:**
 
 ```text
 1956: Bill Fair và Earl Isaac thành lập Fair, Isaac and Company
-      → Sau này là FICO (Fair Isaac Corporation)
+      → Sau này là FICO
+1989: FICO Score ra đời và được các bên cho vay ở Mỹ áp dụng rộng rãi
 
-1989: FICO Score ra đời và được các lender Mỹ adopt rộng rãi
+Ý tưởng: thay vì hỏi "Tôi có thấy tin anh không?",
+hãy hỏi "Những người có hồ sơ giống anh đã trả nợ thế nào?"
 
-Ý tưởng cơ bản: Thay vì hỏi "Tôi có cảm thấy tin tưởng anh không?"
-Hỏi: "Những người có profile giống anh trong quá khứ đã trả nợ như thế nào?"
-
-Statistical approach:
-  1. Collect historical data: applicant features + outcome (paid/default)
-  2. Find features that predict outcome
-  3. Assign weights: features that predict well → higher weight
-  4. Score = weighted combination of features
-  5. Decision: score above threshold → approve
+Cách làm thống kê:
+  1. Thu thập dữ liệu lịch sử: đặc điểm người vay + kết quả (trả được / vỡ nợ)
+  2. Tìm các biến dự báo được kết quả
+  3. Gán trọng số: biến dự báo tốt → trọng số cao
+  4. Điểm = tổ hợp có trọng số của các biến
+  5. Quyết định: điểm trên ngưỡng → duyệt
 ```
 
-### FICO Score: Tại sao vẫn tồn tại năm 2025
+### Vì sao FICO Score vẫn tồn tại
 
 ::::story
-Kỹ sư Tuấn hỏi: "Với ML hiện đại, tại sao nhiều ngân hàng vẫn dùng FICO? Chỉ là tradition hay có lý do thực sự?"
+Kỹ sư Tuấn hỏi: "Với ML hiện đại, sao nhiều ngân hàng vẫn dùng FICO? Chỉ là thói quen hay có lý do thật?"
 ::::
 
-**Năm thành phần của FICO Score:**
+FICO công bố năm nhóm yếu tố cùng tỷ trọng tương đối:
 
-```text
-Payment History (35%):
-  Có trả đúng hạn không? DPD history?
-  → Strongest predictor of future behavior
+| Nhóm | Tỷ trọng | Nội dung | Vì sao dự báo được |
+|---|---|---|---|
+| Lịch sử thanh toán | 35% | Có trả đúng hạn không, lịch sử DPD | Hành vi quá khứ là chỉ báo mạnh nhất cho hành vi tương lai |
+| Số tiền đang nợ | 30% | Tỷ lệ sử dụng hạn mức = dư nợ / hạn mức | Dùng gần hết hạn mức là tín hiệu căng thẳng tài chính |
+| Độ dài lịch sử tín dụng | 15% | Đã có tín dụng bao lâu | Lịch sử dài hơn, nhiều dữ liệu hơn, dễ dự báo hơn |
+| Cơ cấu tín dụng | 10% | Thẻ, trả góp, thế chấp | Cho thấy kinh nghiệm sử dụng tín dụng |
+| Tín dụng mới | 10% | Số lần tra cứu gần đây | Nộp đơn nhiều nơi là tín hiệu căng thẳng |
 
-Amounts Owed (30%):
-  Credit utilization ratio = balance / credit limit
-  → High utilization → stress signal
+FICO tồn tại không chỉ vì nó đủ tốt. Thứ nhất là hiệu ứng hệ sinh thái: bên cho vay thế chấp, chủ nhà cho thuê, nhiều bên khác đều tham chiếu FICO, nên chi phí chuyển đổi cho cả hệ sinh thái rất cao. Thứ hai, cơ quan quản lý hiểu FICO, biết cách kiểm toán nó và biết các thiên lệch của nó; một mô hình ML mới cần thời gian để xây dựng niềm tin đó. Thứ ba là khả năng giải thích: "điểm giảm vì bạn mở thêm thẻ" dễ nói với khách hàng hơn nhiều so với một lời giải thích từ bên trong một ensemble. Thứ tư, mọi bên cho vay dùng cùng thang điểm 300-850 nên điểm so sánh được giữa các bên và theo thời gian; giá trị của nó đến từ việc ai cũng dùng. Cuối cùng, trong môi trường nhiều dữ liệu và ít phức tạp, khoảng cách độ chính xác giữa điểm truyền thống và ML thường không lớn, nên phần cải thiện chưa chắc bù được chi phí chuyển đổi.
 
-Length of Credit History (15%):
-  Bao lâu đã có tín dụng?
-  → Longer = more data = more predictable
+### Thẻ điểm hay ML: khi nào dùng gì
 
-Credit Mix (10%):
-  Có nhiều loại tín dụng không? (revolving, installment, mortgage)
-  → Diversity indicates experience with credit
-
-New Credit (10%):
-  Gần đây có nhiều inquiries không?
-  → Multiple applications → financial stress signal
-```
-
-**Tại sao FICO vẫn tồn tại:**
-
-```text
-Reason 1: Ecosystem lock-in
-  Mortgage lenders, landlords, employers — tất cả reference FICO
-  → "What's your FICO?" là câu hỏi phổ biến hơn "What's your ML score?"
-  → Switching cost cho toàn bộ ecosystem rất cao
-
-Reason 2: Regulatory familiarity
-  Regulators hiểu FICO — biết cách audit, biết biases của nó
-  → New ML models cần time để build regulatory trust
-
-Reason 3: Interpretability
-  Dễ giải thích cho customer: "Score giảm vì bạn mở thẻ mới"
-  → ML: "Score giảm vì attention head 7 của layer 3..."
-
-Reason 4: Consistent baseline
-  Tất cả lenders dùng cùng scale (300-850)
-  → Comparable across lenders, over time
-  → Network effect: valuable because everyone uses it
-
-Reason 5: Actually works well
-  In low-complexity, data-rich environments
-  FICO accuracy không thua kém ML nhiều
-  Gini coefficient: FICO ~0.45-0.55, gradient boosting ~0.55-0.65
-  → Incremental gain từ ML < cost of adoption
-```
-
-### Scorecard vs ML: Khi nào dùng gì
-
-**Bảng so sánh thực tế:**
-
-| Yếu tố | Traditional Scorecard | ML Model |
+| Yếu tố | Thẻ điểm truyền thống | Mô hình ML |
 |--------|----------------------|----------|
-| Accuracy (Gini) | 0.40-0.55 | 0.55-0.70 |
-| Explainability | ✓ Rất cao | Lưu ý: Thấp hơn (cần SHAP) |
-| Regulatory approval | ✓ Dễ | Lưu ý: Phức tạp hơn |
-| Development time | 3-6 tháng | 2-4 tháng (nhưng validation dài hơn) |
-| Maintenance | Thấp | Cao (drift monitoring) |
-| Minimum data required | 5,000+ defaults | 10,000+ (preferably 50,000+) |
-| Thin-file performance | ✗ Kém | ✓ Tốt hơn với alternative data |
+| Độ chính xác (Gini, khoảng điển hình) | 0.40-0.55 | 0.55-0.70 |
+| Khả năng giải thích | Rất cao | Thấp hơn, cần SHAP |
+| Phê duyệt của cơ quan quản lý | Dễ | Phức tạp hơn |
+| Thời gian phát triển | 3-6 tháng | 2-4 tháng, nhưng thẩm định lâu hơn |
+| Bảo trì | Thấp | Cao (giám sát drift) |
+| Dữ liệu tối thiểu | Vài nghìn ca vỡ nợ | Thường cần nhiều hơn đáng kể |
+| Khách hàng thin-file | Kém | Tốt hơn khi có dữ liệu thay thế |
 
-**Decision framework:**
+Thẻ điểm phù hợp khi quy định yêu cầu giải thích đầy đủ, dữ liệu huấn luyện ít, đội ngũ chưa có hạ tầng ML, sản phẩm ổn định và khách hàng chủ yếu đã có lịch sử tín dụng. ML phù hợp khi có phân khúc thin-file với dữ liệu thay thế, khối lượng dữ liệu lớn, quan hệ phi tuyến rõ rệt và phần cải thiện độ chính xác đủ bù chi phí tuân thủ. Trong thực tế, cách lai rất phổ biến: thẻ điểm là mô hình chính và ML dùng cho các trường hợp biên, hoặc điểm ML được quy đổi thành điểm thẻ điểm để phục vụ tuân thủ.
 
-```text
-Chọn Scorecard khi:
-  ✓ Regulatory yêu cầu full explainability (mortgage, consumer loan)
-  ✓ Data size nhỏ (< 10,000 defaults in training)
-  ✓ Team chưa có ML infrastructure
-  ✓ Product stable, không cần frequent model updates
-  ✓ Customer base: mainstream, bureau-visible
-
-Chọn ML khi:
-  ✓ Thin-file segment (alternative data available)
-  ✓ Large data volume (> 50,000 defaults)
-  ✓ Complex non-linear relationships expected
-  ✓ Accuracy improvement justifies compliance cost
-  ✓ BNPL/fintech: speed to market > regulatory complexity
-
-Hybrid approach (common in practice):
-  Scorecard as primary → ML as override for edge cases
-  Or: ML score → translated to scorecard points for compliance
-```
-
-:::summary[Evolution Của Credit Scoring]
-Judgmental → Statistical: consistency, scale,
-audit trail
-FICO vẫn tồn tại: ecosystem lock-in, regulatory,
-interpretability, network effect
-Scorecard: regulated environments, small data,
-explainability priority
-ML: thin-file, large data, accuracy priority
+:::summary[Mục 11.1]
+Chấm điểm thống kê thay thế phán đoán con người vì nó nhất quán, mở rộng được và để lại dấu vết kiểm toán. FICO vẫn tồn tại nhờ hiệu ứng hệ sinh thái, sự quen thuộc với cơ quan quản lý, khả năng giải thích và thang điểm chung. Thẻ điểm hợp với môi trường quản lý chặt và dữ liệu ít; ML hợp với khách hàng thin-file và dữ liệu lớn, và cách lai giữa hai bên rất phổ biến.
 :::
 
-## 11.2 Building A Credit Scorecard
+## 11.2 Xây dựng một thẻ điểm
 
-### Bước 1: Data Collection và Feature Engineering
+### Bước 1: dữ liệu và biến đầu vào
 
 ::::story
-Anh Minh được giao xây dựng scoring model mới cho sản phẩm vay tiêu dùng. Anh có access vào 18 tháng lịch sử data. Bắt đầu từ đâu?
+Đội khoa học dữ liệu được giao xây dựng mô hình chấm điểm mới cho sản phẩm vay tiêu dùng, với 18 tháng dữ liệu lịch sử. Bắt đầu từ đâu?
 ::::
 
-**Target variable - định nghĩa "default":**
+**Biến mục tiêu: định nghĩa "vỡ nợ"**
+
+Trước mọi thứ phải định nghĩa rõ "vỡ nợ" *(default)* là gì.
+
+| Lựa chọn | Ưu điểm | Nhược điểm |
+|---|---|---|
+| DPD 30+ bất kỳ lúc nào trong 12 tháng | Nhiều ca dương tính để huấn luyện | Gồm cả khó khăn tạm thời; có thể đánh giá quá cao rủi ro của khách hàng biên |
+| DPD 90+ bất kỳ lúc nào trong 24 tháng | Phản ánh sát tổn thất tín dụng thật; khớp với IFRS 9 | Ít ca dương tính hơn |
+| Write-off hoặc bán nợ | Định nghĩa thuần nhất của tổn thất | Quá ít ca; phải chờ hơn hai năm mới quan sát được |
+
+DPD 90+ trong 24 tháng là lựa chọn phổ biến vì cân bằng giữa sức dự báo và độ khớp với tổn thất thật. Ở VLP, ngưỡng này là tham số cấu hình trong DRG module chứ không hardcode; các ví dụ trong chương dùng DPD 90+ trong 24 tháng.
+
+**Thời điểm quan sát và cửa sổ hiệu quả:**
 
 ```text
-Trước khi làm gì, phải định nghĩa rõ: "default" là gì?
+Dòng thời gian:
+  Jan 2022 ────────── Dec 2022 ─────────────────── Dec 2024
+     │                    │                            │
+     │← Đơn vay nộp trong năm 2022                     │
+     │                    │← Mỗi đơn được theo dõi     │
+     │                    │   24 tháng kể từ ngày nộp  │← Cửa sổ hiệu quả
+     │                    │                            │   của đơn cuối cùng kết thúc
 
-Option A: DPD 30+ (bất kỳ lúc nào trong 12 tháng)
-  → Broad definition, nhiều positive examples
-  → Includes temporary defaults (situational hardship)
-  → May overpredict risk for borderline customers
+Với mỗi đơn vay nộp trong Jan-Dec 2022:
+  Biến đầu vào: chỉ dữ liệu có TẠI THỜI ĐIỂM NỘP ĐƠN
+  Mục tiêu: có vỡ nợ trong 24 tháng tiếp theo không?
 
-Option B: DPD 90+ (bất kỳ lúc nào trong 24 tháng)
-  → Stricter definition, fewer positive examples
-  → More reflective of actual credit loss
-  → Better for IFRS 9 alignment
-
-Option C: Write-off hoặc debt sale
-  → Purest definition of credit loss
-  → But too few examples for model training
-  → Lagging indicator (takes 2+ years to observe)
-
-*(Note: DPD 90+ in 24 months là industry standard phổ biến.
-   VLP-specific threshold không được xác nhận từ codebase —
-   đây là configurable parameter trong DRG module, không hardcoded)*
-  → Balance between predictive power and credit loss alignment
+Quy tắc then chốt: không bao giờ dùng dữ liệu SAU ngày nộp đơn làm biến đầu vào
+  → Rò rỉ dữ liệu tương lai → mô hình đẹp khi kiểm thử, hỏng khi vận hành
 ```
 
-**Observation window và performance window:**
+**Các nhóm biến đầu vào:**
 
 ```text
-Timeline:
-  Jan 2022 ─────────── Dec 2023 ──────── Dec 2025
-       │                    │                │
-       │← Application date  │← Observation  │← Performance
-       │                    │   window       │   window ends
-       │                    │   (24 months)  │
-       
-For each application in Jan-Dec 2022:
-  Features: data available AT APPLICATION TIME (Jan-Dec 2022)
-  Target: did they default in next 24 months (2022-2024)?
-  
-Key rule: Never use data AFTER application date as features
-          → Future data leakage → model overfits → fails in production
-```
+NHÓM 1: Dữ liệu trung tâm thông tin tín dụng
+  cb_max_dpd_12m: DPD lớn nhất trong 12 tháng
+  cb_max_dpd_24m: DPD lớn nhất trong 24 tháng
+  cb_num_accounts: Số tài khoản tín dụng
+  cb_total_outstanding: Tổng dư nợ
+  cb_num_inquiries_6m: Số lần tra cứu trong 6 tháng
+  cb_credit_age_months: Tuổi của tài khoản lâu nhất
+  cb_utilization_rate: Tỷ lệ sử dụng hạn mức (dư nợ/hạn mức)
 
-**Feature categories:**
-
-```text
-CATEGORY 1: Credit Bureau Features
-  cb_max_dpd_12m: Max DPD in last 12 months
-  cb_max_dpd_24m: Max DPD in last 24 months
-  cb_num_accounts: Number of credit accounts
-  cb_total_outstanding: Total outstanding debt
-  cb_num_inquiries_6m: Number of inquiries last 6 months
-  cb_credit_age_months: Age of oldest account
-  cb_utilization_rate: Credit utilization (balance/limit)
-
-CATEGORY 2: Income & Employment (from CIS verification)
-  income_monthly_verified: Verified monthly income
+NHÓM 2: Thu nhập và việc làm (đã xác minh qua CIS)
+  income_monthly_verified: Thu nhập tháng đã xác minh
   income_type: SALARIED, SELF_EMPLOYED, PENSION
-  employment_tenure_months: Months at current employer
-  income_stability_score: Based on consistency of income proof
+  employment_tenure_months: Số tháng làm ở nơi hiện tại
+  income_stability_score: Độ ổn định của chứng từ thu nhập
 
-CATEGORY 3: Application Features
-  loan_to_income: Requested amount / monthly income
-  dti_after_loan: Debt-to-income ratio if loan approved
-  loan_purpose: PRODUCTIVE vs CONSUMPTION vs REFINANCE
-  channel: DIGITAL vs POS vs TELESALES
-  application_hour: Hour of day submitted
-  form_completion_time: Time taken to fill application
+NHÓM 3: Thông tin đơn vay
+  loan_to_income: Số tiền vay / thu nhập tháng
+  dti_after_loan: Tỷ lệ nợ trên thu nhập nếu khoản vay được duyệt
+  loan_purpose: PRODUCTIVE, CONSUMPTION hoặc REFINANCE
+  channel: DIGITAL, POS hoặc TELESALES
+  application_hour: Giờ nộp đơn
+  form_completion_time: Thời gian điền đơn
 
-CATEGORY 4: Behavioral (existing customers only)
-  payment_ratio_12m: Actual payments / required payments
-  avg_utilization_12m: Average utilization over 12 months
-  app_login_frequency: How often customer logs into app
-  early_payment_rate: % months paid before due date
+NHÓM 4: Hành vi (chỉ khách hàng hiện hữu)
+  payment_ratio_12m: Số tiền đã trả / số tiền phải trả
+  avg_utilization_12m: Tỷ lệ sử dụng hạn mức bình quân 12 tháng
+  app_login_frequency: Tần suất đăng nhập ứng dụng
+  early_payment_rate: Tỷ lệ tháng trả trước hạn
 ```
 
 ### Bước 2: WOE và Information Value
 
-**Khái niệm:**
-
 :::key
-**WOE** *(Weight of Evidence)* đo lường mức độ mỗi bucket của một feature phân biệt giữa "good" (không default) và "bad" (default) customers.
+**WOE** *(Weight of Evidence)* đo mức độ mỗi nhóm giá trị (bin) của một biến tách được khách hàng "tốt" (không vỡ nợ) với khách hàng "xấu" (vỡ nợ).
 
-**IV** *(Information Value)* tổng hợp toàn bộ predictive power của một feature.
+**IV** *(Information Value)* tổng hợp sức dự báo của cả biến.
 :::
 
-**Tại sao cần WOE/IV:**
+Thay vì đưa giá trị thô vào mô hình, biến đổi WOE xử lý được giá trị thiếu (bin "thiếu" có WOE riêng), xử lý quan hệ phi tuyến (mỗi bin một WOE), đưa mọi biến về cùng một thang đo, và làm cho việc quy đổi sang điểm thẻ điểm đơn giản hơn nhiều. Nó cũng buộc người xây mô hình nhìn vào từng bin, nên các quan hệ không đơn điệu dễ bị phát hiện.
+
+**Tính WOE cho biến `cb_max_dpd_12m`:**
 
 ```text
-Thay vì dùng raw features trực tiếp, WOE transform:
-  1. Xử lý missing values (WOE cho missing bucket)
-  2. Xử lý non-linear relationships (mỗi bin có WOE riêng)
-  3. Monotonic relationship với target (dễ validate)
-  4. Comparable scale across different features
-  5. Scorecard points calculation dễ hơn nhiều
+Dữ liệu: 10,000 khoản vay, 800 ca vỡ nợ (tỷ lệ 8%), 9,200 ca tốt
+
+Bin        | Số TK | Vỡ nợ | Tốt   | Tỷ lệ vỡ nợ | %Vỡ nợ | %Tốt
+───────────────────────────────────────────────────────────────────
+DPD = 0    | 6,000 |  240  | 5,760 |     4.0%    | 30.0%  | 62.6%
+DPD 1-5    | 2,000 |  200  | 1,800 |    10.0%    | 25.0%  | 19.6%
+DPD 6-30   | 1,200 |  200  | 1,000 |    16.7%    | 25.0%  | 10.9%
+DPD 31-90  |   600 |  120  |   480 |    20.0%    | 15.0%  |  5.2%
+DPD 90+    |   200 |   40  |   160 |    20.0%    |  5.0%  |  1.7%
+───────────────────────────────────────────────────────────────────
+Tổng       |10,000 |  800  | 9,200 |     8.0%    | 100.0% | 100.0%
+
+Công thức: WOE_i = ln(%Vỡ nợ_i / %Tốt_i)
+
+DPD = 0:   ln(30.0% / 62.6%) = −0.736  ← Nghiêng về khách hàng tốt
+DPD 1-5:   ln(25.0% / 19.6%) = +0.245
+DPD 6-30:  ln(25.0% / 10.9%) = +0.833
+DPD 31-90: ln(15.0% /  5.2%) = +1.056
+DPD 90+:   ln( 5.0% /  1.7%) = +1.056
+
+Đọc kết quả:
+  WOE âm: bin nghiêng về khách hàng tốt (rủi ro thấp)
+  WOE dương: bin nghiêng về khách hàng xấu (rủi ro cao)
+  Trị tuyệt đối lớn: bin phân biệt mạnh
 ```
 
-**Tính toán WOE - ví dụ số:**
-
-Feature: `cb_max_dpd_12m` (Max DPD trong 12 tháng)
-
-```text
-Data: 10,000 loans, 800 defaults (8% default rate)
-
-Binning:
-Bin           | Count | # Default | # Good  | %Default | %Good
-─────────────────────────────────────────────────────────────
-DPD = 0      | 6,000 |    240    |  5,760  |  30.0%  | 71.3%
-DPD 1-5      | 2,000 |    200    |  1,800  |  25.0%  | 22.3%
-DPD 6-30     | 1,200 |    200    |  1,000  |  25.0%  |  12.4%
-DPD 31-90    |   600 |    120    |    480  |  15.0%  |  5.9%
-DPD 90+      |   200 |     40    |    160  |   5.0%  |  2.0%
-─────────────────────────────────────────────────────────────
-Total        |10,000 |    800    |  9,200  | 100.0%  | 100.0%
-
-WOE formula: WOE_i = ln(%Default_i / %Good_i)
-
-WOE calculations:
-DPD = 0:   ln(30.0% / 71.3%) = ln(0.421) = -0.866  ← Good predictor (low risk)
-DPD 1-5:   ln(25.0% / 22.3%) = ln(1.121) = +0.114
-DPD 6-30:  ln(25.0% / 12.4%) = ln(2.016) = +0.700
-DPD 31-90: ln(15.0% / 5.9%)  = ln(2.542) = +0.933
-DPD 90+:   ln(5.0% / 2.0%)   = ln(2.500) = +0.916
-
-Interpretation:
-  Negative WOE: predominantly Good customers (low default risk)
-  Positive WOE: predominantly Bad customers (high default risk)
-  Magnitude: larger absolute value = stronger predictor
-```
+Hai bin cuối có cùng tỷ lệ vỡ nợ 20%, nên cùng WOE. Dữ liệu không cho thấy DPD 90+ rủi ro hơn DPD 31-90, chỉ vì bin DPD 90+ quá nhỏ (200 tài khoản). Cách xử lý thông thường là gộp hai bin thành "DPD 31+", giữ cho WOE tăng đơn điệu theo DPD đúng như logic nghiệp vụ.
 
 **Information Value:**
 
 ```text
-IV = Σ (%Default_i - %Good_i) × WOE_i
+IV = Σ (%Vỡ nợ_i − %Tốt_i) × WOE_i
 
-IV calculation:
-DPD = 0:   (30.0% - 71.3%) × (-0.866) = (-41.3%) × (-0.866) = 0.358
-DPD 1-5:   (25.0% - 22.3%) × 0.114   = 2.7% × 0.114         = 0.003
-DPD 6-30:  (25.0% - 12.4%) × 0.700   = 12.6% × 0.700        = 0.088
-DPD 31-90: (15.0% - 5.9%)  × 0.933   = 9.1% × 0.933         = 0.085
-DPD 90+:   (5.0% - 2.0%)   × 0.916   = 3.0% × 0.916         = 0.027
+DPD = 0:   (30.0% − 62.6%) × (−0.736) = 0.240
+DPD 1-5:   (25.0% − 19.6%) × 0.245   = 0.013
+DPD 6-30:  (25.0% − 10.9%) × 0.833   = 0.118
+DPD 31-90: (15.0% −  5.2%) × 1.056   = 0.103
+DPD 90+:   ( 5.0% −  1.7%) × 1.056   = 0.034
 
-Total IV = 0.358 + 0.003 + 0.088 + 0.085 + 0.027 = 0.561
+IV tổng = 0.509
 
-IV interpretation:
-  IV < 0.02: Useless predictor
-  IV 0.02-0.10: Weak predictor
-  IV 0.10-0.30: Medium predictor
-  IV > 0.30: Strong predictor
+Thang đọc IV thông dụng:
+  IV < 0.02: Không có giá trị
+  IV 0.02-0.10: Yếu
+  IV 0.10-0.30: Trung bình
+  IV > 0.30: Mạnh
+  IV > 0.50: Mạnh bất thường, nên kiểm tra rò rỉ dữ liệu
 
-cb_max_dpd_12m: IV = 0.561 → Very strong predictor ✓
+cb_max_dpd_12m: IV = 0.509 → rất mạnh, đáng tin vì đây là biến
+                lịch sử thanh toán, vốn là nhóm dự báo tốt nhất
 ```
 
-**Feature selection dựa trên IV:**
+**Chọn biến dựa trên IV:**
+
+| Biến | IV | Quyết định |
+|---|---|---|
+| `cb_max_dpd_12m` | 0.509 | Đưa vào |
+| `cb_utilization_rate` | 0.312 | Đưa vào |
+| `employment_tenure_months` | 0.245 | Đưa vào |
+| `loan_to_income` | 0.198 | Đưa vào |
+| `income_type` | 0.156 | Đưa vào |
+| `application_hour` | 0.043 | Yếu, cân nhắc |
+| `cb_credit_age_months` | 0.031 | Yếu, cân nhắc |
+| `form_completion_time` | 0.018 | Quá yếu, loại |
+| `customer_surname` | 0.000 | Không có giá trị, loại |
+
+### Bước 3: hồi quy logistic và điểm thẻ điểm
+
+Mục tiêu là ước lượng xác suất vỡ nợ P(default = 1 | biến đầu vào). Xác suất phải nằm giữa 0 và 1 nên không dùng hồi quy tuyến tính được. Hồi quy logistic mô hình hóa log-odds:
+
+$$
+P = \frac{1}{1 + e^{-z}}, \qquad z = \beta_0 + \beta_1 \cdot WOE_1 + \dots + \beta_n \cdot WOE_n
+$$
+
+Sau khi biến đổi sang WOE, mô hình tuyến tính theo log-odds, dễ thẩm định và dễ giải thích. Với WOE định nghĩa như trên (dương nghĩa là rủi ro cao hơn), mọi hệ số β của các biến đều phải dương. Một hệ số âm là dấu hiệu đa cộng tuyến hoặc lỗi chia bin, và cần được điều tra trước khi dùng mô hình.
+
+**Ví dụ hồi quy logistic (giản lược):**
 
 ```text
-Feature                     IV          Selection
-──────────────────────────────────────────────────
-cb_max_dpd_12m             0.561        ✅ Include
-cb_utilization_rate        0.312        ✅ Include
-employment_tenure_months   0.245        ✅ Include
-loan_to_income             0.198        ✅ Include
-income_type                0.156        ✅ Include
-application_hour           0.043        ⚠️ Weak, evaluate
-cb_credit_age_months       0.031        ⚠️ Weak, evaluate
-form_completion_time       0.018        ❌ Too weak, exclude
-customer_surname           0.000        ❌ Useless, exclude
-```
+Kết quả huấn luyện (5 biến):
 
-### Bước 3: Logistic Regression và Scorecard Points
-
-**Tại sao Logistic Regression:**
-
-```text
-Mục tiêu: predict probability of default P(default=1 | features)
-
-P phải be between 0 and 1 → không thể dùng linear regression
-Logistic regression: P = 1 / (1 + e^(-z))
-where z = β₀ + β₁×WOE₁ + β₂×WOE₂ + ... + βₙ×WOEₙ
-
-Sau khi transform features sang WOE:
-  Model trở nên linear (easier to validate, interpret)
-  Monotonic relationship giữa features và target (easier to audit)
-  Coefficients directly interpretable as odds ratios
-```
-
-**Ví dụ Logistic Regression (simplified):**
-
-```text
-Training kết quả (5 features):
-
-Feature                  Coefficient (β)
-────────────────────────────────────────
-Intercept               -2.145
+Biến                     Hệ số (β)
+────────────────────────────────────
+Hệ số chặn              −1.767
 cb_max_dpd_12m_WOE      +1.234
 cb_utilization_WOE      +0.856
-employment_tenure_WOE   -0.642
+employment_tenure_WOE   +0.642
 loan_to_income_WOE      +0.521
-income_type_WOE         -0.398
+income_type_WOE         +0.398
 
-For chị Lan:
-  cb_max_dpd_12m = 0 → WOE = -0.866
-  cb_utilization = 15% → WOE = -0.520 (computed from binning)
-  employment_tenure = 36 months → WOE = -0.480
-  loan_to_income = 0.842 → WOE = -0.210
-  income_type = SALARIED → WOE = -0.380
+Chị Lan:
+  cb_max_dpd_12m = 0        → WOE = −0.736
+  cb_utilization = 15%      → WOE = −0.520 (theo bảng chia bin)
+  employment_tenure = 36 tháng → WOE = −0.480
+  loan_to_income = 18.5/22 = 0.84 → WOE = −0.210
+  income_type = SALARIED    → WOE = −0.380
 
-z = -2.145
-  + 1.234 × (-0.866)
-  + 0.856 × (-0.520)
-  + (-0.642) × (-0.480)
-  + 0.521 × (-0.210)
-  + (-0.398) × (-0.380)
+z = −1.767
+  + 1.234 × (−0.736) = −0.908
+  + 0.856 × (−0.520) = −0.445
+  + 0.642 × (−0.480) = −0.308
+  + 0.521 × (−0.210) = −0.109
+  + 0.398 × (−0.380) = −0.151
 
-z = -2.145 - 1.069 - 0.445 + 0.308 - 0.109 + 0.151
-z = -3.309
+z = −3.688
 
-P(default) = 1 / (1 + e^(-(-3.309)))
-           = 1 / (1 + e^(3.309))
-           = 1 / (1 + 27.34)
-           = 0.035 = 3.5%
-
-Chị Lan có 3.5% probability of default.
+P(vỡ nợ) = 1 / (1 + e^3.688) = 1 / (1 + 40.0) = 2.4%
+Odds tốt/xấu = 40 : 1
 ```
 
-**Chuyển đổi sang Scorecard Points:**
+**Quy đổi sang điểm:**
+
+Điểm thẻ điểm là một phép biến đổi tuyến tính của log-odds, được chọn để dễ đọc. Quy ước phổ biến: chọn một điểm neo và số điểm để odds tăng gấp đôi *(points to double the odds, PDO)*.
 
 ```text
-Dùng scaling formula:
-  Score = A - B × log(odds)
-  
-  Where:
-    log(odds) = z (logistic regression output)
-    A, B: constants chosen để:
-      Average score ≈ 600
-      Double odds ≈ 20 points (industry convention)
+Điểm = Offset + Factor × ln(odds tốt/xấu)
 
-Standard FICO-like scaling: A = 600, B = 28.85
+Quy ước của thẻ điểm này:
+  Neo: 380 điểm ứng với odds 20 : 1 (P(vỡ nợ) ≈ 4.8%)
+  PDO: 40 điểm (cứ thêm 40 điểm, odds tốt/xấu tăng gấp đôi)
 
-For chị Lan:
-  z = -3.309
-  log(odds) = z = -3.309 (already in log-odds)
-  Score = 600 - 28.85 × (-3.309)
-        = 600 + 95.5
-        = 695.5 ≈ 696
+  Factor = PDO / ln(2) = 40 / 0.6931 = 57.71
+  Offset = 380 − 57.71 × ln(20) = 380 − 172.9 = 207.1
 
-  Chị Lan: Score 696 (ví dụ minh họa — score range thực tế của VLP không được xác nhận từ codebase;
-             scoring logic nằm trong Zeebe process bên ngoài monorepo)
+Chị Lan:
+  ln(odds) = −z = 3.688
+  Điểm = 207.1 + 57.71 × 3.688 = 207.1 + 212.8 = 420
+
+Các mốc khác trên cùng thang:
+  340 điểm ↔ odds 10 : 1 (P ≈ 9.1%)
+  440 điểm ↔ odds ≈ 57 : 1 (P ≈ 1.7%)
 ```
 
-### Bước 4: Model Validation
+Odds của chị Lan là 40 : 1, gấp đôi odds ở điểm neo, nên điểm của chị cao hơn điểm neo đúng một PDO. Với các ngưỡng ở Chương 7 (Prime từ 440, Standard 380-439, Sub-prime 340-379), 420 điểm đặt chị vào hạng Standard. Thang này cũng cho biết mỗi hạng tương ứng với khoảng xác suất vỡ nợ nào: Prime dưới khoảng 1.7%, Standard từ 1.7% đến 4.8%, Sub-prime từ 4.8% đến 9.1%. Chương 12 dùng các khoảng này để định giá. Thang điểm, điểm neo và PDO là lựa chọn thiết kế, không phải quy luật: điều quan trọng là giữ chúng cố định để điểm so sánh được qua các phiên bản mô hình.
 
-**Gini Coefficient - thước đo chính:**
+### Bước 4: thẩm định mô hình
+
+**Gini, thước đo chính:**
 
 ```text
-Gini Coefficient đo lường khả năng phân biệt của model:
-  0 = random (model không có giá trị)
-  1 = perfect (model luôn đúng)
-  Industry benchmark: Gini > 0.45 considered acceptable
+Gini đo khả năng phân biệt khách hàng tốt và xấu của mô hình:
+  0 = ngẫu nhiên (mô hình vô giá trị)
+  1 = hoàn hảo
+  Mốc thường dùng trong tín dụng tiêu dùng: Gini > 0.45 là chấp nhận được
 
-Calculation: Gini = 2 × AUROC - 1
-(AUROC = Area Under ROC Curve)
+Công thức: Gini = 2 × AUROC − 1
+(AUROC: diện tích dưới đường ROC)
 
-Ví dụ với validation data 2,000 accounts (160 defaults):
-
-Sort by score (high to low):
-  Top 10%: 200 accounts, 60 defaults (37.5% of all defaults)
-  Top 20%: 400 accounts, 96 defaults (60% of all defaults)
+Ví dụ với 2,000 tài khoản thẩm định (160 ca vỡ nợ), xếp theo mức rủi ro giảm dần:
+  10% rủi ro nhất: 200 TK, 60 ca vỡ nợ (37.5% tổng số ca)
+  20% rủi ro nhất: 400 TK, 96 ca vỡ nợ (60% tổng số ca)
   ...
 
-ROC Curve construction:
-  For each threshold: True Positive Rate vs False Positive Rate
-  Area under curve = AUROC
-
-If AUROC = 0.72 → Gini = 2 × 0.72 - 1 = 0.44 → Borderline acceptable
-
-If AUROC = 0.80 → Gini = 0.60 → Good model
+Đường ROC: với mỗi ngưỡng, tỷ lệ dương thật so với tỷ lệ dương giả
+AUROC = 0.72 → Gini = 2 × 0.72 − 1 = 0.44 → sát ngưỡng chấp nhận
+AUROC = 0.80 → Gini = 0.60 → mô hình tốt
 ```
 
-**KS Statistic - Kolmogorov-Smirnov:**
+**KS (Kolmogorov-Smirnov):**
 
 ```text
-KS = max(Cum%Good - Cum%Bad) at each score point
+KS = max(%Xấu lũy kế − %Tốt lũy kế) trên các khoảng điểm
 
-Shows: at what score threshold does model best discriminate?
+Khoảng điểm | %Tốt lũy kế | %Xấu lũy kế | Chênh lệch
+──────────────────────────────────────────────────────
+300-350     |      5%     |     18%     |   13%
+350-400     |     18%     |     38%     |   20%
+400-450     |     40%     |     62%     |   22%  ← KS = 22%
+450-500     |     68%     |     80%     |   12%
+500-550     |     85%     |     92%     |    7%
+550-600     |     95%     |     98%     |    3%
+600+        |    100%     |    100%     |    0%
 
-Score Range  | %Good Cumulative | %Bad Cumulative | Difference
-────────────────────────────────────────────────────────────
-300-350      |      5%         |      18%        |   13%
-350-400      |     18%         |      38%        |   20%
-400-450      |     40%         |      62%        |   22%
-450-500      |     68%         |      80%        |   12%  ← KS = 22%
-500-550      |     85%         |      92%        |    7%
-550-600      |     95%         |      98%        |    3%
-600+         |    100%         |     100%        |    0%
-
-KS = 22% at score range 400-450
-Benchmark: KS > 30% good, KS > 40% very good
+KS = 22% tại khoảng 400-450
+Mốc thường dùng: KS > 30% là tốt, KS > 40% là rất tốt
+→ Mô hình này phân biệt chưa đủ tốt
 ```
 
-**PSI - Population Stability Index:**
+**PSI (Population Stability Index):**
 
 ```text
-PSI measures: Is the distribution of applicants changing over time?
+PSI đo xem phân bố của người nộp đơn có đang thay đổi không.
 
-High PSI = model trained on different population than currently applying
-         = model performance likely degraded
+PSI cao = mô hình được huấn luyện trên một tập khách hàng khác
+          với tập đang nộp đơn hiện nay → hiệu quả có thể đã giảm
 
-PSI Formula:
-  PSI = Σ (% Expected - % Actual) × ln(% Expected / % Actual)
+Công thức:
+  PSI = Σ (%Thực tế_i − %Kỳ vọng_i) × ln(%Thực tế_i / %Kỳ vọng_i)
 
-PSI interpretation:
-  PSI < 0.10: No significant shift → model still valid
-  PSI 0.10-0.25: Some shift → monitor carefully
-  PSI > 0.25: Large shift → retrain model
+Thang đọc:
+  PSI < 0.10: Không thay đổi đáng kể → mô hình còn dùng được
+  PSI 0.10-0.25: Có thay đổi → theo dõi sát
+  PSI > 0.25: Thay đổi lớn → cần huấn luyện lại
 
-Example: Model trained on 2022 data, applied to 2024 applicants
-  If economy changed significantly → PSI > 0.25 → retrain needed
+Ví dụ: mô hình huấn luyện trên dữ liệu 2022, áp dụng cho người nộp đơn 2024.
+  Nếu kinh tế thay đổi mạnh → PSI > 0.25 → cần huấn luyện lại
 ```
 
-:::summary[Building A Scorecard]
-Data: observation window vs performance window
-→ No data leakage after application date
-WOE: transform each bin → consistent scale,
-handles missing, non-linear
-IV: select features with IV > 0.10
-Logistic regression on WOE → scorecard points
-Validation: Gini > 0.45, KS > 30%, PSI < 0.10
+:::summary[Mục 11.2]
+Mỗi đơn vay chỉ được mô tả bằng dữ liệu có tại thời điểm nộp đơn, còn kết quả được quan sát trong cửa sổ hiệu quả sau đó. WOE đưa các biến về cùng thang đo log-odds, IV đo sức dự báo để chọn biến, và hồi quy logistic trên WOE cho ra log-odds được quy đổi thành điểm bằng điểm neo và PDO. Với quy ước 380 điểm ở odds 20 : 1 và PDO 40, odds 40 : 1 của chị Lan cho đúng 420 điểm. Mô hình được thẩm định bằng Gini, KS và PSI.
 :::
 
-## 11.3 ML trong Credit Scoring
+## 11.3 ML trong chấm điểm tín dụng
 
-### Gradient Boosting: Tại sao phổ biến nhất
+### Gradient boosting: vì sao phổ biến nhất
 
 ::::story
-Data Science team của Anh Minh thử nghiệm nhiều algorithms. XGBoost cho Gini 0.63, LightGBM cho 0.65, Scorecard cho 0.48. Team muốn deploy XGBoost ngay.
+Đội khoa học dữ liệu thử nhiều thuật toán. XGBoost cho Gini 0.63, LightGBM cho 0.65, thẻ điểm cho 0.48. Đội muốn triển khai XGBoost ngay.
 
-Anh Minh dừng lại: "Accuracy tốt hơn là đủ chưa? Chúng ta cần giải thích được tại sao reject một khách hàng."
+Anh Minh dừng lại: "Chính xác hơn đã đủ chưa? Chúng ta phải giải thích được vì sao từ chối một khách hàng."
 ::::
 
-**Tại sao Gradient Boosting (XGBoost, LightGBM) chiếm ưu thế:**
+Gradient boosting (XGBoost, LightGBM) chiếm ưu thế trên dữ liệu dạng bảng vì nhiều lý do:
 
-```text
-1. Accuracy: Consistently beats other methods on tabular data
-   → Kaggle competitions: gradient boosting wins 70%+ of tabular challenges
-   → Real-world credit: Gini improvement 10-20% vs logistic regression
+| Đặc điểm | Ý nghĩa trong tín dụng |
+|---|---|
+| Độ chính xác | Trên dữ liệu dạng bảng, gradient boosting thường vượt các phương pháp khác, kể cả trong các cuộc thi dữ liệu công khai |
+| Dữ liệu mất cân bằng | Tỷ lệ vỡ nợ chỉ vài phần trăm; tham số như `scale_pos_weight` giúp mô hình chú ý đến nhóm thiểu số |
+| Tương tác phi tuyến | "DPD 0 + thu nhập thấp + mới đi làm" có rủi ro khác với từng yếu tố riêng lẻ; cây quyết định tự nắm bắt điều này |
+| Giá trị thiếu | XGBoost tự học hướng đi cho giá trị thiếu, không cần điền giá trị giả (vốn có thể gây thiên lệch) |
+| Giải thích | SHAP với TreeExplainer tính nhanh trên mô hình cây |
+| Tốc độ huấn luyện | LightGBM dùng histogram, xử lý hàng chục triệu dòng hiệu quả, nên huấn luyện lại thường xuyên là khả thi |
 
-2. Handles imbalanced data well:
-   Default rate 5% → 95% non-default
-   Gradient boosting: focal loss, scale_pos_weight parameter
-   → Better minority class detection than logistic regression
-
-3. Handles non-linear interactions:
-   "DPD 0 + low income + short employment" → different risk than any feature alone
-   → Trees naturally capture interaction effects
-
-4. Missing value handling:
-   XGBoost: built-in missing value direction learning
-   → No need to impute (which can introduce bias)
-
-5. Feature importance built-in:
-   SHAP values via TreeExplainer
-   → Explainability added on top
-
-6. Fast training:
-   LightGBM: histogram-based, can handle 10M+ rows efficiently
-   → Frequent retraining feasible
-```
-
-**Tuning XGBoost for credit scoring:**
+**Tinh chỉnh XGBoost cho chấm điểm tín dụng:**
 
 ```python
 # Key hyperparameters với credit scoring rationale:
@@ -601,51 +452,51 @@ tscv = TimeSeriesSplit(n_splits=5)
 # Validates temporal generalization
 ```
 
-### SHAP Values: Explainability cho ML
+### SHAP: giải thích cho mô hình ML
 
 ::::story
-Khách hàng bị reject bởi ML model. Regulatory yêu cầu: "Tại sao reject?" Bạn không thể trả lời "Vì tree node 284 trong tree 47 của ensemble..."
+Một khách hàng bị mô hình ML từ chối. Cơ quan quản lý hỏi: "Vì sao từ chối?" Không thể trả lời "Vì nút 284 trong cây thứ 47 của ensemble..."
 
-SHAP (SHapley Additive exPlanations) giải quyết vấn đề này.
+SHAP *(SHapley Additive exPlanations)* giải quyết vấn đề này.
 ::::
 
-**Khái niệm SHAP:**
-
 :::key
-**SHAP values** là framework giải thích prediction của bất kỳ model nào - đo lường contribution của từng feature vào prediction cụ thể đó.
+**Giá trị SHAP** chia một dự đoán cụ thể thành phần đóng góp của từng biến, sao cho giá trị nền cộng tổng các đóng góp đúng bằng dự đoán. Nó áp dụng được cho bất kỳ mô hình nào.
 :::
 
-**Ví dụ SHAP explanation:**
+**Ví dụ giải thích bằng SHAP:**
 
 ```text
-Khách hàng bị reject (P(default) = 0.23 = 23%)
-Base rate: 8% (average default rate)
+Khách hàng bị từ chối, P(vỡ nợ) = 23%
+Giá trị nền: 8% (tỷ lệ vỡ nợ bình quân)
 
-SHAP contribution breakdown:
-  Base value:                              0.08 (=8% base rate)
-  
-  + cb_max_dpd_12m = DPD 35             + 0.09 (high DPD → increases risk)
-  + cb_num_inquiries_6m = 4             + 0.03 (many inquiries → increases risk)
-  + loan_to_income = 1.2                + 0.05 (high LTI → increases risk)
-  
-  - employment_tenure = 48 months       - 0.02 (long tenure → decreases risk)
-  - income_type = SALARIED              - 0.01 (stable income → decreases risk)
+Phân rã SHAP (trên thang xác suất, để dễ đọc):
+  Giá trị nền:                            0.08
+
+  + cb_max_dpd_12m = DPD 35             + 0.09 (DPD cao → tăng rủi ro)
+  + cb_num_inquiries_6m = 4             + 0.04 (tra cứu nhiều → tăng rủi ro)
+  + loan_to_income = 1.2                + 0.05 (tỷ lệ vay/thu nhập cao → tăng rủi ro)
+
+  − employment_tenure = 48 tháng        − 0.02 (làm lâu năm → giảm rủi ro)
+  − income_type = SALARIED              − 0.01 (thu nhập ổn định → giảm rủi ro)
   ─────────────────────────────────────────────
-  Final prediction:                       0.23 (=23%)
+  Dự đoán cuối:                           0.23
 
-Human-readable rejection reason:
+Lý do từ chối dạng con người đọc được:
   "Đơn vay của bạn không được phê duyệt vì:
-   1. Lịch sử thanh toán: Tài khoản của bạn có 35 ngày quá hạn
+   1. Lịch sử thanh toán: tài khoản của bạn có 35 ngày quá hạn
       trong 12 tháng gần đây (yếu tố quan trọng nhất)
-   2. Tỷ lệ vay/thu nhập: Khoản vay này chiếm tỷ lệ cao
-      so với thu nhập hàng tháng của bạn
-   3. Số lần hỏi tín dụng: Bạn đã có nhiều lần check
-      tín dụng trong 6 tháng gần đây
-   
-   Bạn có thể cải thiện bằng cách: [actionable advice]"
+   2. Tỷ lệ vay trên thu nhập: khoản vay này cao
+      so với thu nhập hằng tháng của bạn
+   3. Số lần tra cứu tín dụng: bạn đã được tra cứu tín dụng
+      nhiều lần trong 6 tháng gần đây
+
+   Bạn có thể cải thiện bằng cách: [gợi ý cụ thể]"
 ```
 
-**Implementing SHAP in production:**
+Với mô hình cây, SHAP thường được tính trên thang log-odds; ví dụ trên quy về thang xác suất để dễ theo dõi, và tổng các đóng góp cộng với giá trị nền đúng bằng 23%.
+
+**SHAP khi vận hành:**
 
 ```python
 import shap
@@ -679,201 +530,91 @@ def get_rejection_reasons(application_features):
     return translate_to_customer_language(top_negative, application_features)
 ```
 
-### Ensemble Methods: Kết hợp nhiều Models
+### Ensemble: kết hợp nhiều mô hình
 
-**Khi nào dùng ensemble:**
+Một mô hình đơn lẻ có thể khớp quá mức với một kiểu dữ liệu cụ thể và giảm hiệu quả đột ngột khi kiểu đó thay đổi. Có ba cách kết hợp thường gặp. Lấy trung bình có trọng số, ví dụ 0.6 × điểm thẻ điểm + 0.4 × điểm XGBoost, ổn định hơn từng mô hình và hữu ích khi hai mô hình nắm bắt các khía cạnh khác nhau. Stacking dùng một mô hình tầng hai để kết hợp dự đoán của các mô hình tầng một; mạnh hơn nhưng khó thẩm định hơn. Cách thứ ba là dùng mô hình chuyên biệt cho từng phân khúc: một mô hình cho khách hàng có dưới sáu tháng lịch sử, một mô hình cho khách hàng có lịch sử dày, cùng logic định tuyến khách hàng đến mô hình phù hợp với lượng dữ liệu đang có.
 
-```text
-Single model risks:
-  - Model overfit to specific data patterns
-  - Sudden performance degradation when patterns change
-
-Ensemble approaches:
-
-1. Model averaging:
-   Score = 0.6 × scorecard_score + 0.4 × xgboost_score
-   → More stable than either alone
-   → Good when models capture different aspects
-
-2. Stacking:
-   Level 1: Multiple base models (logistic, XGBoost, LightGBM)
-   Level 2: Meta-model combines predictions of base models
-   → More complex, harder to validate
-
-3. Specialized models for segments:
-   Thin-file model: for customers with < 6 months history
-   Thick-file model: for customers with rich history
-   → Route customer to appropriate model based on data availability
-   → Ensemble = specialized models + routing logic
-```
-
-:::summary[ML Credit Scoring]
-Gradient boosting: consistently best on tabular
-data, handles imbalance, non-linear interactions
-Key tuning: max_depth (shallow), min_child_weight
-(conservative), scale_pos_weight (imbalance)
-Scoring: binary POSITIVE/NEGATIVE (SHAP-based explanation NOT implemented in VLP) → regulatory
-compliant rejection reasons
-TimeSeriesSplit: temporal validation, no leakage
+:::summary[Mục 11.3]
+Gradient boosting thường cho độ chính xác cao nhất trên dữ liệu dạng bảng, xử lý tốt dữ liệu mất cân bằng và tương tác phi tuyến; khi tinh chỉnh cho tín dụng, ưu tiên cây nông và tham số thận trọng. SHAP biến một dự đoán thành các đóng góp cộng được của từng biến, là cơ sở cho lý do từ chối. Kiểm định phải theo thời gian (TimeSeriesSplit) để tránh rò rỉ dữ liệu tương lai. Ensemble và mô hình theo phân khúc giúp mô hình ổn định hơn.
 :::
 
-## 11.4 Fairness và Bias trong Credit Scoring
+## 11.4 Công bằng và thiên lệch trong chấm điểm tín dụng
 
-### Disparate Impact: Khi Model "đúng" mà vẫn Sai
+### Tác động bất lợi: khi mô hình "đúng" mà vẫn sai
 
 ::::story
-Công ty tài chính deploy model mới. Model không include race, gender, hay địa chỉ như features. Nhưng sau 6 tháng, analysis cho thấy: approval rate cho phụ nữ thấp hơn nam giới 8 điểm phần trăm - dù cùng income và credit history.
+Một công ty tài chính triển khai mô hình mới. Mô hình không dùng dân tộc, giới tính hay địa chỉ làm biến đầu vào. Nhưng sau sáu tháng, phân tích cho thấy tỷ lệ duyệt của phụ nữ thấp hơn nam giới 8 điểm phần trăm, dù cùng thu nhập và cùng lịch sử tín dụng.
 
-Legal team báo: "Đây có thể là disparate impact discrimination."
+Legal team cảnh báo: "Đây có thể là phân biệt đối xử do tác động bất lợi *(disparate impact)*."
 ::::
 
-**Khái niệm - Proxy Discrimination:**
-
 :::key
-**Proxy discrimination** xảy ra khi một feature không phải protected attribute (race, gender, religion...) nhưng **correlates strongly** với protected attribute - dẫn đến discriminatory outcome dù không intentional.
+**Phân biệt qua biến đại diện** *(proxy discrimination)* xảy ra khi một biến không phải là thuộc tính được bảo vệ (dân tộc, giới tính, tôn giáo...) nhưng **tương quan mạnh** với thuộc tính đó, dẫn đến kết quả phân biệt đối xử dù không ai cố ý.
 :::
 
-**Ví dụ proxy:**
+| Biến | Có thể đại diện cho |
+|---|---|
+| Khu vực sinh sống, mã bưu chính | Dân tộc, do lịch sử phân bố dân cư |
+| Trình độ học vấn | Điều kiện kinh tế gia đình, không phải uy tín tín dụng của cá nhân |
+| Tên nơi làm việc, nghề nghiệp | Giới tính, ở những ngành có tỷ lệ giới chênh lệch |
+| Giờ nộp đơn | Người làm ca đêm, tức lao động phổ thông so với văn phòng |
+
+Những biến này trông "trung lập" nhưng có thể tương quan với thuộc tính được bảo vệ. Phát hiện chúng cần SHAP kết hợp với phân tích theo nhóm nhân khẩu học.
+
+**Kiểm tra tác động bất lợi:**
 
 ```text
-Feature: Neighborhood / zip code
-  → Correlates với race/ethnicity (due to historical housing segregation)
-  → If model uses neighborhood → effectively using race
+Quy tắc 80% (hướng dẫn của Ủy ban Cơ hội Việc làm Bình đẳng Mỹ, EEOC):
+  Nếu tỷ lệ được chọn của nhóm được bảo vệ < 80% tỷ lệ của nhóm thuận lợi nhất
+  → Có dấu hiệu tác động bất lợi
 
-Feature: College education level
-  → Correlates với socioeconomic status
-  → May proxy for family wealth, not individual creditworthiness
+Ví dụ:
+  Tỷ lệ duyệt nam: 72%
+  Tỷ lệ duyệt nữ: 64%
+  Tỷ số: 64% / 72% = 88.9% > 80% → đạt theo quy tắc 80%
 
-Feature: Employer name
-  → Certain industries: gender skewed
-  → "Nurse" vs "Engineer" → may proxy for gender
+  Nếu tỷ lệ duyệt nữ là 55%:
+  Tỷ số: 55% / 72% = 76.4% < 80% → có dấu hiệu tác động bất lợi
 
-Feature: Application hour
-  → "Applied at 2am" may correlate with shift workers
-  → May proxy for blue-collar vs white-collar
-
-In credit scoring:
-  Features seem "neutral" but may correlate with protected attributes
-  → SHAP + demographic analysis needed to detect
+Lưu ý: quy tắc 80% KHÔNG phải vùng an toàn pháp lý, chỉ là điểm khởi đầu
 ```
 
-**Disparate Impact Test:**
+### Các định nghĩa công bằng có mâu thuẫn nhau không?
 
-```text
-80% Rule (US Equal Employment Opportunity Commission guideline):
-  If selection rate of protected group < 80% of most favored group
-  → Potential disparate impact
+Có bốn định nghĩa công bằng phổ biến, mỗi định nghĩa đòi hỏi một điều khác nhau:
 
-Example:
-  Male approval rate: 72%
-  Female approval rate: 64%
-  Ratio: 64% / 72% = 88.9% > 80% → OK by 80% rule
+| Định nghĩa | Điều kiện | Ý nghĩa |
+|---|---|---|
+| Ngang bằng nhân khẩu *(demographic parity)* | P(duyệt \| nam) = P(duyệt \| nữ) | Tỷ lệ duyệt như nhau giữa các nhóm. Nếu tỷ lệ vỡ nợ thật khác nhau, ép điều kiện này nghĩa là duyệt khách rủi ro hơn ở nhóm này và từ chối khách ít rủi ro hơn ở nhóm kia |
+| Cơ hội ngang bằng *(equal opportunity)* | P(duyệt \| khách tốt, nam) = P(duyệt \| khách tốt, nữ) | Trong số khách hàng tốt, cơ hội được duyệt như nhau; gần với nguyên tắc "thưởng cho uy tín thật" |
+| Odds ngang bằng *(equalized odds)* | Như trên, và P(duyệt \| khách xấu, nam) = P(duyệt \| khách xấu, nữ) | Tỷ lệ dương thật VÀ dương giả như nhau giữa các nhóm |
+| Hiệu chuẩn *(calibration)* | P(vỡ nợ \| điểm S, nam) = P(vỡ nợ \| điểm S, nữ) | Cùng điểm nghĩa là cùng rủi ro thật, công bằng theo góc nhìn định phí |
 
-  If female rate was 55%:
-  Ratio: 55% / 72% = 76.4% < 80% → Disparate impact concern
+**Kết quả bất khả thi:**
 
-Note: 80% rule is NOT a legal safe harbor — just a starting point
-```
+Khi tỷ lệ vỡ nợ nền khác nhau giữa hai nhóm, các định nghĩa này không thể cùng được thỏa mãn. Chouldechova (2017) và Kleinberg, Mullainathan và Raghavan (2016) chứng minh rằng một điểm đã hiệu chuẩn không thể đồng thời có tỷ lệ dương giả và âm giả bằng nhau giữa các nhóm, trừ khi mô hình hoàn hảo hoặc tỷ lệ nền bằng nhau. Mâu thuẫn giữa hiệu chuẩn và ngang bằng nhân khẩu còn trực tiếp hơn: nếu nhóm A có tỷ lệ vỡ nợ 10% và nhóm B 5%, một mô hình hiệu chuẩn sẽ cho nhóm A điểm thấp hơn, nên tỷ lệ duyệt của nhóm A thấp hơn.
 
-### Fairness Definitions: Có mâu thuẫn nhau không?
+Đây không phải lỗi mô hình mà là một giới hạn toán học. Hệ quả thực tế là tổ chức phải **chọn** định nghĩa công bằng nào để tối ưu, và đó là quyết định pháp lý, đạo đức và kinh doanh, không chỉ là quyết định kỹ thuật.
 
-**Bốn định nghĩa fairness phổ biến:**
+### Yêu cầu của cơ quan quản lý
 
-**1. Demographic Parity:**
-```text
-P(Approved | Male) = P(Approved | Female)
-→ Equal approval rates across groups
+**Thông báo từ chối** *(adverse action notice)*:
 
-Ưu điểm: Simple, intuitive
-Nhược điểm: Nếu actual default rates khác nhau giữa groups,
-             enforcing demographic parity = approve more risky customers
-             trong one group, reject less risky in another
-```
+Ở Mỹ, Đạo luật Cơ hội Tín dụng Bình đẳng (ECOA) và Regulation B yêu cầu bên cho vay nêu lý do cụ thể khi từ chối; Đạo luật Báo cáo Tín dụng Công bằng (FCRA) yêu cầu thông báo khi quyết định dựa trên báo cáo tín dụng, kèm điểm đã dùng, khoảng điểm có thể có, tối đa bốn yếu tố chính làm giảm điểm, và thông tin liên hệ của trung tâm tín dụng. Lý do phải cụ thể: không phải "điểm của bạn không đủ" mà là "điểm của bạn bị ảnh hưởng bởi: (1) 35 ngày quá hạn...".
 
-**2. Equal Opportunity:**
-```text
-P(Approved | Good customer, Male) = P(Approved | Good customer, Female)
-→ Among good customers, equal chance of approval
+Ở VLP, LOS gọi một BPMN process trên Zeebe để chấm điểm và nhận về kết quả nhị phân POSITIVE hoặc NEGATIVE qua callback. Lý do từ chối chi tiết và giải thích bằng SHAP chưa có trong luồng này. Nếu Vela Finance cần gửi thông báo từ chối có lý do cụ thể, phần đó phải được xây thêm, và SHAP là cách tự nhiên để làm.
 
-More aligned with meritocracy (reward actual creditworthiness)
-```
+**Yêu cầu về khả năng giải thích:**
 
-**3. Equalized Odds:**
-```text
-Both: P(Approved | Good, Male) = P(Approved | Good, Female)
-And:  P(Approved | Bad, Male) = P(Approved | Bad, Female)
-→ Equal true positive AND false positive rates
-```
+| Khu vực | Khung pháp lý | Yêu cầu chính |
+|---|---|---|
+| EU | Đạo luật AI (2024) xếp hệ thống chấm điểm tín dụng cá nhân vào nhóm rủi ro cao; GDPR Điều 22 về quyết định tự động | Minh bạch, giám sát của con người, quyền yêu cầu con người xem xét lại |
+| Mỹ | ECOA/Regulation B, FCRA | Thông báo từ chối có lý do; không dùng thuộc tính được bảo vệ |
+| Việt Nam | Quy định của NHNN về thông tin tín dụng; Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15 | Khuôn khổ về giải thích quyết định tín dụng còn đang hình thành; xu hướng là tăng minh bạch |
 
-**4. Calibration:**
-```text
-P(default | Score=S, Male) = P(default | Score=S, Female)
-→ Same score = same actual risk across groups
-→ Score is "fair" from actuarial perspective
-```
+### Các cách giảm thiểu thiên lệch
 
-**Impossibility result (Chouldechova, 2017):**
-
-```text
-MATHEMATICAL PROOF: Cannot simultaneously achieve
-  Demographic Parity + Calibration + Equal Opportunity
-  when base rates differ between groups.
-
-If Group A has 10% default rate and Group B has 5%:
-  Calibrated model: Group A will have lower scores (higher risk)
-  → Approval rate for Group A lower (violates demographic parity)
-
-This is NOT a modeling problem — it's a mathematical impossibility.
-
-Practical implication:
-  Must CHOOSE which fairness definition to optimize
-  Different definitions → different policy choices
-  → Legal, ethical, and business decision — not just technical
-```
-
-### Regulatory Requirements
-
-**Adverse Action Notice (khi reject):**
-
-```text
-Legal requirement in many jurisdictions:
-When rejecting credit application, must provide:
-  1. Reason for rejection (specific factors, not just "score")
-  2. Score used (if score-based rejection)
-  3. Range of possible scores (context)
-  4. Key factors that adversely impacted score (top 4)
-  5. Contact info for credit bureau used
-
-In VLP:
-  *(verified: scoring-pipeline-spec.md)*
-  Scoring returns POSITIVE / NEGATIVE (binary, via Zeebe callback)
-  Detailed rejection reasons: NOT implemented in current codebase
-  SHAP-based explanations: NOT found — scoring logic is in Zeebe (external)
-  If adverse action notice is needed → implementation required in future
-  Must be specific: NOT "Your score was insufficient"
-  Must be: "Your score was impacted by: (1) 35 days past due..."
-```
-
-**Explainability requirements:**
-
-```text
-EU AI Act (2024): High-risk AI systems in credit decisions
-  → Require meaningful explanation
-  → Right to human review
-  → Transparency about when AI is used
-
-US Fair Credit Reporting Act:
-  → Adverse action notices required
-  → Cannot use protected characteristics
-
-Vietnam:
-  → Credit Information Law, NHNN regulations
-  → Evolving framework, but trend toward explainability
-```
-
-### Practical Mitigation Strategies
-
-**Strategy 1: Feature selection với fairness lens**
+**Cách 1: chọn biến qua lăng kính công bằng**
 
 ```python
 def fairness_aware_feature_selection(features, demographic_data):
@@ -894,7 +635,7 @@ def fairness_aware_feature_selection(features, demographic_data):
 # Alternatively: keep but monitor closely
 ```
 
-**Strategy 2: Post-processing fairness adjustment**
+**Cách 2: điều chỉnh sau mô hình**
 
 ```python
 def fair_score_adjustment(raw_score, group):
@@ -916,144 +657,68 @@ def fair_score_adjustment(raw_score, group):
 # Legal review required before implementation
 ```
 
-**Strategy 3: Regular fairness audits**
+**Cách 3: kiểm toán công bằng định kỳ.** Hằng tháng, tính tỷ lệ duyệt và tỷ lệ vỡ nợ ở cùng mức điểm theo từng nhóm nhân khẩu học, áp dụng quy tắc 80% và kiểm tra odds ngang bằng. Nếu phát hiện tác động bất lợi, phân tích nguyên nhân gốc, ghi lại phát hiện và hành động khắc phục, rồi báo cáo cho bộ phận tuân thủ.
 
-```text
-Monthly audit process:
-  1. Calculate approval rates by demographic segment
-  2. Calculate default rates by demographic segment at same score
-  3. Apply 80% rule and equalized odds tests
-  4. If disparate impact detected: root cause analysis
-  5. Document findings and remediation actions
-  6. Report to compliance team
-```
-
-:::summary[Fairness Và Bias]
-Proxy discrimination: neutral features correlate
-với protected attributes → discriminatory effect
-Fairness impossibility: không thể đồng thời đạt
-demographic parity + calibration → must choose
-Adverse action notice: legal requirement →
-binary POSITIVE/NEGATIVE via Zeebe callback (SHAP not implemented)
-Mitigation: feature selection, post-processing,
-regular fairness audits
+:::summary[Mục 11.4]
+Một biến trông trung lập vẫn có thể là đại diện cho thuộc tính được bảo vệ và gây tác động bất lợi. Khi tỷ lệ vỡ nợ nền khác nhau giữa các nhóm, không thể cùng lúc đạt hiệu chuẩn, cân bằng sai số và ngang bằng nhân khẩu, nên chọn định nghĩa công bằng là một quyết định chính sách. Thông báo từ chối có lý do cụ thể là yêu cầu pháp lý ở nhiều nơi; VLP hiện chỉ nhận kết quả nhị phân từ Zeebe, nên phần lý do từ chối cần được xây thêm. Giảm thiểu bằng chọn biến, điều chỉnh sau mô hình và kiểm toán định kỳ.
 :::
 
-## 11.5 Từ Model đến Production
+## 11.5 Từ mô hình đến vận hành
 
-### Model Governance Framework
+### Khung quản trị mô hình
 
 ::::story
-Anh Minh muốn deploy model mới. Nhưng bà Hương yêu cầu: "Chúng ta cần validation đầy đủ trước khi deploy. Một model sai sẽ approve những người không nên approve và reject những người đáng được approve - cả hai đều tốn tiền."
+Anh Minh muốn triển khai mô hình mới. Bà Hương yêu cầu: "Phải thẩm định đầy đủ trước khi triển khai. Một mô hình sai sẽ duyệt người không nên duyệt và từ chối người đáng được duyệt, và cả hai đều tốn tiền."
 ::::
 
-**Model Risk Management (MRM) framework:**
+Quản trị rủi ro mô hình *(Model Risk Management, MRM)* thường có ba tầng:
+
+| Tầng | Ai làm | Nội dung |
+|---|---|---|
+| 1. Thẩm định khi phát triển | Người xây mô hình | Kiểm định ngoài thời gian (dữ liệu sau mốc huấn luyện) và ngoài mẫu; Gini, KS; hiệu chuẩn (xác suất dự báo so với tỷ lệ vỡ nợ thật); PSI qua các giai đoạn; phân tích công bằng; các biến dẫn dắt chính qua SHAP |
+| 2. Thẩm định độc lập | Một đội khác | Lặp lại toàn bộ tầng 1; chất vấn giả định và cách xây biến; so với một mô hình đơn giản hơn; phân tích độ nhạy khi thiếu biến quan trọng; kiểm tra sức chịu đựng trong kịch bản kinh tế xấu |
+| 3. Giám sát liên tục | Sau triển khai | PSI của biến và của điểm hằng tháng; Gini trên dữ liệu kết quả tích lũy hằng quý; cảnh báo tự động khi PSI > 0.25 hoặc Gini giảm hơn 0.05 |
+
+### Giám sát sau triển khai
+
+Cơ chế champion/challenger để thử mô hình mới đã được bàn ở Chương 7. Ở đây ta tập trung vào giám sát sau khi mô hình đã chạy.
 
 ```text
-TIER 1: Development Validation (by model developer)
-  □ Out-of-time validation (OOT): Test trên data sau training cutoff
-  □ Out-of-sample validation (OOS): Hold-out set không dùng trong training
-  □ Discriminatory power: Gini, KS statistics
-  □ Calibration: Predicted P(default) vs actual default rate
-  □ Stability: PSI across different time periods
-  □ Fairness: Demographic analysis, adverse impact testing
-  □ Explainability: Top feature drivers, SHAP analysis
+Hằng ngày:
+  Số đơn (tổng, theo kênh, theo sản phẩm)
+  Phân bố điểm (trung bình, độ lệch chuẩn, các phân vị)
+  Tỷ lệ duyệt (tổng, theo hạng)
 
-TIER 2: Independent Model Validation (by separate team)
-  □ Replicate all Tier 1 validation independently
-  □ Challenge model assumptions (feature engineering choices)
-  □ Alternative benchmark: simpler model comparison
-  □ Sensitivity analysis: what if key features are missing?
-  □ Stress testing: model performance in adverse economic scenarios
+Hằng tuần:
+  PSI theo từng biến và theo điểm
+  Tỷ lệ giá trị thiếu theo từng biến
 
-TIER 3: Ongoing Monitoring (post-deployment)
-  □ Monthly: PSI for feature distributions
-  □ Monthly: Prediction drift (score distribution shift)
-  □ Quarterly: Gini on accumulated outcome data
-  □ Trigger: Auto-alert if PSI > 0.25 or Gini drop > 0.05
+Hằng tháng (khi dữ liệu kết quả đủ chín):
+  Tỷ lệ DPD 30+ theo vintage và theo dải điểm
+  Gini trên 12 tháng dữ liệu đầu tiên
+  Phân tích drift của 5 biến quan trọng nhất
+
+Cảnh báo tự động:
+  PSI > 0.10: Cảnh báo
+  PSI > 0.25: Phải hành động
+  Điểm trung bình dịch chuyển > 10 điểm: Điều tra
+  Tỷ lệ duyệt thay đổi > 5 điểm phần trăm: Điều tra
+  Tỷ lệ DPD sớm > 2 lần kỳ vọng: Khẩn cấp
 ```
 
-### Champion/Challenger Framework: Revisit
+### Drift và thời điểm huấn luyện lại
 
-Đã covered trong Chương 7 (Origination). Ở đây, focus vào monitoring sau khi model được deployed.
+| Loại drift | Điều gì thay đổi | Ví dụ | Phát hiện | Phản ứng |
+|---|---|---|---|---|
+| Drift dữ liệu | Phân bố biến đầu vào | Thu nhập của người nộp đơn tăng đều; mô hình huấn luyện trên mức thu nhập cũ đọc sai | PSI từng biến | Huấn luyện lại nếu PSI > 0.25 |
+| Drift khái niệm | Quan hệ giữa biến và kết quả | Sau các chương trình giãn nợ thời COVID, DPD không còn dự báo tốt như trước | Hiệu quả giảm trên dữ liệu mới | Huấn luyện lại, thường gấp hơn |
+| Drift nhãn | Chính tỷ lệ vỡ nợ | Suy thoái làm tỷ lệ vỡ nợ tăng gấp đôi; mô hình huấn luyện thời bình đánh giá thấp rủi ro | Tỷ lệ thật lệch khỏi dự báo | Hiệu chuẩn lại ngưỡng, huấn luyện lại |
 
-**Model monitoring dashboard:**
+Khi kinh tế ổn định, huấn luyện lại định kỳ mỗi 12-18 tháng với cửa sổ dữ liệu trượt, thường 36 tháng gần nhất, có trọng số cao hơn cho dữ liệu mới. Khi có cú sốc kinh tế, thay đổi quy định hoặc thay đổi sản phẩm, huấn luyện lại theo sự kiện trong 2-4 tuần, chấp nhận quy trình thẩm định rút gọn. Học liên tục, tức cập nhật mô hình với mỗi nhóm khách hàng mới, luôn phản ánh hành vi hiện tại nhưng có rủi ro thích nghi quá nhanh với nhiễu; nó chỉ hợp khi dữ liệu rất lớn và môi trường quản lý ổn định.
 
-```text
-Daily metrics:
-  Application volume (total, by channel, by product)
-  Score distribution (mean, std, percentiles)
-  Approval rate (total, by tier)
-  Score band distribution (% in each bucket)
+### Kiến trúc triển khai
 
-Weekly metrics:
-  PSI: feature-level population stability
-  PSI: score-level population stability
-  Missing value rates per feature
-  
-Monthly metrics (as data matures):
-  DPD 30+ rate by vintage and score band
-  Gini coefficient on first 12 months of data
-  Feature drift analysis: top 5 features
-
-Automated alerts:
-  PSI > 0.10: Warning
-  PSI > 0.25: Action required
-  Score mean shift > 10 points: Investigate
-  Approval rate shift > 5%: Investigate
-  Early DPD rate > 2× expected: Urgent
-```
-
-### Model Drift và Retraining Triggers
-
-**Ba loại drift:**
-
-```text
-1. Data Drift (Feature Drift):
-   Input features distribution changes
-   Example: Income levels increase across all applicants
-            → Model trained on old income levels may misinterpret
-   Detection: PSI on each feature
-   Response: Retrain if PSI > 0.25
-
-2. Concept Drift:
-   Relationship between features and target changes
-   Example: High DPD used to predict default strongly
-            → COVID forgiveness programs → DPD no longer predicts well
-   Detection: Model performance degradation on new data
-   Response: Retrain (often more urgent)
-
-3. Label Drift:
-   Default rate itself changes
-   Example: Economic recession → default rate doubles
-            → Model trained on normal times under-predicts risk
-   Detection: Actual vs predicted default rate divergence
-   Response: Recalibrate threshold, retrain
-```
-
-**Retraining strategy:**
-
-```text
-Scheduled retraining (when economy stable):
-  Frequency: Every 12-18 months
-  Data: Rolling window, typically last 36 months with more weight on recent
-  Trigger: Scheduled calendar + any monitoring alert
-
-Event-triggered retraining:
-  Triggers: Economic shock, regulatory change, product change
-  Timeline: 2-4 weeks from trigger to deploy
-  Process: Compressed validation, higher risk tolerance for speed
-
-Continuous learning (advanced):
-  Model updated incrementally with each new cohort
-  Risk: May adapt too quickly to noise
-  Benefit: Always reflects current patterns
-  When to use: High data volume, stable regulatory environment
-```
-
-### Production Deployment Architecture
-
-**Scoring trong VLP - Zeebe-based flow:**
+**Chấm điểm trong VLP, qua Zeebe:**
 
 ```mermaid
 sequenceDiagram
@@ -1073,314 +738,239 @@ sequenceDiagram
 
     Note over LOS,Zeebe: ASYNC fire-and-forget<br/>No A/B routing, no SHAP, binary result only
 ```
-**General scoring pipeline best practices** (industry-wide, NOT VLP-specific):
+
+*Hình 11.1. Luồng chấm điểm của VLP qua Zeebe.*
+
+LOS gửi yêu cầu chấm điểm và nhận kết quả bất đồng bộ. Luồng hiện tại không có định tuyến A/B và không có SHAP; kết quả chỉ là POSITIVE hoặc NEGATIVE.
+
+Một pipeline chấm điểm đầy đủ theo thực hành tốt của ngành có các bước: trích xuất biến, feature store, phục vụ mô hình (champion/challenger), giải thích SHAP, quy tắc chính sách, rồi quyết định kèm ghi nhận kiểm toán. Ở VLP, phần lớn các bước này nằm trong BPMN process trên Zeebe, ngoài các service ta đang xét trong sách.
+
+**Ngân sách độ trễ:**
 
 ```text
-Feature Extraction → Feature Store → Model Serving (Champion/Challenger)
-  → SHAP Explanation → Policy Rules → Decision + Audit
+Tổng ngân sách độ trễ chấm điểm: 2,000 ms
+  API trung tâm thông tin tín dụng: 800 ms (lớn nhất)
+  Trích xuất biến: 200 ms
+  Suy luận mô hình: 50 ms (XGBoost nhanh)
+  Tính SHAP: 150 ms (TreeExplainer)
+  Quy tắc chính sách: 50 ms
+  Ghi log: 100 ms, bất đồng bộ (không chặn)
+  Dự phòng: 650 ms
 
-[Đây là industry best practice. VLP implement phần lớn logic trong
- Zeebe BPMN process engine — details không visible trong monorepo source code]
+Cách tối ưu:
+  Trung tâm tín dụng: gọi song song nếu dùng nhiều nguồn
+  Feature store: cache Redis cho các biến dùng lại
+  Mô hình: ONNX runtime để suy luận nhanh hơn
+  SHAP: chạy nền cho trường hợp phức tạp, tra sẵn cho trường hợp phổ biến
 ```
 
-**Latency requirements:**
-
-```text
-Total scoring latency budget: 2,000ms (2 seconds)
-  Credit bureau API: 800ms (largest component)
-  Feature extraction: 200ms
-  Model inference: 50ms (fast with XGBoost)
-  SHAP calculation: 150ms (TreeExplainer, fast)
-  Policy rules: 50ms
-  Logging: 100ms async (non-blocking)
-  Buffer: 650ms
-
-Optimization strategies:
-  Credit bureau: parallel calls if multiple bureaus
-  Feature store: Redis cache for reusable features
-  Model: ONNX runtime for faster inference
-  SHAP: Background job for complex cases, simple lookup for common
-```
-
-:::summary[Model Đến Production]
-3-tier validation: developer → independent →
-ongoing monitoring
-3 types of drift: data, concept, label
-→ PSI, performance degradation, rate divergence
-Retraining: scheduled (12-18 months) +
-event-triggered (economic shock)
-Latency: 2s total budget, credit bureau largest
-component → parallel calls to optimize
+:::summary[Mục 11.5]
+Quản trị mô hình có ba tầng: thẩm định khi phát triển, thẩm định độc lập và giám sát liên tục. Drift có ba loại, dữ liệu, khái niệm và nhãn, được phát hiện lần lượt qua PSI, hiệu quả trên dữ liệu mới và độ lệch giữa tỷ lệ thật với dự báo. Huấn luyện lại định kỳ 12-18 tháng và theo sự kiện khi có cú sốc. Ngân sách độ trễ 2 giây bị chi phối bởi lời gọi đến trung tâm tín dụng.
 :::
 
-## 11.6 Alternative Data: Mở rộng tầm với của Scoring
+## 11.6 Dữ liệu thay thế: mở rộng phạm vi chấm điểm
 
-### The Thin-File Problem
+### Vấn đề thin-file
 
 ::::story
-Bà Hương nhận được báo cáo: 35% người nộp đơn vay không có credit bureau history - hoặc lịch sử quá ít để score được. Tất cả bị reject tự động. Đây là 35% cơ hội bị bỏ lỡ.
+Bà Hương nhận báo cáo: 35% người nộp đơn không có lịch sử ở trung tâm thông tin tín dụng, hoặc có quá ít để chấm điểm. Tất cả bị từ chối tự động. Đó là 35% cơ hội bị bỏ lỡ.
 ::::
 
-**Thin-file borrowers là ai:**
+Người vay thin-file thường là người trẻ vay lần đầu, người mới chuyển lên thành phố, người làm nghề tự do ít dùng tín dụng chính thức, và nhóm thu nhập thấp ít tiếp xúc với hệ thống tài chính.
+
+Ở Việt Nam, khoảng cách lớn nhất không còn nằm ở tài khoản ngân hàng mà ở lịch sử tín dụng. Theo Ngân hàng Nhà nước, tỷ lệ người từ 15 tuổi trở lên có tài khoản tại ngân hàng đạt 86.97% vào năm 2024, và đến cuối năm 2025 đạt gần 89%. Khảo sát Global Findex dùng phương pháp khác và cho con số thấp hơn: tỷ lệ người từ 15 tuổi trở lên có tài khoản tăng từ 30.8% năm 2017 lên 70.6% năm 2024. Dù theo số liệu nào, rất nhiều người đã có tài khoản và dùng thanh toán số nhưng chưa từng vay chính thức, nên trung tâm thông tin tín dụng gần như không có gì về họ. Đó chính là nhóm mà dữ liệu thay thế nhắm đến.
+
+**Các nguồn dữ liệu thay thế:**
+
+| Nguồn | Tín hiệu | Lưu ý |
+|---|---|---|
+| Nhà mạng viễn thông | Nạp tiền đều đặn (kỷ luật tài chính), gói cước (đại diện thu nhập), kiểu gọi | Bắt buộc có sự đồng ý rõ ràng |
+| Ví điện tử, thanh toán di động | Tần suất giao dịch, độ đa dạng của nơi chi tiêu, thói quen tiết kiệm nhỏ, giao dịch lớn bất thường | Thường là nguồn giàu tín hiệu nhất cho thin-file |
+| Hóa đơn điện, nước, internet | Lịch sử trả đúng hạn | Gần với hành vi trả nợ nhất; mạnh với người vay lần đầu |
+| Mạng xã hội | Chất lượng mạng lưới, độ đầy đủ hồ sơ | Gây tranh cãi lớn, rủi ro pháp lý và quyền riêng tư cao; không khuyến nghị |
+| Hành vi trong ứng dụng | Cách điền đơn, thời gian đọc điều khoản | Có sức dự báo nhưng phức tạp về đạo đức; chỉ dùng thận trọng và minh bạch |
+
+Mức cải thiện Gini mà dữ liệu thay thế mang lại cho nhóm thin-file khác nhau nhiều giữa các thị trường và các bộ dữ liệu, nên phải đo trên chính danh mục của mình bằng champion/challenger, không nên dựa vào con số của người khác.
+
+**Kiến trúc chấm điểm cho thin-file:**
 
 ```text
-Profile characteristics:
-  - Người trẻ (18-25 tuổi) lần đầu vay
-  - Người mới đến thành phố, chưa có tài khoản ngân hàng
-  - Người làm việc tự do, ít dùng tín dụng chính thức
-  - Nhóm thu nhập thấp: ít tương tác với hệ thống tài chính
+Bước 1: Phân loại người nộp đơn
+  NẾU có dữ liệu trung tâm tín dụng VÀ đủ để chấm điểm:
+    → Thẻ điểm tiêu chuẩn
+  NẾU dữ liệu mỏng HOẶC không có:
+    → Mô hình dữ liệu thay thế
 
-Vietnam context (2024):
-  - 40% dân số không có bank account (NHNN data)
-  - Significant portion unscored by traditional bureaus
-  - BNPL và fintech đang phục vụ segment này
-  - Mobile penetration: 75%+ → digital footprint available
+Bước 2: Mô hình dữ liệu thay thế
+  Biến đầu vào:
+    telco_payment_regularity: điểm 0-100 từ dữ liệu nhà mạng
+    ewallet_transaction_count_6m: số giao dịch ví trong 6 tháng
+    utility_ontime_rate_12m: tỷ lệ hóa đơn trả đúng hạn trong 12 tháng
+    mobile_app_tenure_months: thời gian dùng ứng dụng tài chính
+
+  Mô hình: XGBoost (mạnh hơn khi biến truyền thống ít)
+
+Bước 3: Kết hợp
+  Nếu có một phần dữ liệu tín dụng:
+    Điểm = α × mô hình tiêu chuẩn + (1 − α) × mô hình thay thế
+    α phụ thuộc vào độ dày của dữ liệu
+  Nếu không có dữ liệu tín dụng:
+    Điểm = chỉ mô hình thay thế
+    Giới hạn số tiền vay tối đa (thận trọng với phân khúc chưa có lịch sử)
 ```
 
-**Alternative data sources:**
+**Quyền riêng tư và sự đồng ý:**
 
-```text
-SOURCE 1: Telco Data
-  Call patterns, SMS frequency, top-up behavior
-  → People who top up regularly → financial discipline proxy
-  → Night calls only → may indicate irregular employment
-  → Premium plan → income proxy
-  Consent: Must get explicit opt-in
-  Predictive power: Gini improvement +5-10% for thin-file
+Dữ liệu thay thế là dữ liệu cá nhân, nên mọi nguyên tắc về đồng ý và tối thiểu hóa đều áp dụng, càng chặt hơn kể từ khi Luật Bảo vệ dữ liệu cá nhân có hiệu lực. Khách hàng phải đồng ý rõ ràng ("Bạn có đồng ý cho chúng tôi truy cập dữ liệu [nhà mạng/ví/hóa đơn] để đánh giá đơn vay?") và được giải thích cụ thể dữ liệu được dùng thế nào. Khách hàng có quyền từ chối, và khi đó đơn vay vẫn được xử lý theo cách dành cho thin-file. Chỉ lấy đúng phần dữ liệu cần cho chấm điểm (sáu tháng giao dịch nếu chỉ cần sáu tháng), xóa sau khi có quyết định hoặc theo thời hạn lưu trữ đã công bố, và khách hàng có quyền hỏi dữ liệu thay thế đã ảnh hưởng thế nào đến kết quả của họ.
 
-SOURCE 2: eWallet / Mobile Payment
-  Transaction frequency, merchant diversity, saving behavior
-  → Regular small savings → discipline indicator
-  → Diverse merchant spending → economic activity proxy
-  → Irregular large transactions → volatility indicator
-  Predictive power: Gini improvement +8-15% for thin-file
-
-SOURCE 3: Utility Bills
-  Electricity, water, internet payment history
-  → On-time payment → payment behavior proxy
-  → Strong predictor for first-time borrowers
-  Predictive power: Gini +10-18% for thin-file
-
-SOURCE 4: Social Media (controversial)
-  Network quality, profile completeness
-  → Used by some fintechs but highly controversial
-  → Regulatory pushback in many markets
-  → Privacy concerns significant
-  Not recommended: legal risk > benefit
-
-SOURCE 5: Behavioral Data (in-app)
-  How applicant fills form, time spent on each section
-  → Careful reading of terms → conscientiousness proxy
-  → Fast completion → may not understand what they're signing
-  → Predictive but ethically complex
-  Use with caution and transparency
-```
-
-**Alternative data model architecture:**
-
-```text
-Thin-file scoring pipeline:
-
-Step 1: Classify applicant
-  IF bureau data available AND score computable:
-    → Route to standard scorecard
-  ELSE IF bureau thin-file OR no bureau:
-    → Route to alternative data model
-
-Step 2: Alternative model
-  Features:
-    telco_payment_regularity: 0-100 score from telco data
-    ewallet_transaction_count_6m: number of transactions
-    utility_ontime_rate_12m: % utility bills paid on time
-    mobile_app_tenure_months: how long using financial apps
-    
-  Model: XGBoost (more powerful for limited traditional features)
-  
-Step 3: Combined scoring
-  If partial bureau data:
-    Score = α × standard_model + (1-α) × alternative_model
-    α determined by data richness
-  If no bureau data:
-    Score = alternative_model_only
-    Max loan amount capped (prudent limit for unproven segment)
-```
-
-**Privacy và consent requirements:**
-
-```text
-For alternative data usage:
-  1. Explicit opt-in required: "Bạn có đồng ý cho phép chúng tôi
-     truy cập dữ liệu [telco/eWallet/utility] để đánh giá đơn vay?"
-
-  2. Explain how data is used: specific, not generic
-
-  3. Opt-out option: customer can decline → application still processed
-     (without alternative data = standard thin-file treatment)
-
-  4. Data minimization: only request what's needed for scoring
-     (not entire transaction history if only 6 months needed)
-
-  5. Retention limit: alternative data deleted after scoring decision
-     (or after account closed, whichever is later)
-
-  6. Right to explanation: customer can ask what alternative data
-     contributed to their score
-```
-
-:::summary[Alternative Data]
-Thin-file: 35-40% Vietnam applicants unscored
-Best alternatives: utility bills (+10-18% Gini),
-eWallet (+8-15%), telco (+5-10%)
-Social media: high risk, not recommended
-Architecture: standard model + alt model +
-routing logic based on data richness
-Privacy: explicit opt-in, data minimization,
-explanation rights mandatory
+:::summary[Mục 11.6]
+Ở Việt Nam, phần lớn người trưởng thành đã có tài khoản ngân hàng nhưng nhiều người chưa có lịch sử tín dụng, nên thin-file là một phân khúc lớn. Hóa đơn, ví điện tử và dữ liệu nhà mạng là những nguồn thay thế hữu ích; mạng xã hội thì rủi ro hơn lợi ích. Kiến trúc gồm mô hình tiêu chuẩn, mô hình thay thế và logic định tuyến theo độ dày dữ liệu. Đồng ý rõ ràng, tối thiểu hóa dữ liệu và quyền được giải thích là bắt buộc.
 :::
 
 ## Tóm tắt chương 11
 
 ```text
-Credit scoring journey — từ raw data đến decision:
+Hành trình chấm điểm, từ dữ liệu thô đến quyết định:
 
-DATA
-  47 features về chị Lan:
-  - Credit bureau: DPD history, utilization, inquiries
-  - CIS: income 22M, SALARIED, tenure 36 months
-  - Application: amount 18.5M, channel DIGITAL, hour 10:15
+DỮ LIỆU
+  47 biến về chị Lan:
+  - Trung tâm tín dụng: lịch sử DPD, tỷ lệ sử dụng hạn mức, số lần tra cứu
+  - CIS: thu nhập 22 triệu, SALARIED, 36 tháng ở nơi làm hiện tại
+  - Đơn vay: 18.5 triệu, kênh DIGITAL, nộp lúc 10:15
 
-FEATURE ENGINEERING
-  WOE transformation:
-  cb_max_dpd_12m (DPD=0) → WOE = -0.866 ← Strong good signal
+BIẾN ĐỔI BIẾN
+  WOE: cb_max_dpd_12m (DPD = 0) → WOE = −0.736, tín hiệu tốt
 
-MODEL
-  XGBoost: 500 trees, max_depth=4, trained on 50,000+ loans
-  → P(default | chị Lan) = 3.5%
+MÔ HÌNH
+  Hồi quy logistic trên 5 biến WOE
+  → z = −3.688, P(vỡ nợ | chị Lan) = 2.4%, odds 40 : 1
 
-SCORE
-  Score = 420 (Prime tier)
-  → Approve, rate 15%/năm
+ĐIỂM
+  Neo 380 điểm ở odds 20 : 1, PDO 40 → 420 điểm
+  → Hạng Standard, lãi suất 18%/năm (Chương 7)
 
-EXPLAINABILITY (if rejected — this case she's approved):
-  SHAP would show top positive/negative factors
-  → Regulatory compliance, customer transparency
+GIẢI THÍCH (nếu bị từ chối; chị Lan được duyệt):
+  SHAP cho thấy các yếu tố tăng và giảm rủi ro
+  → Tuân thủ quy định, minh bạch với khách hàng
 
-FAIRNESS CHECK
-  Monthly audit: approval rate by gender, region, age
-  → Detect proxy discrimination before it becomes systemic
+KIỂM TRA CÔNG BẰNG
+  Kiểm toán hằng tháng: tỷ lệ duyệt theo giới tính, vùng, độ tuổi
+  → Phát hiện phân biệt qua biến đại diện trước khi nó thành hệ thống
 
-MONITORING
-  PSI daily, Gini monthly
-  → Model valid → no drift detected
+GIÁM SÁT
+  PSI hằng tuần, Gini hằng tháng
+  → Mô hình còn hiệu lực, chưa có drift
 
-Every step documented. Every decision auditable.
-"Score 420" is not a black box — it's a justified, explainable, monitored decision.
+Mọi bước đều được ghi lại. Mọi quyết định đều kiểm toán được.
+"420 điểm" không phải hộp đen mà là một quyết định có căn cứ, giải thích được và được giám sát.
 ```
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. WOE là gì? Tại sao chuyển đổi features sang WOE trước khi dùng logistic regression?
-2. IV = 0.05 có ý nghĩa gì? Threshold thường được dùng để chọn features là gì?
-3. Gini coefficient đo lường gì? Benchmark chấp nhận được trong credit scoring?
-4. PSI > 0.25 cần action gì?
+**Loại 1: Nhớ lại**
+1. WOE là gì? Vì sao biến đổi biến sang WOE trước khi dùng hồi quy logistic?
+2. IV = 0.05 nghĩa là gì? Ngưỡng IV thường dùng để chọn biến là bao nhiêu?
+3. Gini đo điều gì? Mức chấp nhận được trong chấm điểm tín dụng là bao nhiêu?
+4. PSI > 0.25 thì cần làm gì?
 
-**Loại 2 - Hiểu:**
-5. Tại sao không dùng random k-fold cross-validation cho credit scoring? Thay bằng gì và tại sao?
-6. "Fairness impossibility theorem" nói gì? Tại sao không thể đồng thời đạt demographic parity và calibration khi base rates khác nhau?
-7. SHAP values giải quyết vấn đề regulatory nào của ML models?
-8. Tại sao payment holiday vẫn tích lũy lãi suất? Giải thích từ góc độ kinh tế học.
+**Loại 2: Hiểu**
+5. Vì sao không dùng kiểm định chéo k-fold ngẫu nhiên cho chấm điểm tín dụng? Thay bằng gì và vì sao?
+6. Kết quả bất khả thi về công bằng nói gì? Vì sao không thể đồng thời đạt hiệu chuẩn và tỷ lệ sai số bằng nhau khi tỷ lệ vỡ nợ nền khác nhau?
+7. SHAP giải quyết vấn đề quản lý nào của mô hình ML?
+8. Với thẻ điểm có neo 380 điểm ở odds 20 : 1 và PDO 40, một khách hàng có P(vỡ nợ) = 3% được bao nhiêu điểm? Thuộc hạng nào theo ngưỡng của Chương 7?
 
-**Loại 3 - Áp dụng:**
-9. Cho data sau:
-   - 8,000 accounts: 4,000 DPD=0, 2,000 DPD 1-30, 1,500 DPD 31-90, 500 DPD 90+
-   - Total defaults: 640 (distribution: 80, 120, 200, 240)
-   - Total non-defaults: 7,360
-   
-   (a) Tính WOE cho mỗi bin
-   (b) Tính IV cho feature này
-   (c) Feature này có nên include trong model không?
-   (d) Monotonicity check: WOE có tăng đơn điệu theo DPD không? Nếu không, cần xử lý gì?
+**Loại 3: Áp dụng**
+9. Cho dữ liệu:
+   - 8,000 tài khoản: 4,000 DPD = 0, 2,000 DPD 1-30, 1,500 DPD 31-90, 500 DPD 90+
+   - Tổng số ca vỡ nợ: 640 (phân bố: 80, 120, 200, 240)
+   - Tổng số ca tốt: 7,360
 
-10. Model đang có Gini = 0.58. Sau 6 tháng deploy, PSI của feature `employment_tenure` = 0.18. Monthly Gini tính trên new data = 0.51.
-    (a) Cần action gì ngay?
-    (b) Root cause analysis: cần investigate gì?
-    (c) Nếu retrain ngay, cần validation nào?
+   (a) Tính WOE cho từng bin
+   (b) Tính IV của biến này
+   (c) Có nên đưa biến này vào mô hình không?
+   (d) WOE có tăng đơn điệu theo DPD không? Nếu không, cần xử lý thế nào?
 
-**Loại 4 - Phân tích:**
-11. Fintech đề xuất dùng smartphone behavioral data (app usage patterns, GPS location history, social graph) để score thin-file borrowers. Phân tích:
-    (a) Predictive potential của từng data type
-    (b) Privacy concerns và regulatory risks
-    (c) Fairness implications: which groups might be disadvantaged?
-    (d) Your recommendation: what's acceptable, what's not?
+10. Mô hình đang có Gini 0.58. Sau 6 tháng triển khai, PSI của biến `employment_tenure` là 0.18 và Gini tính trên dữ liệu mới hằng tháng là 0.51.
+    (a) Cần làm gì ngay?
+    (b) Phân tích nguyên nhân gốc: cần điều tra những gì?
+    (c) Nếu huấn luyện lại ngay, cần thẩm định gì?
 
-12. Startup dùng ML model mới (Gini 0.68 vs scorecard 0.50). CEO muốn deploy ngay mà không cần full validation vì "competition is fierce." Phân tích:
-    (a) Risks của incomplete validation trong credit scoring
-    (b) Minimum viable validation (if must go fast)
-    (c) Monitoring requirements to catch problems early
-    (d) How to explain to CEO why this shortcut is dangerous
+**Loại 4: Phân tích**
+11. Một fintech đề xuất dùng dữ liệu hành vi trên điện thoại (cách dùng ứng dụng, lịch sử vị trí GPS, mạng quan hệ xã hội) để chấm điểm khách hàng thin-file. Phân tích:
+    (a) Sức dự báo tiềm năng của từng loại dữ liệu
+    (b) Rủi ro quyền riêng tư và pháp lý
+    (c) Tác động công bằng: nhóm nào có thể bị bất lợi?
+    (d) Đề xuất của bạn: điều gì chấp nhận được, điều gì không?
+
+12. Một startup có mô hình ML mới (Gini 0.68 so với 0.50 của thẻ điểm). CEO muốn triển khai ngay, không cần thẩm định đầy đủ, vì "cạnh tranh quá gay gắt". Phân tích:
+    (a) Rủi ro của thẩm định không đầy đủ trong chấm điểm tín dụng
+    (b) Mức thẩm định tối thiểu nếu buộc phải nhanh
+    (c) Yêu cầu giám sát để phát hiện vấn đề sớm
+    (d) Giải thích với CEO vì sao lối tắt này nguy hiểm
 
 ## Bài tập áp dụng
 
-**Bài 1 - WOE/IV Analysis:**
-Dataset: 15,000 loans với target = default trong 24 tháng
+**Bài 1: Phân tích WOE/IV**
 
-Feature: `loan_to_income_ratio`
+Dữ liệu: 15,500 khoản vay, mục tiêu là vỡ nợ trong 24 tháng.
 
-| Bin | N Accounts | N Defaults |
+Biến: `loan_to_income_ratio`
+
+| Bin | Số tài khoản | Số ca vỡ nợ |
 |-----|------------|------------|
 | < 0.3 | 3,000 | 90 |
 | 0.3 - 0.5 | 4,500 | 180 |
 | 0.5 - 0.7 | 3,500 | 280 |
 | 0.7 - 1.0 | 2,500 | 325 |
 | > 1.0 | 1,500 | 375 |
-| Missing | 500 | 100 |
+| Thiếu | 500 | 100 |
 
-(a) Tính WOE cho mỗi bin
+(a) Tính WOE cho từng bin
 (b) Tính IV tổng
-(c) Có nên include feature này không?
-(d) Monotonicity: WOE có consistent với business logic không?
-(e) Nên xử lý "Missing" như thế nào?
+(c) Có nên đưa biến này vào mô hình không?
+(d) WOE có nhất quán với logic nghiệp vụ không?
+(e) Nên xử lý bin "Thiếu" thế nào?
 
-**Bài 2 - Champion/Challenger Impact Analysis:**
-Bạn có hai models:
-- Champion: Gini 0.52, approve rate 65%, deployed 18 tháng
-- Challenger: Gini 0.61, approve rate 68%, tested 3 tháng (5% traffic)
+**Bài 2: Đánh giá champion/challenger**
 
-Challenger data sau 3 tháng (1,500 loans):
-- DPD 30+ rate at M3: 2.8% vs Champion M3: 4.1%
-- Average score: 392 vs Champion: 381
+Bạn có hai mô hình:
+- Champion: Gini 0.52, tỷ lệ duyệt 65%, đã chạy 18 tháng
+- Challenger: Gini 0.61, tỷ lệ duyệt 68%, đã thử 3 tháng trên 5% lưu lượng
 
-Business metrics (portfolio 100,000 loans, avg 12M VNĐ):
+Dữ liệu của challenger sau 3 tháng (1,500 khoản vay):
+- Tỷ lệ DPD 30+ ở tháng thứ 3: 2.8% so với 4.1% của champion
+- Điểm trung bình: 392 so với 381 của champion
 
-(a) Calculate net economic benefit of promoting Challenger
-(b) Is 3 months of data sufficient? What additional validation needed?
-(c) Design a gradual promotion plan (10% → 50% → 100%)
-(d) What monitoring metrics needed during promotion?
-(e) Define rollback triggers
+Danh mục: 100,000 khoản vay, bình quân 12 triệu VNĐ.
 
-**Bài 3 - Fairness Audit Design:**
-Design monthly fairness audit process for credit scoring system:
+(a) Tính lợi ích kinh tế ròng nếu đưa challenger lên thay champion
+(b) Ba tháng dữ liệu có đủ không? Cần thẩm định thêm gì?
+(c) Thiết kế kế hoạch chuyển dần (10% → 50% → 100%)
+(d) Cần giám sát chỉ số nào trong quá trình chuyển?
+(e) Định nghĩa các điều kiện quay lui
 
-Portfolio: 50,000 applications/month
-Protected attributes to monitor: gender, age group (18-25, 26-40, 41-60, 60+), province
+**Bài 3: Thiết kế kiểm toán công bằng**
 
-Requirements:
-(a) Define metrics to calculate for each protected group
-(b) Define alert thresholds (when to investigate vs just monitor)
-(c) Design root cause analysis process when disparate impact detected
-(d) Define remediation options (in order of preference)
-(e) Reporting template for compliance team
+Thiết kế quy trình kiểm toán công bằng hằng tháng cho hệ thống chấm điểm:
+
+Danh mục: 50,000 đơn mỗi tháng. Thuộc tính cần giám sát: giới tính, nhóm tuổi (18-25, 26-40, 41-60, trên 60), tỉnh thành.
+
+(a) Các chỉ số cần tính cho từng nhóm
+(b) Ngưỡng cảnh báo: khi nào điều tra, khi nào chỉ theo dõi
+(c) Quy trình phân tích nguyên nhân gốc khi phát hiện tác động bất lợi
+(d) Các phương án khắc phục, theo thứ tự ưu tiên
+(e) Mẫu báo cáo cho bộ phận tuân thủ
 
 ## Đọc thêm
 
-**Credit Scoring:**
-- Siddiqi, N. (2017). *Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards.* Wiley. - Định nghĩa book về scorecard development, bao gồm WOE/IV trong thực tế.
+**Chấm điểm tín dụng:**
+- Siddiqi, N. (2017). *Intelligent Credit Scoring: Building and Implementing Better Credit Risk Scorecards* (2nd ed.). Wiley. Sách chuẩn về phát triển thẻ điểm, gồm WOE/IV trong thực tế.
 
-**ML Explainability:**
-- Molnar, C. (2022). *Interpretable Machine Learning.* Free at christophm.github.io/interpretable-ml-book/ - Comprehensive guide về SHAP, LIME, và các explainability methods.
+**Khả năng giải thích:**
+- Molnar, C. (2022). *Interpretable Machine Learning* (2nd ed.). Đọc miễn phí tại christophm.github.io/interpretable-ml-book. Hướng dẫn đầy đủ về SHAP, LIME và các phương pháp giải thích khác.
 
-**Fairness in ML:**
-- Barocas, S., Hardt, M., & Narayanan, A. (2023). *Fairness and Machine Learning.* MIT Press. - Available free at fairmlbook.org - rigorous treatment của fairness definitions và impossibility results.
+**Công bằng trong ML:**
+- Barocas, S., Hardt, M., & Narayanan, A. (2023). *Fairness and Machine Learning: Limitations and Opportunities.* MIT Press. Đọc miễn phí tại fairmlbook.org. Trình bày chặt chẽ các định nghĩa công bằng và kết quả bất khả thi.
+- Chouldechova, A. (2017). Fair prediction with disparate impact: A study of bias in recidivism prediction instruments. *Big Data*, 5(2), 153-163.
 
-*Chương 12 sẽ xây dựng trên credit scoring để tackle một vấn đề phức tạp hơn: Risk-Based Pricing - không chỉ là "approve hay không" mà còn là "approve với điều kiện gì?" Từ score đến rate, từ tariff architecture đến pricing optimization, và tại sao "right price for right customer" quan trọng hơn nhiều so với "lowest possible price."*
+*Chương 12 xây tiếp trên chấm điểm tín dụng để giải một bài toán phức tạp hơn: định giá theo rủi ro. Câu hỏi không còn là "duyệt hay không" mà là "duyệt với điều kiện gì?". Từ điểm đến lãi suất, từ kiến trúc biểu phí đến tối ưu giá, và vì sao "đúng giá cho đúng khách hàng" quan trọng hơn nhiều so với "giá thấp nhất có thể".*

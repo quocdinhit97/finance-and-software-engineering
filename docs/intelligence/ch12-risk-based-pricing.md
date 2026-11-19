@@ -5,852 +5,432 @@ sidebar_position: 2
 chapter: 12
 subtitle: "Risk-Based Pricing"
 reading_time: 26
+description: "Từ điểm tín dụng đến lãi suất: ranh giới hạng và hiệu chuẩn, mô hình chi phí cộng biên tính trên dư nợ bình quân, hòa vốn của từng hạng, độ co giãn giá và lựa chọn bất lợi, biểu phí như hạ tầng định giá, thử nghiệm A/B, định giá hành vi và quản trị định giá."
 source_file: "phan-3-chuong-12.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Giá đúng không phải là giá thấp nhất, cũng không phải là giá cao nhất. Giá đúng là giá phản ánh đúng rủi ro - đủ để lender bền vững, đủ để borrower có thể trả, và đủ để cả hai muốn giao dịch lại."*
+> *"Giá đúng không phải giá thấp nhất, cũng không phải giá cao nhất. Giá đúng phản ánh đúng rủi ro: đủ để bên cho vay bền vững, đủ để người vay trả được, và đủ để cả hai muốn giao dịch lại."*
 
-## Dẫn nhập: Tại sao một giá cho tất cả là Sai
-
-::::story
-Năm 2015, một công ty tài chính tiêu dùng ở Đông Nam Á quyết định đơn giản hóa: một mức lãi suất 24%/năm cho tất cả sản phẩm vay tiêu dùng. Không phân biệt risk profile, không phân biệt segment.
-
-Kết quả sau 18 tháng:
-- Approval rate: tăng (vì không cần complex scoring)
-- Default rate: tăng từ 4% lên 8.5%
-- Customer chất lượng cao: rời đi (họ tìm được 18% ở nơi khác)
-- Customer rủi ro cao: ở lại và vay nhiều hơn
-- Net interest margin: âm
-
-Đây là adverse selection spiral được dự báo từ Chương 1 - và nó xảy ra vì không có risk-based pricing.
-::::
-
-Chương này xây dựng từ credit scoring (Chương 11) để trả lời câu hỏi: sau khi biết ai là Prime, Standard, Sub-prime - nên charge họ bao nhiêu? Không phải trả lời bằng cảm tính hay benchmark thị trường - mà bằng mô hình tài chính chặt chẽ, kết hợp với understanding về customer behavior và competitive dynamics.
-
-## 12.1 Từ Credit Score đến Risk Tier
-
-### Tier Boundaries: Không phải tùy tiện
+## Dẫn nhập: vì sao một giá cho tất cả là sai
 
 ::::story
-Data Science team vừa xây xong scoring model. Anh Minh hỏi: "Thế thì cutoff là bao nhiêu? Score bao nhiêu thì approve, score bao nhiêu thì decline?"
+Một công ty tài chính tiêu dùng quyết định đơn giản hóa: một mức lãi suất 24%/năm cho mọi khoản vay tiêu dùng, không phân biệt mức rủi ro hay phân khúc.
 
-Đây không phải câu hỏi của data scientist - đây là câu hỏi của business, có hệ quả tài chính rất cụ thể.
+Sau 18 tháng, tỷ lệ duyệt tăng vì không cần chấm điểm phức tạp, nhưng tỷ lệ vỡ nợ tăng từ 4% lên 8.5%. Khách hàng tốt rời đi vì họ vay được 18% ở nơi khác. Khách hàng rủi ro ở lại và vay nhiều hơn. Biên lãi ròng chuyển sang âm.
+
+Đó chính là vòng xoáy lựa chọn bất lợi đã mô tả ở Chương 1, và nó xảy ra vì không có định giá dựa trên rủi ro.
 ::::
 
-**Economic rationale cho tier boundaries:**
+Chương này xây tiếp trên chấm điểm tín dụng (Chương 11) để trả lời câu hỏi: sau khi biết ai thuộc hạng Prime, Standard, Sub-prime, nên tính lãi bao nhiêu? Câu trả lời không đến từ cảm tính hay bám theo thị trường, mà từ một mô hình tài chính chặt chẽ, kết hợp với hiểu biết về hành vi khách hàng và cạnh tranh.
 
-Recall từ Chương 1 và 12.2: mỗi khoản vay cần cover cost of funds + EL + operating cost + target margin.
+## 12.1 Từ điểm tín dụng đến hạng rủi ro
 
-```text
-Cost structure per loan (30 triệu VNĐ, 18 tháng):
+### Ranh giới hạng không tùy tiện
 
-                    Prime     Standard   Sub-prime
-                   (Score     (Score     (Score
-                   400-500)   320-399)   240-319)
-─────────────────────────────────────────────────
-Cost of funds:      8.5%       8.5%       8.5%
-EL = PD×LGD:        1.2%       3.0%       7.2%
-Operating cost:     3.5%       4.0%       5.0%
-Target ROE adj:     1.8%       2.0%       2.3%
-─────────────────────────────────────────────────
-Min rate needed:   15.0%      17.5%      23.0%
-Actual rate:       15.5%      18.5%      24.5%
-Margin:             0.5%       1.0%       1.5%
+::::story
+Đội khoa học dữ liệu vừa xây xong mô hình chấm điểm. Anh Minh hỏi: "Vậy ngưỡng là bao nhiêu? Bao nhiêu điểm thì duyệt, bao nhiêu thì từ chối?"
 
-Why margin increases for higher risk tiers:
-  → Higher risk = higher volatility in EL estimates
-  → Need more buffer for unexpected losses
-  → Higher CLV risk (less likely to return) → amortize acquisition cost over fewer loans
-```
+Đây không phải câu hỏi của nhà khoa học dữ liệu mà là câu hỏi kinh doanh, với hệ quả tài chính rất cụ thể.
+::::
 
-**PD estimation per tier:**
+VLP dùng ba hạng, như đã thấy ở Chương 7. Thang điểm của Chương 11 (380 điểm ứng với odds 20 : 1, PDO 40) cho biết mỗi hạng tương ứng với khoảng xác suất vỡ nợ nào:
 
-```text
-Risk Tier   Score Range   Historical Default Rate   EL (LGD=60%)
-Prime       420-500       2.0%                       1.2%
-Standard    340-419       5.0%                       3.0%
-Sub-prime   260-339       12.0%                      7.2%
-Decline     < 260         30%+                       18%+
-```
+| Hạng | Khoảng điểm | Khoảng PD theo thang điểm | PD bình quân của hạng (lịch sử) | Lãi suất |
+|---|---|---|---|---|
+| Prime | ≥ 440 | dưới khoảng 1.7% | 1.0% | 15%/năm |
+| Standard | 380-439 | 1.7% đến 4.8% | 3.0% | 18%/năm |
+| Sub-prime | 340-379 | 4.8% đến 9.1% | 6.5% | 21%/năm |
+| Từ chối | < 340 | trên 9.1% | | |
 
-**Calibration là bắt buộc:**
+Mỗi ranh giới là điểm mà ở đó lãi suất của hạng không còn bù được chi phí của khách hàng tệ nhất trong hạng. Mục 12.2 tính các chi phí đó.
+
+**Hiệu chuẩn là bắt buộc**
+
+Mô hình cho ra điểm, nhưng điều quan trọng là: những người được 410 điểm có thực sự vỡ nợ với tỷ lệ mô hình dự báo không?
 
 ```text
-Model gives scores, but what matters is:
-  "Do people with Score 400 actually default at 2%?"
+Bảng hiệu chuẩn:
+  Dải điểm   PD dự báo   PD thực tế   Tỷ số
+  460-479:     1.0%        1.2%        1.20 ← đánh giá thấp rủi ro một chút
+  440-459:     1.5%        1.6%        1.07 ← sát
+  420-439:     2.1%        2.1%        1.00 ← hiệu chuẩn tốt
+  400-419:     2.9%        2.8%        0.97 ← hiệu chuẩn tốt
+  380-399:     4.0%        4.7%        1.18 ← đánh giá thấp rủi ro
 
-Calibration plot:
-  Score band    Predicted PD    Actual PD    Ratio
-  460-480:      1.8%            2.1%         1.17 ← slight underprediction
-  440-459:      2.3%            2.5%         1.09 ← close
-  420-439:      2.8%            2.9%         1.04 ← well calibrated
-  400-419:      3.5%            3.4%         0.97 ← well calibrated
-  380-399:      4.2%            4.8%         1.14 ← underprediction
-
-If ratio consistently > 1: model underestimates risk → adjust pricing up
-If ratio consistently < 1: model overestimates → may be leaving money on table
+Tỷ số liên tục > 1: mô hình đánh giá thấp rủi ro → điều chỉnh giá lên hoặc hiệu chuẩn lại
+Tỷ số liên tục < 1: mô hình đánh giá quá cao rủi ro → có thể đang bỏ lỡ khách hàng tốt
 ```
 
-### Dynamic vs Static Thresholds
+Dải 380-399 đáng chú ý nhất: nó nằm sát ngưỡng dưới của hạng Standard. Nếu PD thật ở đây là 4.7% thay vì 4.0%, một phần khách hàng đang được định giá như Standard nhưng có rủi ro gần với Sub-prime.
 
-**Static thresholds:**
-```text
-Score >= 420: Prime tier (15.5%/năm)
-Score 340-419: Standard tier (18.5%/năm)
-Score 260-339: Sub-prime tier (24.5%/năm)
-Score < 260: Decline
+### Ngưỡng cố định và ngưỡng động
 
-Simple, consistent, easy to audit.
-Reviewed annually or when model is retrained.
-```
+Ngưỡng cố định đơn giản, nhất quán, dễ kiểm toán, và được xem lại hằng năm hoặc khi mô hình được huấn luyện lại. Ngưỡng động điều chỉnh theo mục tiêu danh mục:
 
-**Dynamic thresholds:**
-```text
-Adjust thresholds based on portfolio objectives:
+| Tình huống | Điều chỉnh |
+|---|---|
+| Tỷ lệ vỡ nợ của danh mục đang tăng | Nâng ngưỡng duyệt (340 → 350), nâng ngưỡng Prime (440 → 450) |
+| Không đạt mục tiêu giải ngân | Hạ ngưỡng duyệt (340 → 330) một cách thận trọng, có giám sát, kèm lãi suất phù hợp cho nhóm mới |
+| Mất khách Prime vì cạnh tranh | Giữ ngưỡng Prime, hạ lãi suất Prime nếu kinh tế học cho phép |
 
-If portfolio default rate trending up:
-  Raise approval threshold: 260 → 280
-  Raise Prime threshold: 420 → 440 (only best customers get best rate)
+Ngưỡng động đòi hỏi giám sát chất lượng danh mục hằng ngày, quy tắc điều chỉnh được định sẵn, phê duyệt của hội đồng rủi ro chứ không riêng đội mô hình, và dấu vết kiểm toán cho mọi lần thay đổi ngưỡng cùng lý do.
 
-If origination volume target not being met:
-  Lower approval threshold: 260 → 240 (carefully, with monitoring)
-  Consider rate increase for new lower-risk bucket
+### Phân khúc nhiều chiều
 
-If competitive pressure losing Prime customers:
-  Keep Prime threshold, lower Prime rate: 15.5% → 14.5%
-  (If economics allow)
-
-Dynamic threshold requires:
-  Daily monitoring of incoming portfolio quality
-  Pre-defined rules for when to adjust
-  Approval from risk committee, not just models team
-  Audit trail of every threshold change and reason
-```
-
-### Multi-Dimensional Segmentation
-
-**Beyond just credit score:**
+Hai khách hàng cùng 425 điểm có thể rất khác nhau: một người thu nhập 10 triệu với tỷ lệ nợ trên thu nhập (DTI) cao, một người thu nhập 50 triệu với DTI thấp. Cùng điểm nhưng rủi ro khả năng chi trả khác hẳn. Vì vậy nhiều bên cho vay định giá theo ma trận điểm × DTI, cộng thêm các điều chỉnh hành vi. Dưới đây là một phương án Vela Finance đang cân nhắc để thay cho ba mức giá hiện tại:
 
 ```text
-Single-dimension: Score only
-  Prime: Score >= 420
-  Problem: Two customers with score 425 but different risk profiles:
-    Customer A: Score 425, income 10M/month, high DTI
-    Customer B: Score 425, income 50M/month, low DTI
-    → Same score, very different affordability risk
+              DTI < 30%    DTI 30-50%   DTI > 50%
+Điểm 440+       14.5%        15.5%        18.0%
+Điểm 380-439    17.5%        18.5%        21.0%
+Điểm 340-379    20.5%        21.5%        TỪ CHỐI
+Điểm < 340      TỪ CHỐI      TỪ CHỐI      TỪ CHỐI
 
-Two-dimensional: Score × Affordability
-  Prime A: Score >= 420 AND DTI < 30%: rate = 14.5% (best)
-  Prime B: Score >= 420 AND DTI 30-50%: rate = 15.5%
-  Standard A: Score 340-419 AND DTI < 30%: rate = 17.5%
-  Standard B: Score 340-419 AND DTI 30-50%: rate = 19.5%
-  ...
-
-Three-dimensional: Score × Affordability × Behavioral
-  If existing customer:
-    + Good payment history (always on time): rate discount -0.5%
-    + Early payment behavior: rate discount -0.5%
-    + Loyalty (3+ loans): rate discount -1%
-    
-  → Incentivizes good behavior, rewards loyalty, improves retention
+Điều chỉnh thêm:
+  Khách hàng cũ, chưa từng trễ hạn: −0.5 điểm phần trăm
+  Thu nhập SALARIED đã xác minh: −0.3 điểm phần trăm
+  Kênh số (chi phí phục vụ thấp hơn): −0.3 điểm phần trăm
 ```
 
-**Practical implementation - risk matrix:**
+Ma trận chính xác hơn, khuyến khích hành vi tốt và giữ chân khách hàng trung thành, nhưng quản trị phức tạp hơn: mỗi ô là một mức giá phải được chứng minh bằng chi phí và được kiểm tra về công bằng.
 
-```text
-            DTI < 30%    DTI 30-50%   DTI 50%+
-Score 420+    14.5%        15.5%        18.5%
-Score 340-419 17.5%        18.5%        21.5%
-Score 260-339 22.5%        24.5%        DECLINE
-Score < 260   DECLINE      DECLINE      DECLINE
-
-Additional modifiers:
-  + Returning customer, no late payment: -0.5%
-  + Employer: Government/State-owned enterprise: -0.5%
-  + Income type: SALARIED: -0.3%
-  + Loan purpose: PRODUCTIVE (laptop, tools): -0.3%
-  + Loan purpose: CONSUMPTION (entertainment): +0.3%
-```
-
-:::summary[Risk Tier Segmentation]
-Tier boundaries: economic rationale từ cost
-structure, không phải arbitrary
-Calibration: verify predicted PD vs actual PD
-→ Adjust pricing if miscalibrated
-Dynamic thresholds: adjust theo portfolio quality
-→ Need risk committee governance
-Multi-dimensional: Score × DTI × Behavioral
-→ More precise, mais complex governance
+:::summary[Mục 12.1]
+Ranh giới hạng có cơ sở kinh tế: mỗi hạng tương ứng với một khoảng xác suất vỡ nợ mà lãi suất của hạng phải bù được. Hiệu chuẩn so PD dự báo với PD thực tế để biết mô hình có đang định giá sai không, đặc biệt ở sát các ngưỡng. Ngưỡng động cần quản trị của hội đồng rủi ro. Phân khúc theo điểm, DTI và hành vi chính xác hơn nhưng phức tạp hơn khi quản trị.
 :::
 
-## 12.2 Cost-Plus Pricing Model
+## 12.2 Mô hình chi phí cộng biên
 
-### Full Cost Decomposition
+### Phân rã chi phí đầy đủ
 
 ::::story
-Bà Hương phải present pricing proposal cho Board. Board hỏi: "Tại sao 24.5% cho Sub-prime? Cơ sở tính toán là gì?"
+Bà Hương trình đề xuất định giá lên Hội đồng quản trị. Hội đồng hỏi: "Vì sao Sub-prime là 21%? Cơ sở tính là gì?"
 
-Câu trả lời phải dựa trên cost decomposition đầy đủ, không phải "vì thị trường charge vậy."
+Câu trả lời phải dựa trên phân rã chi phí đầy đủ, không phải "vì thị trường tính vậy".
 ::::
 
-**Ví dụ số chi tiết - Sub-prime tier:**
+Có một điểm kỹ thuật phải làm đúng trước khi tính: khoản vay trả góp giảm dần. Với khoản vay 12 tháng, dư nợ bình quân chỉ khoảng 55% số tiền vay. Lãi suất danh nghĩa được tính trên dư nợ, nên mọi chi phí cũng phải quy về **phần trăm dư nợ bình quân mỗi năm** thì mới so được với lãi suất. Chia chi phí cho số tiền vay ban đầu, rồi nhân lãi suất với cả số tiền vay trong suốt kỳ hạn, là lỗi phổ biến làm doanh thu lãi bị thổi phồng gần gấp đôi.
+
+**Giả định chung cho cả ba hạng** (cùng khoản vay chuẩn của sách):
 
 ```text
-Product: Unsecured consumer loan
-Tier: Sub-prime (Score 260-339)
-Average loan: 15,000,000 VNĐ
-Average tenor: 18 months
+Khoản vay: 18,500,000 VNĐ, 12 tháng, trả góp đều, phí khởi tạo 1%
+Khoản vay vỡ nợ: trả được 6 kỳ rồi dừng; EAD = dư nợ sau kỳ 6
+LGD: 62%
 
-COST COMPONENT ANALYSIS:
+Nguồn vốn (cấu trúc 85% nợ, 15% vốn chủ sở hữu):
+  Vay ngân hàng: 9.0%/năm, 65% phần nợ
+  Trái phiếu: 7.6%/năm, 35% phần nợ
+  Chi phí nợ bình quân: 65% × 9.0% + 35% × 7.6% = 8.5%/năm
+  Vốn chủ sở hữu: 15% dư nợ, ROE mục tiêu 18%/năm
 
-1. COST OF FUNDS (Chi phí vốn)
-   Blended funding cost: 8.5%/năm
-   
-   Funding mix:
-     Bank borrowing (60%): 9.0%/năm
-     Bond issuance (30%): 8.5%/năm  
-     Equity (10%): 6.0%/năm (opportunity cost)
-   
-   Blended: 60%×9.0 + 30%×8.5 + 10%×6.0 = 8.55% ≈ 8.5%
-
-2. EXPECTED LOSS (Chi phí rủi ro dự kiến)
-   PD (Sub-prime, 18 months): 12% × (18/12) adjustment = 15%
-   LGD: 62%
-   EAD: 15,000,000 VNĐ (full outstanding)
-   
-   EL = 15% × 62% × 15,000,000 = 1,395,000 VNĐ per loan per year
-   EL/Loan amount = 1,395,000 / 15,000,000 = 9.3%/năm
-
-   Note: PD is adjusted for 18-month observation window
-   (12-month model PD × time adjustment factor)
-
-3. OPERATING COST (Chi phí vận hành)
-   Origination (one-time, amortized over tenor):
-     Credit check: 80,000
-     Processing: 120,000
-     Agent commission: 400,000 (POS channel)
-     System cost: 50,000
-     Total: 650,000 / 18 months = 43,333 VNĐ/tháng
-     Annualized: 43,333 × 12 / 15,000,000 = 3.5%/năm
-   
-   Servicing (monthly):
-     Collections (Sub-prime: intensive): 350,000 VNĐ/năm
-     Customer service: 120,000 VNĐ/năm
-     System maintenance: 80,000 VNĐ/năm
-     Total: 550,000 VNĐ/năm / 15,000,000 = 3.7%/năm
-   
-   Total operating cost: 3.5% + 3.7% = 7.2%/năm
-   
-   Note: Sub-prime has higher operating cost than Prime due to:
-     - More intensive collections effort
-     - Higher customer service calls (more issues)
-     - Higher credit check costs (more bureaus checked)
-
-4. UNEXPECTED LOSS BUFFER
-   UL buffer = function(volatility of EL)
-   For Sub-prime: EL volatility high → buffer 1.5%
-   (Prime: buffer 0.5% due to lower volatility)
-
-5. TARGET RETURN ON EQUITY (ROE contribution)
-   Target ROE: 18%/năm (company target)
-   Equity allocation per loan: 15% of loan amount (capital requirement)
-   = 15,000,000 × 15% = 2,250,000 VNĐ equity
-   
-   ROE contribution needed:
-   = 2,250,000 × 18% / 15,000,000 = 2.7%/năm
-
-6. TOTAL MINIMUM RATE:
-   Cost of funds:    8.5%
-   Expected loss:    9.3%
-   Operating cost:   7.2%
-   UL buffer:        1.5%
-   ROE contribution: 2.7%
-   ─────────────────────
-   Total:           29.2%
-   
-   But wait — this is 29.2%, but we said 24.5%?
+  Chi phí vốn trên dư nợ:     85% × 8.5% = 7.23%/năm
+  Yêu cầu lợi nhuận vốn chủ:  15% × 18%  = 2.70%/năm
 ```
 
-**Resolving the apparent inconsistency:**
+Vốn chủ sở hữu không phải nguồn vốn rẻ. Cổ đông kỳ vọng lợi nhuận cao hơn chủ nợ vì họ chịu tổn thất trước, nên 18% là chi phí cơ hội của họ, cao gấp đôi chi phí nợ.
+
+**Phân rã chi phí, hạng Sub-prime:**
 
 ```text
-"Floor" calculation is based on MARGINAL loan (worst in tier).
-"Actual" pricing uses AVERAGE expected performance.
+PD: 6.5%, kênh POS (có hoa hồng đại lý)
+Dư nợ bình quân của danh mục: 10.15 triệu VNĐ-năm mỗi khoản vay
 
-Sub-prime tier average PD: 12% (not 15% worst case)
-EL at 12% PD × 62% LGD = 7.4%/năm (not 9.3%)
-
-Recalculation with average:
-  Cost of funds:    8.5%
-  Expected loss:    7.4%
-  Operating cost:   6.0% (weighted, not all loans are worst case)
-  UL buffer:        1.1%
-  ROE contribution: 2.3%
-  ─────────────────────
-  Total:           25.3%
-
-Actual rate 24.5% → margin 24.5 - 25.3 = -0.8%?
-No — this is because:
-  Not all sub-prime loans default: 88% perform, generating revenue
-  Interest income from 88% good loans covers EL from 12% bad loans
-  
-The correct way: net margin calculation over portfolio
+                                  VNĐ/khoản vay   % dư nợ bình quân/năm
+1. Chi phí vốn (phần nợ)              733,494            7.23%
+2. Tổn thất dự kiến                   392,159            3.86%
+   = 6.5% × 62% × EAD 9,731,000
+3. Chi phí vận hành                   840,250            8.28%
+   Khởi tạo một lần: 550,000
+     (tra cứu tín dụng, xử lý hồ sơ, hoa hồng đại lý, hệ thống)
+   Phục vụ: 300,000/năm
+     (collections tích cực hơn, chăm sóc khách hàng nhiều hơn)
+4. Lợi nhuận vốn chủ (ROE 18%)        274,109            2.70%
+─────────────────────────────────────────────────────────────
+Tổng chi phí cần bù                 2,240,012           22.07%
+Trừ phí khởi tạo 1%                  −185,000           −1.82%
+─────────────────────────────────────────────────────────────
+Lãi suất hòa vốn (có ROE mục tiêu)                     20.25%
+Lãi suất áp dụng                                       21.00%
+Biên                                                   +0.75 điểm
 ```
 
-### Break-Even Analysis: Tối thiểu phải Charge bao nhiêu?
+Hai điều đáng chú ý. Chi phí vận hành, không phải tổn thất, là thành phần lớn nhất của Sub-prime: một khoản vay nhỏ, ngắn hạn phải gánh chi phí khởi tạo cố định trên một dư nợ bình quân nhỏ. Và biên của Sub-prime rất mỏng: nếu PD thật là 8% thay vì 6.5%, lãi suất hòa vốn lên 21.16%, tức hạng này lỗ ở mức 21%.
 
-**Portfolio simulation:**
+### Hòa vốn cho từng hạng
 
-```text
-Sub-prime portfolio: 1,000 loans, 15M each, 18 months, rate r%
+Cùng một mô hình mô phỏng cho cả ba hạng, chỉ khác PD và chi phí vận hành:
 
-Revenue:
-  All 1,000 loans pay interest for some period
-  Good loans (88%): pay full 18 months
-  Bad loans (12%): default at average month 9 (midpoint assumption)
-  
-Revenue = 880 × 15M × r × 1.5 years [good loans, full tenor]
-        + 120 × 15M × r × 0.75 years [bad loans, half tenor]
-        = 15M × r × (880×1.5 + 120×0.75)
-        = 15M × r × (1,320 + 90)
-        = 15M × r × 1,410
+| | Prime | Standard | Sub-prime |
+|---|---:|---:|---:|
+| PD bình quân | 1.0% | 3.0% | 6.5% |
+| Chi phí khởi tạo | 300,000 | 300,000 | 550,000 |
+| Chi phí phục vụ/năm | 100,000 | 150,000 | 300,000 |
+| Chi phí vốn (% dư nợ bình quân) | 7.23% | 7.23% | 7.23% |
+| Tổn thất dự kiến | 0.58% | 1.76% | 3.86% |
+| Chi phí vận hành | 3.91% | 4.39% | 8.28% |
+| Lợi nhuận vốn chủ | 2.70% | 2.70% | 2.70% |
+| Phí khởi tạo (giảm trừ) | −1.81% | −1.81% | −1.82% |
+| **Lãi suất hòa vốn (có ROE 18%)** | **12.61%** | **14.27%** | **20.25%** |
+| Lãi suất áp dụng | 15% | 18% | 21% |
+| Biên vượt ROE mục tiêu | +2.39 | +3.73 | +0.75 |
 
-Cost:
-  Cost of funds = 1,000 × 15M × 8.5% × 1.5 years = 1,912,500,000
-  Operating cost = 1,000 × (650,000 origination + 550,000×1.5 servicing)
-                 = 1,000 × (650,000 + 825,000) = 1,475,000,000
-  Credit losses = 120 loans × 15M × 62% LGD = 1,116,000,000
-  UL buffer = 1,000 × 15M × 1.1% × 1.5 = 247,500,000
-  ROE = 1,000 × 2,250,000 equity × 18% × 1.5 = 607,500,000
-  
-  Total costs: 1,912.5M + 1,475M + 1,116M + 247.5M + 607.5M = 5,358.5M VNĐ
+Cả ba hạng đều có lãi ở mức giá hiện tại, và Standard có biên tốt nhất. Đây là điều thường gặp: Prime bị cạnh tranh ép giá, Sub-prime bị chi phí vận hành và tổn thất ép biên, còn Standard là phần thân khỏe của danh mục.
 
-Break-even: Revenue = Costs
-  15M × r × 1,410 = 5,358,500,000
-  r = 5,358,500,000 / (15,000,000 × 1,410)
-  r = 5,358,500,000 / 21,150,000,000
-  r = 0.2534 = 25.34%/năm
+Bảng này cũng cho thấy vì sao phải tính ở cấp danh mục chứ không phải từng khoản vay. Một khoản vay riêng lẻ hoặc trả đủ (lời) hoặc vỡ nợ (lỗ nặng); chỉ khi tính trên cả danh mục, với tỷ lệ vỡ nợ kỳ vọng, mới thấy lãi từ 93.5% khoản vay tốt có bù được tổn thất từ 6.5% khoản vay xấu hay không.
 
-Break-even rate: 25.3%/năm
-  If r = 24.5%: slight loss → subsidized by Prime tier margin
-  If r = 26.5%: reasonable margin
+**Khi nào chấp nhận một hạng có biên âm?** Nếu biên Sub-prime chuyển sang âm (ví dụ vì PD tăng), công ty có thể vẫn giữ hạng này với hai điều kiện: tổng danh mục vẫn có lãi nhờ Prime và Standard, và giá trị vòng đời của khách hàng Sub-prime dương vì một phần trong số họ sẽ trả tốt và "tốt nghiệp" lên Standard. Điều kiện thứ hai phải được đo, không phải giả định: theo dõi tỷ lệ tốt nghiệp, và tăng giá hoặc siết ngưỡng nếu nó thấp hơn mức đã đặt ra.
 
-Decision: 24.5% is below break-even for Sub-prime standalone.
-  Rationale: Sub-prime customers may graduate to Standard/Prime → CLV justifies subsidy
-  Risk: If graduation rate low → portfolio loses money
-  Action: Monitor graduation rate, adjust rate if graduation rate < 15%
-```
-
-### Target Margin và ROE
-
-**Tổng hợp pricing table:**
-
-```text
-                    Prime     Standard   Sub-prime
-Break-even rate:    12.8%     17.2%      25.3%
-Target rate:        15.5%     18.5%      24.5%
-Margin vs BE:       +2.7%     +1.3%      -0.8%
-
-Overall portfolio margin (weighted by volume):
-  Volume mix: Prime 40%, Standard 45%, Sub-prime 15%
-  Blended margin = 40%×2.7% + 45%×1.3% + 15%×(-0.8%)
-               = 1.08% + 0.585% - 0.12%
-               = 1.545%/năm on portfolio
-
-Target ROE contribution from lending: 2.5%+
-  → Sub-prime cross-subsidized by Prime margin
-  → Acceptable if CLV of Sub-prime customers is positive over time
-```
-
-:::summary[Cost-Plus Pricing]
-5 cost components: CoF + EL + OpEx + UL buffer +
-ROE contribution
-Break-even: portfolio simulation, not individual
-loan - good loans cover EL from bad loans
-Sub-prime cross-subsidy: acceptable if CLV
-justifies; monitor graduation rate
-Board presentation: every rate has justification
+:::summary[Mục 12.2]
+Lãi suất hòa vốn là tổng của chi phí vốn, tổn thất dự kiến, chi phí vận hành và lợi nhuận vốn chủ, trừ phần phí thu được, tất cả quy về phần trăm dư nợ bình quân mỗi năm. Với các giả định của Vela Finance, hòa vốn của Prime, Standard và Sub-prime lần lượt là 12.61%, 14.27% và 20.25%, nên các mức 15%, 18% và 21% đều có lãi, nhưng biên của Sub-prime rất mỏng và nhạy với PD. Tính ở cấp danh mục, và chỉ chấp nhận trợ giá chéo khi giá trị vòng đời được đo, không phải giả định.
 :::
 
-## 12.3 Competitive Pricing Dynamics
+## 12.3 Cạnh tranh và độ co giãn giá
 
-### Price Elasticity trong Consumer Lending
-
-**Khái niệm:**
+### Độ co giãn giá trong cho vay tiêu dùng
 
 :::key
-**Price elasticity of demand** *(độ co giãn giá cầu)* đo lường mức độ thay đổi của cầu khi giá thay đổi 1%.
+**Độ co giãn giá của cầu** *(price elasticity of demand)* là tỷ số giữa phần trăm thay đổi của lượng cầu và phần trăm thay đổi của giá. Với khoản vay, "giá" là lãi suất, và phần trăm thay đổi tính trên chính lãi suất: hạ từ 15% xuống 14% là giảm 6.67%, không phải giảm 1%.
 :::
 
-```text
-Elasticity = % change in quantity / % change in price
+Trị tuyệt đối lớn hơn 1 là co giãn (lượng cầu nhạy với giá), nhỏ hơn 1 là kém co giãn. Khách hàng Prime thường co giãn mạnh vì họ chủ động so sánh và có nhiều lựa chọn. Khách hàng Sub-prime kém co giãn hơn vì ít lựa chọn, nhu cầu gấp hơn. Hệ quả: với Prime, lãi suất cạnh tranh là sống còn; với Sub-prime, tốc độ và khả năng tiếp cận quan trọng hơn lãi suất.
 
-|Elasticity| > 1: Elastic (quantity sensitive to price)
-|Elasticity| < 1: Inelastic (quantity not very sensitive to price)
-|Elasticity| = 0: Perfectly inelastic (quantity doesn't change with price)
-```
-
-**Elasticity trong consumer lending - research findings:**
+**Ví dụ: có nên đổi giá Prime?**
 
 ```text
-Prime segment:
-  Elasticity ≈ -1.5 to -2.0 (elastic)
-  → Rate increases 1% → applications decrease 1.5-2%
-  → These customers actively compare rates, have alternatives
-  
-Sub-prime segment:
-  Elasticity ≈ -0.3 to -0.6 (inelastic)
-  → Rate increases 1% → applications decrease only 0.3-0.6%
-  → Fewer alternatives, more urgent need, less rate-sensitive
+Hiện tại: Prime 15%, giải ngân 5,000 khoản/tháng
+Độ co giãn ước tính: −1.8
+Lợi nhuận mỗi khoản vay (sau ROE mục tiêu, theo mô hình 12.2):
+  ở 14%: 142,036   ở 15%: 244,714   ở 16%: 347,691 VNĐ
 
-Implications:
-  For Prime: Competitive rate is critical. Lose on price → lose the customer.
-  For Sub-prime: Rate is less critical. Focus on access and speed.
+Phương án A: hạ xuống 14% (−6.67%)
+  Lượng: 5,000 × (1 + 1.8 × 6.67%) = 5,600 khoản
+  Lợi nhuận: 5,600 × 142,036 = 795 triệu VNĐ/tháng
+
+Hiện tại: 15%
+  Lợi nhuận: 5,000 × 244,714 = 1,224 triệu VNĐ/tháng
+
+Phương án B: tăng lên 16% (+6.67%)
+  Lượng: 5,000 × (1 − 1.8 × 6.67%) = 4,400 khoản
+  Lợi nhuận: 4,400 × 347,691 = 1,530 triệu VNĐ/tháng
 ```
 
-**Ví dụ số - pricing decision impact:**
+Trên giấy, tăng giá có lợi hơn dù mất 600 khoản mỗi tháng. Nhưng có ba lý do để thận trọng. Độ co giãn chỉ đúng quanh mức giá đã đo; xa hơn, khách hàng có thể bỏ đi hàng loạt khi đối thủ rẻ hơn rõ rệt. Những khách hàng ở lại sau khi tăng giá thường là những người ít lựa chọn hơn, tức rủi ro hơn, nên PD của Prime có thể tăng và xóa mất phần lợi. Và vị thế thị trường, hình ảnh thương hiệu là những chi phí không nằm trong bảng tính tháng này.
+
+### Chiến lược định vị
+
+| Chiến lược | Lãi suất | Mục tiêu | Rủi ro | Khi nào dùng |
+|---|---|---|---|---|
+| Dẫn đầu về giá | Thấp hơn thị trường 0.5-1 điểm | Thu hút khối lượng, nhất là Prime | Ép biên, thu hút chất lượng lẫn lộn | Người mới vào muốn giành thị phần |
+| Ngang thị trường | Thị trường ± 0.2 điểm | Cạnh tranh ở mọi phân khúc | Không có khác biệt | Người chơi đã có vị thế |
+| Cao hơn nhờ giá trị gia tăng | Cao hơn 0.5-1.5 điểm | Khách hàng coi trọng tốc độ, tiện lợi | Khách nhạy giá bỏ đi | Thương hiệu mạnh, lợi thế số |
+| Theo phân khúc | Theo từng phân khúc | Phân khúc giá trị cao có nhu cầu riêng (giáo viên, nhân viên y tế) | Phức tạp, bị soi về cho vay công bằng | Có dữ liệu phân khúc tốt |
+
+Vela Finance chọn ngang thị trường cho Prime (15%), cao hơn một chút cho Standard nhờ duyệt nhanh trên kênh số (18%), và thấp hơn mặt bằng Sub-prime của thị trường (21%) nhưng vẫn trên hòa vốn. Sản phẩm cho giáo viên có giá riêng vì dữ liệu cho thấy phân khúc này rủi ro thấp, và BNPL có lãi suất danh nghĩa 0% nhờ mô hình người bán trợ giá (Chương 3).
+
+### Phòng tránh vòng xoáy lựa chọn bất lợi
+
+Nếu lãi suất Prime cao hơn thị trường, khách Prime chuyển sang đối thủ vì họ có lựa chọn, còn khách Standard và Sub-prime ở lại. Chất lượng danh mục giảm, phải tăng giá để bù vỡ nợ, thêm khách Prime bỏ đi, và vòng xoáy tiếp diễn. Cách phòng tránh là theo dõi cơ cấu chất lượng của đơn vay mới hằng tháng:
 
 ```text
-Current: Prime rate = 15.5%, monthly applications = 5,000
+Bảng theo dõi hằng tháng: cơ cấu đơn vay mới
 
-Option A: Lower rate to 14.5% (-1%)
-  New applications = 5,000 × (1 + 1.8 × 1%) = 5,000 × 1.018 = 5,090
-  Revenue change: 
-    Volume increase: +90 loans × 15M × 15% margin = +202,500,000/year
-    Rate decrease on existing: 5,000 × 15M × (-1%) × 1.5 years = -1,125,000,000/year
-    Net: -922,500,000/year → Lower rate loses money at this scale
+Phân khúc   Tháng này   Bình quân 6 tháng   Ngưỡng cảnh báo
+Prime          38%            42%             < 35%
+Standard       47%            46%             > 55%
+Sub-prime      15%            12%             > 20%
 
-Option B: Raise rate to 16.5% (+1%)
-  New applications = 5,000 × (1 - 1.8 × 1%) = 5,000 × 0.982 = 4,910
-  Revenue change:
-    Volume decrease: -90 loans × [15M × (15%+1%) margin] = slight decrease
-    Rate increase on remaining: 4,910 × 15M × 1% × 1.5 = +1,105,000,000/year
-    Net: positive → Raise rate is profitable IF volume loss is acceptable
+Nếu Prime < 35%:
+  → Kiểm tra lãi suất đối thủ (khảo sát như khách hàng thật)
+  → Hỏi các khách Prime đã bỏ đi: vì sao họ chọn nơi khác?
+  → Cân nhắc điều chỉnh giá hoặc cải thiện trải nghiệm (duyệt nhanh hơn)
 
-Decision framework:
-  "Is it better to have 5,090 loans at 15% margin 
-   or 4,910 loans at 16% margin?"
-  
-  At 15.5% rate: 5,000 × 15M × 15% × 1.5y = 16,875,000,000 VNĐ/year
-  At 16.5% rate: 4,910 × 15M × 16% × 1.5y = 17,676,000,000 VNĐ/year
-  
-  → Higher rate is more profitable, even with 90 fewer loans!
-  But: strategic risk (market position, brand perception) matters too
+Nếu Sub-prime > 20%:
+  → Chiến dịch marketing có nhắm sai phân khúc không?
+  → Ngưỡng chấm điểm có vô tình bị thay đổi không?
+  → Tạm thời siết tiêu chí duyệt
 ```
 
-### Market Positioning Strategy
+:::summary[Mục 12.3]
+Độ co giãn được tính trên phần trăm thay đổi của chính lãi suất. Khách Prime co giãn mạnh, khách Sub-prime kém co giãn. Một phép tính đơn giản có thể cho thấy tăng giá có lợi, nhưng độ co giãn chỉ đúng cục bộ và người ở lại sau khi tăng giá thường rủi ro hơn. Theo dõi cơ cấu chất lượng đơn vay mới là cách phát hiện sớm vòng xoáy lựa chọn bất lợi.
+:::
 
-**Four positioning strategies:**
+## 12.4 Biểu phí là hạ tầng định giá
+
+### Từ quyết định định giá đến cấu hình biểu phí
+
+Chương 3 đã giải thích thiết kế dựa trên biểu phí: quyết định định giá nằm trong cơ sở dữ liệu, không nằm trong code. Ở đây ta nối mô hình định giá với cấu hình đó.
+
+**Bước 1: quyết định của hội đồng rủi ro**
 
 ```text
-STRATEGY 1: Price Leader (Market Rate Minus)
-  Rate = Market benchmark - 0.5% to 1%
-  Target: Attract volume, especially Prime customers
-  Risk: Margin compression, attract mixed quality
-  When to use: New entrant wanting market share
-
-STRATEGY 2: Market Parity
-  Rate = Market benchmark ± 0.2%
-  Target: Compete across all segments
-  Risk: No differentiation
-  When to use: Established player in competitive market
-
-STRATEGY 3: Value-Add Premium
-  Rate = Market benchmark + 0.5% to 1.5%
-  Justification: Better service, faster approval, digital experience
-  Target: Customers who value speed/convenience over rate
-  Risk: Rate-sensitive customers go elsewhere
-  When to use: Strong brand, digital advantage
-
-STRATEGY 4: Niche / Segment-Specific
-  Rate adjusted per segment, not tied to single benchmark
-  Example: Better rate for teachers, healthcare workers
-  Target: High-value segments with specific needs
-  Risk: Complex to manage, fair lending scrutiny
-  When to use: Strong segment data, regulatory comfort
+Quyết định (tháng 3/2025):
+  Prime: giảm lãi suất từ 15.0% xuống 14.5% vì áp lực cạnh tranh
+  Hiệu lực: 1/4/2025
+  Lý do: đối thủ ra mắt 14.8%, đơn Prime đang giảm
+  Kiểm tra: hòa vốn của Prime 12.61% → vẫn còn biên ở 14.5%
 ```
 
-**VLP positioning example:**
+**Bước 2: chuyển thành cấu hình biểu phí**
 
 ```text
-Prime: 15.5% (market parity for well-priced segment)
-Standard: 18.5% (slight premium: faster approval digital)
-Sub-prime: 24.5% (below market 25-28%, but above costs)
-Teacher product: 13.5% (segment-specific, data supports it)
-BNPL: 0% nominal (merchant subsidy model)
+Phiên bản hiện tại:
+  Tariff code = "PRIME", version = 3
+  validFrom: 2025-01-01, validTo: 2025-04-01 (nửa mở: validTo không được tính)
+  FeeComponent lãi (INTEREST_CASH_PRIME):
+    lãi suất tháng: 1.25% (= 15.0% / 12)
+
+Phiên bản mới:
+  Tariff code = "PRIME", version = 4
+  validFrom: 2025-04-01, validTo: null
+  FeeComponent lãi (INTEREST_CASH_PRIME_V2):
+    lãi suất tháng: 1.2083% (= 14.5% / 12)
+
+Không sửa code. Không sửa phiên bản cũ.
+Phiên bản được chọn theo ngày, nhờ validFrom/validTo.
+(Tên mã ở đây viết dài cho dễ đọc; mã thật trong VLP là viết tắt ngắn.)
 ```
 
-### Adverse Selection Spiral: Phòng tránh
+Lưu ý `validTo` của phiên bản 3 là 2025-04-01, đúng ngày phiên bản 4 bắt đầu. Như Chương 3 đã phân tích, đặt `validTo` là 2025-03-31 sẽ tạo ra một ngày không có biểu phí nào hiệu lực.
 
-**Revisit từ Chương 1 - bây giờ với pricing lens:**
+**Bước 3: khách hàng cũ và khách hàng mới**
 
-```text
-The adverse selection problem in pricing:
+Khoản vay Prime ký trước 1/4/2025 vẫn gắn với phiên bản 3 và trả 15% đến hết kỳ hạn, vì điều khoản hợp đồng được khóa khi khởi tạo (cờ `useLatestTariff: false`). Khoản vay ký từ 1/4/2025 nhận phiên bản 4 và trả 14.5%. Khi khởi tạo, hệ thống xác định hạng lúc phê duyệt, tìm phiên bản biểu phí đang hiệu lực của hạng đó (validFrom ≤ hôm nay < validTo), rồi gắn mã và phiên bản vào hợp đồng của tài khoản mới.
 
-If Prime rate too high (above market):
-  Prime customers leave to competitors (they have options)
-  Standard/Sub-prime customers stay (fewer options)
-  Average portfolio quality degrades
-  → Must raise rate further to cover higher defaults
-  → More Prime customers leave
-  → Spiral down
-
-Prevention strategy:
-  Monitor "quality mix" of incoming applications monthly
-  Track: What % are Prime/Standard/Sub-prime?
-  Compare to 6-month rolling average
-  
-  If Prime % drops: rate competitiveness issue → investigate
-  If Sub-prime % rises sharply: selection shift → tighten criteria
-```
-
-**Practical monitoring:**
-
-```text
-Monthly dashboard — Incoming Application Mix:
-
-Segment    Current Month   6M Average   Alert Threshold
-Prime         38%             42%          < 35% (warning)
-Standard      47%             46%          > 55% (warning)  
-Sub-prime     15%             12%          > 20% (warning)
-
-If Prime < 35%:
-  → Check competitor rates (mystery shopping)
-  → Survey rejected Prime customers: why did they go elsewhere?
-  → Consider rate adjustment or feature addition (faster approval)
-
-If Sub-prime > 20%:
-  → Are marketing campaigns targeting wrong segments?
-  → Has scoring threshold changed inadvertently?
-  → Tighten approval criteria temporarily
-```
-
-## 12.4 Tariff Architecture như Pricing Infrastructure
-
-### Từ Pricing Decision đến Tariff Config
-
-**Recall Chương 3:** Tariff-driven design = pricing decisions live in database, not code.
-
-Bây giờ: connect pricing model → tariff config.
-
-**Step 1: Pricing decision (business/risk team)**
-
-```text
-Risk committee decision (March 2025):
-  Prime segment: reduce rate from 15.5% to 15.0% (competitive pressure)
-  Effective: 1 April 2025
-  Reason: Competitor launched 14.8%, losing Prime applications
-```
-
-**Step 2: Translate to tariff configuration**
-
-```text
-// NOTE: Tariff code naming — illustrative examples
-// verified: pricing-risk-chapter-claims.md
-// Actual tariff codes trong VLP là short abbreviations (không phải descriptive):
-//   e.g., SVCFEE (interest fee), ORIGFEE (origination fee), STMTFEE (statement fee)
-// Version stored in separate 'version' field, not embedded in code name
-// Names dưới đây là ILLUSTRATIVE để dễ đọc
-
-Current: Tariff "SVCFEE_v2025" (code = "SVCFEE", version = 1, valid through 31 March 2025)
-  FeeComponent type SVCFEE:
-    percentage: 0.01292 (=15.5%/12 monthly = 1.292%/month)
-    validFrom: 2025-01-01
-
-Action: Create new tariff version for April 2025
-  New Tariff: code = "SVCFEE", version = 2 (valid from 1 April 2025)
-  New FeeComponent type SVCFEE:
-    percentage: 0.01250 (=15.0%/12 monthly = 1.250%/month)
-    validFrom: 2025-04-01
-
-Key: Existing Prime loans keep OLD rate (contract terms)
-     New loans from April 2025 get NEW rate
-     No code changes needed — version selected by validFrom/validTo date
-```
-
-**Step 3: Apply to existing vs new customers**
-
-```text
-Existing Prime customers (loan started before April 2025):
-  AccountService.tariffCode = "SVCFEE" version = 1 (unchanged)
-  They pay 15.5% for duration of their loan
-  (Contract terms are locked at origination)
-
-New Prime customers (loan started April 2025+):
-  AccountService.tariffCode = "SVCFEE" version = 2
-  They pay 15.0%
-
-How tariff selection works in origination:
-  1. Determine tier at approval time
-  2. Look up ACTIVE tariff version for that code (validFrom <= today < validTo)
-  3. Assign tariff code + version to new account (stored in AccountService)
-  4. Tariff is locked at account creation
-```
-
-### A/B Testing Pricing Strategies
+### Thử nghiệm A/B cho giá
 
 ::::story
-Anh Minh proposes: "Let's A/B test: half of Prime applicants get 15.0%, other half get 15.5%. Compare conversion and default rate."
+Anh Minh đề xuất: "Mình thử A/B nhé: một nửa khách Prime nhận 14.5%, nửa còn lại 15.0%. So sánh tỷ lệ chuyển đổi và tỷ lệ vỡ nợ."
 
-Có hai vấn đề cần giải quyết trước khi run test:
+Có hai vấn đề cần giải quyết trước khi chạy thử nghiệm.
 ::::
 
-**Issue 1: Fairness (regulatory)**
+**Vấn đề 1: công bằng và pháp lý.** Hai khách hàng nộp đơn cùng ngày, cùng hồ sơ rủi ro, một người nhận 14.5% và người kia 15.0%. Ở Mỹ, cách này thường chấp nhận được nếu phân nhóm ngẫu nhiên và không tương quan với thuộc tính được bảo vệ. Ở EU, cần mục đích và thời hạn được ghi rõ. Ở Việt Nam chưa có quy định cấm trực tiếp, nhưng xu hướng là tăng minh bạch. Cách giảm thiểu: ghi rõ mục đích, thời hạn và phạm vi thử nghiệm; bảo đảm phân nhóm thật sự ngẫu nhiên; giới hạn thời gian; và có điều kiện dừng nếu tỷ lệ vỡ nợ của một nhóm lệch đáng kể.
+
+**Vấn đề 2: ý nghĩa thống kê.**
 
 ```text
-Two customers apply on same day, same risk profile:
-  Customer A gets 15.0% (A group)
-  Customer B gets 15.5% (B group)
+Với chênh lệch tỷ lệ chuyển đổi:
+  Tỷ lệ chuyển đổi nền (15.0%): 65%
+  Kỳ vọng (14.5%): 68% (+3 điểm phần trăm)
 
-Is this fair? Is this legal?
+  α = 0.05, power 80% (β = 0.20)
+  Hiệu ứng nhỏ nhất cần phát hiện: 3 điểm phần trăm
 
-Answer varies by jurisdiction:
-  US: Generally acceptable if random assignment, no protected class bias
-  EU: More scrutiny, need documented purpose and duration limit
-  Vietnam: No explicit prohibition, but regulatory trend toward transparency
-
-Mitigation:
-  Clearly document experiment purpose, duration, scope
-  Ensure random assignment (not correlated with any protected attribute)
-  Set time limit: 3 months, then promote winner
-  Have exit criteria: if B group default rate diverges significantly, stop
-```
-
-**Issue 2: Statistical significance**
-
-```text
-How long to run experiment?
-
-For conversion rate difference:
-  Baseline conversion (at 15.5%): 65%
-  Expected conversion (at 15.0%): 68% (+3%)
-  
-  Power analysis:
-    α = 0.05 (5% false positive rate)
-    β = 0.20 (80% power — detect real effect 80% of time)
-    Minimum detectable effect: 3% absolute difference
-    
-    Required sample: n = 2 × (Z_α/2 + Z_β)² × p(1-p) / Δ²
-    = 2 × (1.96 + 0.84)² × 0.65(0.35) / 0.03²
+  n = 2 × (Z_α/2 + Z_β)² × p(1 − p) / Δ²
+    = 2 × (1.96 + 0.84)² × 0.65 × 0.35 / 0.03²
     = 2 × 7.84 × 0.2275 / 0.0009
-    = 3,964 per group
-    
-  At 1,000 applicants/day to Prime: 4 days to reach significance for conversion rate.
+    ≈ 3,964 mỗi nhóm, tổng 7,928
 
-For default rate difference:
-  Need to observe defaults → minimum 12 months
-  → A/B test for default rate takes much longer
-  → Use Champion/Challenger with long-term monitoring instead
+  Với khoảng 5,000 đơn Prime mỗi tháng: cần khoảng 7 tuần
+
+Với chênh lệch tỷ lệ vỡ nợ:
+  Phải chờ vỡ nợ xảy ra → tối thiểu 6-12 tháng
+  → Thử nghiệm A/B cho tỷ lệ vỡ nợ lâu hơn nhiều
+  → Dùng champion/challenger với giám sát dài hạn
 ```
 
-### Dynamic Pricing: Cơ hội và rủi ro
+### Định giá động: cơ hội và rủi ro
 
-**Dynamic pricing concept:**
+Thay vì các hạng cố định, định giá động tính giá riêng cho từng người: lãi suất = f(điểm, DTI, kênh, thời điểm, bối cảnh cạnh tranh, CLV). Các hãng hàng không làm vậy với vé máy bay. Vì sao cho vay tiêu dùng khác?
 
-```text
-Instead of fixed tiers, price each customer individually:
-  Rate = f(score, DTI, channel, time, competitive context, CLV)
+Thứ nhất, những khách hàng "giống hệt nhau" phải được đối xử như nhau, và định giá theo dữ liệu hành vi dễ trở thành phân biệt qua biến đại diện. Thứ hai, vé máy bay dùng một lần rồi quên, còn khoản vay kéo dài 12-36 tháng; khách hàng nhìn thấy lãi suất mỗi tháng và sẽ khiếu nại khi biết bạn mình được giá thấp hơn. Thứ ba, có một vòng phản hồi lựa chọn bất lợi: người sẵn sàng chấp nhận lãi suất rất cao thường là người đang gấp, tức rủi ro hơn. Thứ tư là rủi ro danh tiếng: "công ty tính lãi khác nhau dựa trên lịch sử duyệt web của bạn" là một tiêu đề báo không ai muốn.
 
-Amazon does this for products.
-Airlines do this for tickets.
-Why not consumer lending?
-```
+| Chấp nhận được | Không chấp nhận được |
+|---|---|
+| Giảm giá cho khách hàng cũ có lịch sử tốt | Dựa trên biến đại diện cho nhân khẩu học |
+| Giá thấp hơn cho kênh số vì chi phí phục vụ thấp hơn | Dựa trên tín hiệu cấp bách (nộp đơn lúc 2 giờ sáng → lãi cao hơn) |
+| Khuyến mãi có thời hạn | Tiêu chí mờ mà khách hàng không hiểu được |
+| Đề nghị tiền duyệt dựa trên dữ liệu tín dụng | "Cá nhân hóa" nhưng thực chất là phân biệt đối xử |
 
-**Why consumer lending is different:**
-
-```text
-1. Regulatory constraint:
-   "Identical" customers should get identical treatment
-   Dynamic pricing based on behavioral data → proxy discrimination risk
-   
-2. Contract duration:
-   Airline ticket: 2-hour flight, price forgotten
-   Consumer loan: 18-36 months, customer will see rate daily
-   → If friend gets lower rate, grievance filed
-   
-3. Adverse selection feedback loop:
-   Dynamic pricing might appear to optimize, but:
-   Customers who "accept" very high rate → may be less rational
-   → Actually higher risk (selection effect)
-   
-4. Reputational risk:
-   "Company charges different rates based on your browsing history"
-   → PR nightmare, regulatory investigation
-
-WHEN dynamic pricing IS acceptable:
-  ✓ Returning customers: rate discount for good history
-  ✓ Channel-based: lower rate for digital (lower cost to serve)
-  ✓ Promotional: time-limited offers (Independence Day special)
-  ✓ Pre-approved offers: tailored to individual based on bureau pull
-  
-WHEN it IS NOT acceptable:
-  ✗ Based on demographic proxies
-  ✗ Based on urgency signals (applying at 2am → higher rate)
-  ✗ Opaque criteria customer cannot understand
-  ✗ "Personalized" but actually discriminatory
-```
-
-:::summary[Tariff Architecture & A/B Testing]
-Pricing decision → tariff config: no code change
-existing loans locked at origination rate
-A/B testing pricing: regulatory review first,
-statistical significance calculation, time limit
-Dynamic pricing: acceptable for loyalty/channel/
-promotional; NOT for demographic proxies or
-urgency exploitation
+:::summary[Mục 12.4]
+Quyết định định giá đi vào hệ thống bằng một phiên bản biểu phí mới, không sửa code; khoản vay cũ giữ lãi suất lúc khởi tạo. Thử nghiệm A/B cho giá cần rà soát pháp lý, tính cỡ mẫu và giới hạn thời gian; tỷ lệ vỡ nợ cần thời gian quan sát dài hơn nhiều so với tỷ lệ chuyển đổi. Định giá động chấp nhận được cho lòng trung thành, kênh và khuyến mãi, không chấp nhận được khi dựa trên biến đại diện hay khai thác sự cấp bách.
 :::
 
-## 12.5 Behavioral Pricing: Không chỉ là Numbers
+## 12.5 Định giá hành vi
 
-### Anchoring trong Offer Presentation
+### Hiệu ứng mỏ neo khi trình bày đề nghị vay
 
-**Recall Chương 4:** Anchoring - người đọc tập trung vào con số đầu tiên họ thấy.
+Chương 4 đã giới thiệu hiệu ứng mỏ neo: người đọc bám vào con số đầu tiên họ thấy. Trong định giá, đây là công cụ mạnh, nhưng phải dùng đúng.
 
-Trong pricing, đây là một công cụ mạnh - nhưng phải dùng đúng cách.
+Cùng một đề nghị: 30,000,000 VNĐ, 18 tháng, 18%/năm, phí khởi tạo 1%. Khoản trả hằng tháng 1,914,173 VNĐ, tổng tiền lãi 4,455,121 VNĐ, APR 19.35%. Có hai cách trình bày:
 
-**Ví dụ - Two ways to present the same offer:**
+| | Cách A: neo vào khoản trả tháng | Cách B: cân bằng |
+|---|---|---|
+| Dòng chữ lớn nhất | "Chỉ 1,914,173 VNĐ/tháng" | Số tiền vay 30,000,000 VNĐ |
+| Lãi suất và APR | Chữ nhỏ cuối trang | 18%/năm, APR 19.35%, cùng cỡ chữ |
+| Tổng phải trả | Chữ nhỏ cuối trang | 34,455,121 VNĐ, cùng phí 300,000 VNĐ |
+| Bối cảnh khả năng chi trả | Không có | "Bằng 13.7% thu nhập tháng của bạn" (thu nhập 14 triệu) |
+| Hệ quả | Khách hàng bám vào số nhỏ, bỏ qua tổng chi phí | Khách hàng thấy nhiều con số và tự đánh giá |
 
-```text
-Offer: 30,000,000 VNĐ, 18 tháng, 18.5%/năm
-Monthly payment: 1,897,000 VNĐ/tháng
-Total cost: 34,146,000 VNĐ
+Cách A khai thác sự chú ý; cách B giúp khách hàng quyết định có hiểu biết. Xu hướng quy định ở nhiều nơi là yêu cầu công bố đầy đủ tổng chi phí ngay từ đầu, như Chỉ thị Tín dụng Tiêu dùng của EU hay quy định của FCA ở Anh. Thiết kế hệ thống cho cách trình bày cân bằng ngay từ bây giờ rẻ hơn nhiều so với sửa lại khi quy định đến.
 
-Presentation A (PMT anchor — exploitative):
-```
-  
-:::note[]
-Chỉ
-1,897,000 VNĐ
-/tháng
-:::
-
-  [Fine print: APR 20.2%, Total: 34,146,000 VNĐ]
-
-```text
-→ Customer focuses on PMT, ignores total cost
-→ Anchoring to low number → looks affordable
-```
-
-Presentation B (Balanced - ethical):
-  
-:::note[]
-:::
-```text
->
-> Khoản vay: 30,000,000 VNĐ
-> Lãi suất: 18.5%/năm (APR: 20.2%)
-> Số tiền trả hàng tháng: 1,897,000 ✓
-> Tổng phải trả: 34,146,000 VNĐ
-> = 13.8% thu nhập tháng của bạn
-
-→ Anchors to multiple numbers → balanced view
-→ "13.8% thu nhập" gives affordability context
-→ Customer makes informed decision
-```
-
-**Regulatory trend:** EU Mortgage Credit Directive, UK FCA rules require full cost disclosure upfront. Vietnam trend moving same direction. Design systems for ethical presentation now.
-
-### Decoy Effect trong Product Design
-
-**Khái niệm:**
+### Hiệu ứng mồi nhử
 
 :::key
-**Decoy effect** xảy ra khi một option thứ ba (không hấp dẫn) được thêm vào để làm một trong hai options ban đầu trông hấp dẫn hơn.
+**Hiệu ứng mồi nhử** *(decoy effect)* xảy ra khi thêm một lựa chọn thứ ba kém hấp dẫn làm cho một trong hai lựa chọn ban đầu trông hấp dẫn hơn.
 :::
 
-**Ứng dụng trong loan product design:**
+Ví dụ kinh điển là thí nghiệm của Dan Ariely với gói đặt báo The Economist: bản điện tử 59 USD, bản in 125 USD, bản in kèm điện tử 125 USD. Khi có lựa chọn bản in đơn thuần (mồi nhử), 84% chọn gói in kèm điện tử và 16% chọn bản điện tử. Khi bỏ lựa chọn mồi nhử, tỷ lệ đảo lại: 68% chọn bản điện tử, 32% chọn gói kết hợp.
+
+Trong cho vay, cách làm tương tự:
 
 ```text
-Classic decoy experiment (Dan Ariely, The Economist):
-  Option A: Web subscription: $59
-  Option B: Print subscription: $125
-  Option C: Print + Web: $125
+Không có mồi nhử:
+  A: 15,000,000 VNĐ, 12 tháng, 15%/năm → 1,353,875 VNĐ/tháng, tổng lãi 1,246,500
+  B: 15,000,000 VNĐ, 24 tháng, 15%/năm →   727,300 VNĐ/tháng, tổng lãi 2,455,200
 
-Without Option B: 68% chose A, 32% chose C
-With Option B (decoy): 16% chose A, 84% chose C
+Thêm mồi nhử C, gần giống A nhưng kém hơn rõ rệt:
+  C: 15,000,000 VNĐ, 12 tháng, 15%/năm, thêm phí khởi tạo 3%
 
-Why? Option B makes C look like a great deal (same price, more value)
-
-Consumer lending application:
-
-Without decoy:
-  Option A: 15M VNĐ, 12 months, PMT=1,365,000 VNĐ
-  Option B: 15M VNĐ, 24 months, PMT=755,000 VNĐ
-  Result: 60% choose shorter tenor (rational)
-
-With decoy (Option C: 15M, 18 months, PMT=1,010,000 VNĐ at higher rate):
-  Option A: 15M VNĐ, 12 months, PMT=1,365,000 VNĐ (rate 15%)
-  Option B: 15M VNĐ, 24 months, PMT=755,000 VNĐ (rate 15%)
-  Option C (decoy): 15M VNĐ, 18 months, PMT=1,080,000 VNĐ (rate 18%)
-  
-  C makes A look good (similar PMT but shorter) and B look good (longer, cheaper)
-  → Customer more likely to choose A or B, doesn't matter which
-
-Is this ethical?
-  If C is a real, fair product that customers can choose: ✓ OK
-  If C is designed purely to manipulate, not actually offered: ✗ NOT OK
-  If C has unfairly high rate to make others look good: ✗ NOT OK
+  C làm A trông như "món hời", nên nhiều khách hàng chọn A hơn so với B.
 ```
 
-### Ethical Boundaries của Behavioral Pricing
+Có đạo đức không? Nếu C là một sản phẩm thật, được định giá công bằng và có người thực sự cần nó, việc đặt nó cạnh A và B là chấp nhận được. Nếu C được tạo ra chỉ để thao túng lựa chọn, không ai được kỳ vọng sẽ chọn nó, hoặc có giá cao bất hợp lý chỉ để làm nền, thì không.
 
-**Framework từ Chapter 4 (áp dụng vào pricing):**
+### Ranh giới đạo đức của định giá hành vi
 
-```text
-ACCEPTABLE behavioral pricing:
-  ✓ Transparency: all costs shown clearly
-  ✓ Informed choice: customer understands what they're choosing
-  ✓ Opt-in: customer actively selects product
-  ✓ Genuine value: all options are fair and real
-  ✓ Education: "if you pay in 12 months vs 24, you save X"
+| Chấp nhận được | Không chấp nhận được |
+|---|---|
+| Mọi chi phí được hiển thị rõ ràng | Phí ẩn chỉ xuất hiện sau khi đã cam kết |
+| Khách hàng hiểu mình đang chọn gì | Cấp bách giả: "lãi suất này hết hạn sau 10 phút" khi không phải vậy |
+| Khách hàng chủ động chọn sản phẩm | Phức tạp có chủ đích, khiến không thể so sánh |
+| Mọi lựa chọn đều thật và công bằng | Lãi cao hơn cho khách hàng nộp đơn khi đang khủng hoảng |
+| Giáo dục: "trả trong 12 tháng thay vì 24, bạn tiết kiệm X" | Mỏ neo lừa dối: gạch một con số lớn để "giảm giá" xuống số nhỏ hơn |
 
-NOT ACCEPTABLE:
-  ✗ Hidden fees that emerge after commitment
-  ✗ Fake urgency: "This rate expires in 10 minutes" (when it doesn't)
-  ✗ Complexity designed to confuse: impossible to compare options
-  ✗ Exploiting vulnerability: higher rates for customers who apply in crisis
-  ✗ Deceptive anchoring: large number crossed out, "discounted" to lower number
+Phép thử: một người bình thường, có đầy đủ thông tin, có cảm thấy bị lừa không? Nếu có, đừng làm. Nếu không, có thể chấp nhận được, nhưng vẫn phải kiểm tra tuân thủ.
 
-The test: Would a reasonable person, with full information, feel deceived?
-  If yes → don't do it
-  If no → probably acceptable (still verify regulatory compliance)
-```
+## 12.6 Quản trị định giá và tuân thủ
 
-## 12.6 Pricing Governance và Regulatory Compliance
+### Trần lãi suất
 
-### Rate Cap Compliance
+Ở Việt Nam, Bộ luật Dân sự 2015 (Điều 468) giới hạn lãi suất thỏa thuận ở mức không quá 20%/năm, trừ trường hợp luật khác có liên quan quy định khác; hoạt động cho vay của tổ chức tín dụng, gồm công ty tài chính, được điều chỉnh bởi pháp luật về các tổ chức tín dụng. Dù khung pháp lý hiện tại áp dụng cho Vela Finance thế nào, khả năng cơ quan quản lý đặt hoặc thay đổi một trần lãi suất là rủi ro mà hệ thống định giá phải sẵn sàng.
 
 ::::story
-NHNN công bố: từ 1/7/2025, tất cả tổ chức tín dụng không được cho vay tiêu dùng với lãi suất (APR) vượt 24%/năm.
+Giả sử cơ quan quản lý công bố: từ một ngày cụ thể, khoản vay tiêu dùng không có tài sản bảo đảm không được có APR vượt một mức trần.
 
-Hệ thống phải ensure compliance automatically.
+Hệ thống phải tự động bảo đảm tuân thủ. VLP hiện chưa làm được điều đó.
 ::::
 
-**System enforcement:**
+LPS đã tính XIRR (lãi suất thực tế) cho mỗi kế hoạch trả góp, nhưng không có bước nào so XIRR với một trần lãi suất. Không có validator, không có mã lỗi, không có tham số cấu hình nào cho trần. Nếu cần bổ sung, thiết kế tự nhiên là một bước kiểm tra trong luồng chọn đề nghị vay *(chooseOffer)*:
 
 ```text
-// ⚠️ ILLUSTRATIVE — RateCapValidator KHÔNG tồn tại trong VLP codebase
-// verified: verify-remaining-chapters.md, pricing-risk-chapter-claims.md
-// LPS tính toán XIRR (EIR) nhưng KHÔNG validate rate cap
-// Không có RateCapValidator class, APR_EXCEEDS_RATE_CAP error code, 
-// hay lending.rate-cap property trong bất kỳ module nào
+// Thiết kế đề xuất (minh họa)
+// 1. LPS tính XIRR sau khi tạo kế hoạch trả góp
+// 2. Bước kiểm tra mới trong chooseOffer: so XIRR với trần đọc từ cấu hình
+//    (trần theo loại sản phẩm, có validFrom như biểu phí)
+// 3. Vượt trần → từ chối đề nghị, ghi lý do, không cho khách hàng ký
 //
-// Recommended pattern cho rate cap enforcement (nếu cần implement):
-// - LPS calculate XIRR sau khi tính IP
-// - Thêm validation step trong chooseOffer workflow
-// - So sánh XIRR với regulatory cap từ config
-// - Return error nếu vượt quá limit
-//
-// Ví dụ design minh họa (conceptual, không phải code thực):
 // if (calculatedXIRR.compareTo(regulatoryCapConfig.getConsumerUnsecured()) > 0) {
 //     throw new ValidationException("APR exceeds regulatory cap");
 // }
 ```
 
-### Pricing Audit Trail
+Điểm quan trọng là trần phải được kiểm tra trên APR (đã gồm phí), không phải lãi suất danh nghĩa. Khoản vay của chị Lan có lãi suất danh nghĩa 18% nhưng APR 19.94%; với một trần 19%, kiểm tra trên lãi suất danh nghĩa sẽ cho qua một khoản vay vi phạm.
 
-**Every pricing decision must be logged:**
+### Dấu vết kiểm toán của định giá
+
+Mọi quyết định định giá cần được ghi lại. Dưới đây là một schema minh họa:
 
 ```sql
 -- ILLUSTRATIVE SCHEMA — pricing_audit_log KHÔNG tồn tại trong VLP
@@ -873,187 +453,171 @@ CREATE TABLE pricing_audit_log (  -- ILLUSTRATIVE
 -- Append-only, never updated
 ```
 
-**Why audit trail matters:**
-
 ```text
-Scenario: Customer dispute 18 months later
-  "You charged me more than agreed"
-  
-  With audit trail:
-    Query pricing decisions where application_id = X
-    Show: at time of approval, tariff was active
-    Show: APR disclosed was 20.2%
-    → Complete evidence chain
-  
-  Without audit trail:
-    "We don't have records from 18 months ago"
-    → Loss of credibility, regulatory violation,
-      potentially unfavorable legal outcome
+Tình huống: khách hàng khiếu nại 18 tháng sau
+  "Các anh tính tôi nhiều hơn thỏa thuận"
 
-Note: VLP stores tariff snapshot at origination time via CTM contract.
-Pricing audit is reconstructable from contract + tariff version data.
+  Có dấu vết kiểm toán:
+    Tra quyết định định giá theo mã đơn vay
+    Chứng minh: tại thời điểm phê duyệt, biểu phí nào đang hiệu lực
+    Chứng minh: APR đã công bố là 19.94%
+    → Chuỗi bằng chứng đầy đủ
+
+  Không có dấu vết kiểm toán:
+    "Chúng tôi không còn hồ sơ từ 18 tháng trước"
+    → Mất uy tín, vi phạm quy định, bất lợi nếu ra tòa
 ```
 
-:::summary[Pricing Governance]
-Rate cap: NOT enforced in VLP (LPS calculates
-XIRR but no RateCapValidator exists)
-Transparency: APR prominently displayed, total
-cost shown - regulatory requirement
-Audit trail: reconstructable from CTM contract
-+ tariff version (no pricing_audit_log table)
+VLP không có bảng nhật ký định giá riêng, nhưng hợp đồng trong CTM lưu mã và phiên bản biểu phí tại thời điểm khởi tạo. Kết hợp với dữ liệu phiên bản biểu phí, có thể dựng lại đầy đủ quyết định định giá của bất kỳ khoản vay nào.
+
+:::summary[Mục 12.5 và 12.6]
+Trình bày đề nghị vay phải cân bằng: lãi suất, APR và tổng phải trả cùng nổi bật như khoản trả hằng tháng. Hiệu ứng mồi nhử chỉ chấp nhận được khi mọi lựa chọn đều thật và công bằng. VLP hiện chưa kiểm tra trần lãi suất dù LPS đã tính XIRR; nếu bổ sung, phải kiểm tra trên APR chứ không phải lãi suất danh nghĩa. Quyết định định giá dựng lại được từ hợp đồng CTM và phiên bản biểu phí.
 :::
 
 ## Tóm tắt chương 12
 
 ```text
-Từ credit score 420 của chị Lan đến rate 15.5%:
+Từ 420 điểm của chị Lan đến lãi suất 18%:
 
-Score 420 → Prime tier
-  DTI = 7.6% → Prime A (best sub-tier)
-  Channel = DIGITAL → no agent commission
-  First-time borrower → no loyalty discount
+Điểm 420 → hạng Standard (380-439)
+  PD theo thang điểm: odds 40 : 1 → khoảng 2.4%
+  DTI sau khoản vay: 7.7% → khả năng chi trả tốt
+  Kênh: DIGITAL → chi phí khởi tạo thấp
+  Khách hàng lần đầu → chưa có ưu đãi khách hàng cũ
 
-Cost analysis:
-  Cost of funds: 8.5%
-  EL (PD 2%, LGD 60%): 1.2%
-  Operating cost (digital): 3.3%
-  UL buffer: 0.5%
-  ROE contribution: 1.8%
-  Break-even: 15.3%
+Kinh tế học của hạng Standard (mô hình 12.2):
+  Chi phí vốn:             7.23%
+  Tổn thất dự kiến:        1.76%
+  Chi phí vận hành:        4.39%
+  Lợi nhuận vốn chủ:       2.70%
+  Trừ phí khởi tạo:       −1.81%
+  Hòa vốn:                14.27%
+  Lãi suất áp dụng:       18.00% → biên 3.73 điểm phần trăm
 
-Market context:
-  Competitor A: 14.8% (slightly below us)
-  Competitor B: 16.0% (above us)
-  Our position: 15.5% → competitive, slight margin
+Công bố cho khách hàng:
+  Lãi suất danh nghĩa: 18%/năm
+  APR: 19.94%/năm (gồm phí khởi tạo 185,000 VNĐ)
+  Khoản trả hằng tháng: 1,696,080 VNĐ (kỳ cuối 1,696,077)
+  Tổng tiền lãi: 1,852,957 VNĐ
+  Tổng phải trả: 20,352,957 VNĐ, cộng phí 185,000 VNĐ
 
-A/B test running: 5% traffic gets 15.0%
-  → If conversion improves AND margin holds → promote to 15.0%
-  → If margin insufficient → stay at 15.5%
+Dấu vết: dựng lại được từ hợp đồng CTM + phiên bản biểu phí.
+Trần lãi suất: VLP chưa kiểm tra; nếu bổ sung, kiểm tra trên APR 19.94%.
 
-Disclosure:
-  Nominal rate: 15.5%/năm
-  APR: 16.8%/năm (includes 200,000 origination fee)
-  Monthly payment: 1,668,400 VNĐ
-  Total cost: 20,020,800 VNĐ
-  
-  Pricing decision reconstructable from CTM contract + tariff version (no dedicated pricing_audit_log).
-  Rate cap check: APR 16.8% < cap 24% → PASS.
-
-Pricing is not guesswork. Every number has a reason.
+Định giá không phải phỏng đoán. Mỗi con số đều có lý do.
 ```
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. Kể 5 thành phần của cost-plus pricing model. Thành phần nào thường lớn nhất cho Sub-prime tier?
-2. Price elasticity là gì? Tại sao Prime segment thường elastic hơn Sub-prime?
-3. Tariff có validFrom/validTo. Tại sao existing loans không bị ảnh hưởng khi tariff mới được tạo?
-4. APR khác nominal rate ở điểm nào? Tại sao regulatory yêu cầu hiển thị APR?
+**Loại 1: Nhớ lại**
+1. Kể các thành phần của mô hình chi phí cộng biên. Thành phần nào lớn nhất ở hạng Sub-prime trong ví dụ của chương, và vì sao?
+2. Độ co giãn giá là gì? Vì sao khách Prime thường co giãn mạnh hơn khách Sub-prime?
+3. Biểu phí có validFrom/validTo. Vì sao khoản vay đang chạy không bị ảnh hưởng khi một phiên bản biểu phí mới được tạo?
+4. APR khác lãi suất danh nghĩa ở điểm nào? Vì sao trần lãi suất phải được kiểm tra trên APR?
 
-**Loại 2 - Hiểu:**
-5. Giải thích adverse selection spiral trong pricing. Tại sao việc tăng rate để bù đắp high defaults lại tạo ra more defaults?
-6. Tại sao break-even analysis phải được thực hiện ở cấp portfolio (1,000 loans) thay vì cấp individual loan?
-7. Dynamic pricing được chấp nhận cho loyalty discount nhưng không được chấp nhận cho urgency signals. Tại sao sự khác biệt này?
-8. Decoy effect là gì? Khi nào dùng decoy trong product design là ethical, khi nào không?
+**Loại 2: Hiểu**
+5. Giải thích vòng xoáy lựa chọn bất lợi trong định giá. Vì sao tăng lãi suất để bù vỡ nợ lại có thể làm vỡ nợ tăng thêm?
+6. Vì sao chi phí phải quy về phần trăm dư nợ bình quân, không phải phần trăm số tiền vay ban đầu? Điều gì xảy ra với lãi suất hòa vốn nếu làm sai?
+7. Định giá động chấp nhận được cho ưu đãi khách hàng trung thành nhưng không chấp nhận được khi dựa trên tín hiệu cấp bách. Vì sao?
+8. Hiệu ứng mồi nhử là gì? Khi nào dùng mồi nhử trong thiết kế sản phẩm là có đạo đức?
 
-**Loại 3 - Áp dụng:**
-9. Product mới: Sub-prime, 10,000,000 VNĐ, 12 tháng.
-   - Cost of funds: 9%/năm
-   - PD: 14%, LGD: 65%
-   - Origination cost: 500,000 VNĐ (one-time)
-   - Servicing cost: 400,000 VNĐ/năm
-   - UL buffer: 1.2%
-   - Target ROE: 20% on 15% equity allocation
-   
-   (a) Calculate break-even rate using portfolio simulation (100 loans)
-   (b) What's the minimum rate to charge?
-   (c) If competitor charges 26%, what should your positioning be?
+**Loại 3: Áp dụng**
+9. Sản phẩm mới cho Sub-prime: 10,000,000 VNĐ, 12 tháng, trả góp đều.
+   - Chi phí nợ: 9%/năm, cấu trúc 85% nợ, 15% vốn chủ, ROE mục tiêu 20%
+   - PD: 8%, LGD: 65%, khoản vỡ nợ trả được 6 kỳ
+   - Chi phí khởi tạo: 500,000 VNĐ (một lần)
+   - Chi phí phục vụ: 400,000 VNĐ/năm
+   - Không có phí khởi tạo thu từ khách hàng
 
-10. A/B test design: Standard tier (18.5% vs 18.0%)
-    - Baseline application volume: 3,000/month
-    - Baseline approval rate: 70%
-    - Baseline default rate: 5%
-    - Expected elasticity: -1.5
-    
-    (a) Expected application volume change if rate drops to 18.0%
-    (b) Sample size needed for statistical significance (conversion rate)
-    (c) What's the net revenue impact of the rate change?
-    (d) How long to run before checking default rate impact?
+   (a) Tính lãi suất hòa vốn bằng mô phỏng danh mục 100 khoản vay
+   (b) Lãi suất tối thiểu nên áp dụng là bao nhiêu?
+   (c) Nếu đối thủ tính 26%, bạn nên định vị thế nào?
 
-**Loại 4 - Phân tích:**
-11. Công ty đang xem xét "urgency pricing" - khách hàng apply ngoài giờ hành chính (18h-22h) được tính lãi suất cao hơn 1.5% với lý do "rủi ro behavioral cao hơn." Data support: default rate của off-hours applications là 6.5% vs 4.5% business hours.
+10. Thiết kế thử nghiệm A/B cho hạng Standard (18.0% so với 17.5%):
+    - Số đơn nền: 3,000/tháng
+    - Tỷ lệ duyệt nền: 70%
+    - Tỷ lệ vỡ nợ nền: 3%
+    - Độ co giãn kỳ vọng: −1.5
 
-    Phân tích: (a) Is the data sufficient to justify differential pricing? (b) Is this regulatory compliant? (c) Is this ethical? (d) What alternative approaches could achieve same risk management goal?
+    (a) Lượng đơn kỳ vọng thay đổi thế nào nếu giảm xuống 17.5%?
+    (b) Cỡ mẫu cần thiết để phát hiện chênh lệch tỷ lệ chuyển đổi 3 điểm phần trăm
+    (c) Tác động ròng đến lợi nhuận của việc giảm giá
+    (d) Cần chạy bao lâu trước khi đánh giá được tác động lên tỷ lệ vỡ nợ?
 
-12. Board yêu cầu: "Tăng Standard tier rate từ 18.5% lên 20.5% để cải thiện margin." Risk team phản đối: "Chúng ta sẽ mất Standard customers." Marketing team nói: "Không sao, Standard customers ít nhạy cảm với rate." Ai đúng?
-    
-    Design the analysis: (a) What data do you need? (b) How to estimate elasticity for Standard segment specifically? (c) What is the P&L impact of the change? (d) What's your recommendation to Board?
+**Loại 4: Phân tích**
+11. Công ty cân nhắc "định giá theo giờ": khách nộp đơn ngoài giờ hành chính (18-22 giờ) chịu lãi cao hơn 1.5 điểm phần trăm, với lý do "rủi ro hành vi cao hơn". Dữ liệu: tỷ lệ vỡ nợ của đơn ngoài giờ là 6.5% so với 4.5% trong giờ hành chính.
+
+    Phân tích: (a) Dữ liệu có đủ để biện minh cho giá khác biệt không? (b) Có tuân thủ quy định không? (c) Có đạo đức không? (d) Cách nào khác đạt cùng mục tiêu quản trị rủi ro?
+
+12. Hội đồng quản trị yêu cầu: "Tăng lãi suất Standard từ 18% lên 20% để cải thiện biên." Đội rủi ro phản đối: "Chúng ta sẽ mất khách Standard." Đội marketing nói: "Không sao, khách Standard ít nhạy giá." Ai đúng?
+
+    Thiết kế phân tích: (a) Cần dữ liệu gì? (b) Ước lượng độ co giãn riêng cho Standard thế nào? (c) Tác động đến lãi lỗ? (d) Khuyến nghị của bạn với hội đồng?
 
 ## Bài tập áp dụng
 
-**Bài 1 - Full Pricing Model:**
-Xây dựng complete pricing model cho 3 tiers cho sản phẩm mới: BNPL (Buy Now Pay Later), không có origination fee, tenor 3 months, average amount 5,000,000 VNĐ.
+**Bài 1: Mô hình định giá đầy đủ cho BNPL**
 
-Assumptions:
-- Cost of funds: 9%/năm
-- Operating cost: 250,000 VNĐ/loan (flat, channel is merchant POS)
-- Target ROE: 20% on 12% equity allocation
-- Merchant subsidy available for "0% rate" offer: depends on your negotiation
+Xây dựng mô hình định giá cho ba phân khúc của sản phẩm BNPL: không phí khởi tạo, kỳ hạn 3 tháng, số tiền bình quân 5,000,000 VNĐ.
 
-Segments (BNPL customers are different from standard loans):
-- Thin-file: No bureau data, alt data only: PD 18%, LGD 55%
-- Standard: Light bureau data: PD 8%, LGD 58%
-- Prime: Full bureau, good history: PD 3%, LGD 52%
+Giả định:
+- Chi phí nợ: 9%/năm; cấu trúc 88% nợ, 12% vốn chủ; ROE mục tiêu 20%
+- Chi phí vận hành: 250,000 VNĐ/khoản vay (cố định, kênh POS của người bán)
+- Người bán có thể trợ giá cho ưu đãi "0% lãi suất": mức trợ giá tùy đàm phán
 
-Yêu cầu:
-(a) Calculate break-even rate for each segment
-(b) Design the pricing strategy: what rate to charge each segment?
-(c) If offering "0% lãi," calculate required merchant subsidy
-(d) APR calculation (including any fees): does it comply with rate cap?
-(e) Tariff configuration: what FeeComponents would you create?
-
-**Bài 2 - Competitive Response Analysis:**
-
-Competitor vừa launch sản phẩm với Prime rate 13.8% (vs your 15.5%). Anh Minh cần analysis trong 48 giờ.
-
-Available data:
-- Your monthly Prime applications: 5,000
-- Competitor announcement date: 2 weeks ago
-- Your applications since announcement: 4,200/month (down 800 = -16%)
-- Your credit loss rate (Prime): 2.1%
-- Elasticity estimate: -1.8
+Phân khúc (khách BNPL khác khách vay thông thường):
+- Thin-file: chỉ có dữ liệu thay thế; PD 18%, LGD 55%
+- Standard: có ít dữ liệu tín dụng; PD 8%, LGD 58%
+- Prime: dữ liệu tín dụng đầy đủ, lịch sử tốt; PD 3%, LGD 52%
 
 Yêu cầu:
-(a) Is the 16% drop significant or within normal variation? (statistical test)
-(b) Revenue impact of current situation (vs before competitor launch)
-(c) Three response options with P&L analysis for each
-(d) Your recommendation with risk assessment
-(e) What additional data would make your analysis more confident?
+(a) Tính lãi suất hòa vốn cho từng phân khúc
+(b) Thiết kế chiến lược giá: mỗi phân khúc nên tính bao nhiêu?
+(c) Nếu chào "0% lãi", tính mức trợ giá cần thiết từ người bán
+(d) Tính APR (gồm mọi khoản phí) và so với một trần giả định 20%/năm
+(e) Cấu hình biểu phí: cần những FeeComponent nào?
 
-**Bài 3 - Rate Cap Compliance System:**
+**Bài 2: Phản ứng trước đối thủ**
 
-NHNN thông báo: từ 1/6/2025, rate cap cho consumer unsecured = 22% APR (currently 24%).
+Đối thủ vừa ra mắt sản phẩm với lãi suất Prime 13.8% (so với 15% của bạn). Anh Minh cần phân tích trong 48 giờ.
 
-Current portfolio analysis:
-- 15% of loans have APR between 22-24% (would violate new cap)
-- These are all Sub-prime loans originated after January 2025
+Dữ liệu hiện có:
+- Số đơn Prime hằng tháng của bạn: 5,000
+- Đối thủ công bố cách đây 2 tuần
+- Số đơn từ khi đối thủ công bố: 4,200/tháng (giảm 800, tức −16%)
+- Tỷ lệ tổn thất tín dụng (Prime): 1.0%
+- Độ co giãn ước tính: −1.8
 
-Thiết kế compliance response:
-(a) System changes needed in origination (validation logic)
-(b) What happens to existing loans above new cap? (cannot retroactively change)
-(c) How to reprice Sub-prime product to fit under 22% APR?
-(d) Business impact: how many Sub-prime customers will now be declined?
-(e) Monitoring: how to ensure no new loans exceed cap post-implementation?
+Yêu cầu:
+(a) Mức giảm 16% có ý nghĩa thống kê không hay nằm trong biến động bình thường?
+(b) Tác động doanh thu của tình hình hiện tại so với trước khi đối thủ ra mắt
+(c) Ba phương án phản ứng, kèm phân tích lãi lỗ cho từng phương án (dùng hòa vốn Prime 12.61% làm sàn)
+(d) Khuyến nghị của bạn kèm đánh giá rủi ro
+(e) Dữ liệu nào giúp phân tích của bạn chắc chắn hơn?
+
+**Bài 3: Hệ thống tuân thủ trần lãi suất**
+
+Giả sử cơ quan quản lý thông báo: sau 6 tháng nữa, trần APR cho vay tiêu dùng không bảo đảm là 22%/năm.
+
+Phân tích danh mục hiện tại:
+- 15% khoản vay có APR từ 22% đến 24% (sẽ vượt trần mới)
+- Tất cả là khoản vay Sub-prime khởi tạo trong năm nay
+
+Thiết kế phương án tuân thủ:
+(a) Thay đổi hệ thống ở khâu khởi tạo (logic kiểm tra)
+(b) Khoản vay đang chạy có APR vượt trần mới xử lý thế nào? (không thể thay đổi hồi tố)
+(c) Định giá lại sản phẩm Sub-prime để APR dưới 22% thế nào?
+(d) Tác động kinh doanh: bao nhiêu khách Sub-prime sẽ bị từ chối?
+(e) Giám sát: làm sao bảo đảm không khoản vay mới nào vượt trần sau khi triển khai?
 
 ## Đọc thêm
 
-**Risk-Based Pricing:**
-- Thomas, L. C., Edelman, D. B., & Crook, J. N. (2002). *Credit Scoring and Its Applications.* SIAM. - Chapter 8-10 về pricing models và their implementation.
+**Định giá dựa trên rủi ro:**
+- Thomas, L. C., Crook, J. N., & Edelman, D. B. (2017). *Credit Scoring and Its Applications* (2nd ed.). SIAM. Các chương về định giá và mô hình lợi nhuận.
 
-**Behavioral Pricing:**
-- Ariely, D. (2008). *Predictably Irrational: The Hidden Forces That Shape Our Decisions.* Harper Collins. - Chapters 1-3 về decoy effect, anchoring, và their application to pricing.
+**Định giá hành vi:**
+- Ariely, D. (2008). *Predictably Irrational: The Hidden Forces That Shape Our Decisions.* HarperCollins. Các chương đầu về hiệu ứng mồi nhử, mỏ neo và ứng dụng vào định giá.
 
-**Financial Regulation:**
-- Consumer Financial Protection Bureau. (2020). *Truth in Lending (Regulation Z).* - Available at consumerfinance.gov - comprehensive guide về APR calculation và disclosure requirements.
+**Quy định về công bố chi phí:**
+- Consumer Financial Protection Bureau. *Truth in Lending Act (Regulation Z).* Có tại consumerfinance.gov. Hướng dẫn đầy đủ về cách tính và công bố APR.
 
-*Chương 13 sẽ đưa kinh tế học hành vi vào ứng dụng thực tế - không chỉ là lý thuyết mà là concrete product design và UX decisions. Từ "nudge" thiết kế repayment behavior, đến transparency tools giúp khách hàng ra quyết định tốt hơn, đến những ranh giới đạo đức mà hệ thống tài chính trách nhiệm không nên vượt qua.*
+*Chương 13 đưa kinh tế học hành vi vào thực tế, không chỉ là lý thuyết mà là các quyết định thiết kế sản phẩm và trải nghiệm cụ thể: từ những cú hích giúp khách hàng trả nợ đúng hạn, đến công cụ minh bạch giúp họ quyết định tốt hơn, đến những ranh giới đạo đức mà một hệ thống tài chính có trách nhiệm không nên vượt qua.*

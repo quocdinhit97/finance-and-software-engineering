@@ -5,1130 +5,649 @@ sidebar_position: 3
 chapter: 13
 subtitle: "Behavioral Economics and Responsible Finance"
 reading_time: 28
+description: "Hai hệ tư duy, né tránh mất mát, thiên kiến hiện tại và kế toán tâm lý trong quyết định vay; thiết kế cú hích (mặc định, cam kết, minh bạch); phát hiện sớm nợ quá mức; tiếp thị có trách nhiệm, khách hàng dễ tổn thương, cơ chế thưởng theo chất lượng và các chỉ số về phúc lợi khách hàng."
 source_file: "phan-3-chuong-13.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Người ta không ra quyết định tài chính như robot tối ưu hóa. Họ ra quyết định như con người - với cảm xúc, với thiên kiến, với thông tin không đầy đủ, trong bối cảnh áp lực và không chắc chắn. Hệ thống tài chính tốt phải hiểu điều này - và thiết kế để giúp, không phải khai thác."*
+> *"Người ta không ra quyết định tài chính như một cỗ máy tối ưu. Họ quyết định như con người: với cảm xúc, thiên kiến, thông tin không đầy đủ, dưới áp lực và trong bất định. Một hệ thống tài chính tốt phải hiểu điều đó, và được thiết kế để giúp, không phải để khai thác."*
 
-## Dẫn nhập: Hai cuộc gặp gỡ, một quyết định
+## Dẫn nhập: hai lần gặp, một con người
 
 ::::story
-**Cảnh 1 - Tháng 3/2024:**
+**Cảnh 1, tháng 3/2024.** Chị Hoa bước vào cửa hàng điện thoại. Trên màn hình máy tính bảng của nhân viên bán hàng: "Chỉ 458,000 VNĐ/tháng, mang điện thoại mới về nhà ngay hôm nay!"
 
-Chị Lan bước vào cửa hàng điện thoại. Trên màn hình iPad của sales rep: "Chỉ cần 490,000 VNĐ/tháng - iPhone 15 về nhà ngay hôm nay!"
+Chị Hoa không hỏi lãi suất, không tính tổng số tiền phải trả. Chị chỉ nghĩ: *458 nghìn, có vẻ ổn*, rồi ký.
 
-Chị Lan không hỏi lãi suất. Chị không tính tổng tiền trả. Chị chỉ nghĩ: *490,000 - có vẻ ổn.* Và ký.
+Chiếc điện thoại giá 12,000,000 VNĐ. Khoản vay 36 tháng, lãi suất 22%/năm, tổng phải trả 16,498,283 VNĐ.
 
-Lãi suất: 22%/năm. Tổng tiền trả: 15,680,000 VNĐ cho chiếc điện thoại giá 12,000,000 VNĐ.
+**Cảnh 2, tháng 3/2026.** Chị Hoa vừa nhận thưởng cuối năm thì ứng dụng gửi thông báo: "Khoản vay của bạn còn 12 tháng. Nếu tất toán ngay, bạn tiết kiệm được 602,922 VNĐ tiền lãi. Bạn có muốn xem chi tiết?"
 
-**Cảnh 2 - Tháng 9/2024:**
+Chị bấm vào, thấy con số tiết kiệm cụ thể, và chuyển khoản ngay.
 
-Chị Lan nhận được thông báo từ app: "Khoản vay của bạn còn 3 tháng. Thanh toán trước 1 lần có thể tiết kiệm 320,000 VNĐ tiền lãi. Bạn có muốn xem không?"
-
-Chị Lan click. Thấy số tiền tiết kiệm cụ thể. Chuyển khoản ngay.
-
-Hai tình huống khác nhau về cùng một người, cùng một hệ thống tài chính. Tình huống 1: hệ thống khai thác cognitive bias để bán. Tình huống 2: hệ thống dùng behavioral design để giúp customer ra quyết định tốt hơn.
-
-Ranh giới giữa hai tình huống này - đó là chủ đề của chương cuối Phần III.
+Cùng một người, cùng một hệ thống tài chính. Ở cảnh 1, hệ thống khai thác thiên kiến nhận thức để bán. Ở cảnh 2, hệ thống dùng thiết kế hành vi để giúp khách hàng quyết định tốt hơn. Ranh giới giữa hai cảnh này là chủ đề của chương cuối Phần IV.
 ::::
 
 ## 13.1 Nền tảng kinh tế học hành vi
 
-### Dual-Process Theory: System 1 vs System 2
-
-**Khái niệm (Daniel Kahneman, *Thinking, Fast and Slow*, 2011):**
+### Hai hệ tư duy
 
 :::key
-**System 1:** Tư duy nhanh, tự động, cảm tính. Không tốn effort. Dễ bị biased.
+Theo Daniel Kahneman (*Thinking, Fast and Slow*, 2011):
 
-**System 2:** Tư duy chậm, có chủ đích, logic. Tốn effort. Chính xác hơn nhưng mệt mỏi.
+**Hệ 1** tư duy nhanh, tự động, cảm tính. Không tốn sức, nhưng dễ thiên lệch.
+
+**Hệ 2** tư duy chậm, có chủ đích, logic. Chính xác hơn nhưng tốn sức và dễ mệt.
 :::
 
-**Tại sao quan trọng cho tài chính:**
+Quyết định vay lý tưởng thuộc về Hệ 2: tính đủ tổng số tiền phải trả và lãi suất thực, so sánh các lựa chọn, đánh giá khả năng trả trong suốt kỳ hạn, cân nhắc chuyện gì xảy ra nếu mất việc hay ốm đau. Quyết định vay thực tế thường thuộc về Hệ 1: "458 nghìn một tháng, chắc trả được", "đã được duyệt rồi, ký thôi", "mình cần nó ngay bây giờ". Khoảng cách giữa hai cách quyết định này dẫn đến nợ quá mức, vỡ nợ và hối tiếc.
+
+**Cái bẫy của tải nhận thức.** Hãy hình dung một khách hàng đang mua tủ lạnh: cửa hàng ồn ào, nhân viên bán hàng đứng ngay cạnh, đứa con nhỏ kéo tay, đã xem năm mẫu tủ lạnh trong hai tiếng. Hệ 2 đã mệt, Hệ 1 lên tiếng: "Ký đi, về nhà thôi." Một hệ thống có đạo đức không khai thác những khoảnh khắc tải nhận thức cao như vậy: nó đưa ra một vài thông tin then chốt, đơn giản, ngay tại điểm quyết định, và cho người ta thời gian suy nghĩ thay vì tạo cảm giác gấp gáp giả.
+
+### Thuyết triển vọng: né tránh mất mát
+
+Kahneman và Tversky (1979) chỉ ra rằng người ta không đánh giá kết quả theo giá trị tuyệt đối mà theo **sự thay đổi** so với một **điểm tham chiếu**, và **mất mát có sức nặng lớn hơn khoản được tương đương**.
 
 ```text
-Quyết định tài chính lý tưởng: System 2
-  Tính toán đầy đủ: tổng tiền trả, lãi suất thực, so sánh alternatives
-  Đánh giá khả năng trả trong 18 tháng tới
-  Cân nhắc rủi ro: nếu mất việc, nếu ốm đau...
+Hàm giá trị v(x), theo ước lượng của Tversky và Kahneman (1992):
+  Khi được:  v(x) = x^α,         α ≈ 0.88 (lõm: độ nhạy giảm dần)
+  Khi mất:   v(x) = −λ(−x)^β,    β ≈ 0.88, λ ≈ 2.25 (hệ số né tránh mất mát)
 
-Quyết định tài chính thực tế: System 1 dominant
-  "490,000/tháng — OK, tôi có thể trả được"
-  "Được duyệt rồi, cứ ký đi"
-  "Cần cái điện thoại đó lắm, cần ngay bây giờ"
-
-Kết quả: Mismatch giữa quyết định thực tế và quyết định lý trí
-  → Over-indebtedness
-  → Default
-  → Regret
+λ ≈ 2.25 nghĩa là:
+  Mất 100,000 VNĐ gây khó chịu tương đương niềm vui khi được khoảng 225,000 VNĐ
 ```
 
-**Cái bẫy cognitive load:**
+**Né tránh mất mát trong nhắc nợ.** Hai thông điệp sau tương đương về mặt toán học:
 
-```text
-Scenario: Customer đang mua tủ lạnh tại cửa hàng
-  - Đứng giữa cửa hàng ồn ào
-  - Sales rep đứng ngay bên cạnh
-  - Đứa con nhỏ đang kéo tay
-  - Đã xem 5 mẫu tủ lạnh trong 2 tiếng
-  
-Cognitive load: rất cao
-→ System 2 đã mệt (ego depletion)
-→ System 1 dominant: "Ký đi, về nhà thôi"
+| Cách đóng khung | Thông điệp |
+|---|---|
+| Được | "Thanh toán sớm để tiết kiệm 50,000 đồng tiền lãi" |
+| Mất | "Nếu không thanh toán trước ngày 25, bạn sẽ phải trả thêm 50,000 đồng tiền lãi" |
 
-Ethical system design phải:
-  Không exploit high cognitive load moments
-  Provide simple, key information at point of decision
-  Allow time to think (không tạo false urgency)
-```
+Lý thuyết dự đoán cách đóng khung "mất" thúc đẩy hành động mạnh hơn, và đây là một giả thuyết đáng thử nghiệm A/B trên chính khách hàng của mình. Điều kiện bắt buộc: con số phải đúng sự thật. Không được bịa ra một khoản phạt để tạo cảm giác mất mát.
 
-### Prospect Theory: Loss Aversion
-
-**Kahneman & Tversky (1979) - Nobel Prize winning insight:**
-
-> Người ta không evaluate outcomes theo absolute value.
-> Họ evaluate theo **changes** from a **reference point**.
-> Và **losses loom larger than equivalent gains**.
-
-**Phát biểu toán học:**
-
-```text
-Value function v(x):
-  Gains: v(x) = x^α, where α ≈ 0.88 (concave — diminishing sensitivity)
-  Losses: v(x) = -λ(-x)^β, where β ≈ 0.88, λ ≈ 2.25 (loss aversion coefficient)
-
-What λ ≈ 2.25 means:
-  Losing 100,000 VNĐ feels as bad as gaining 225,000 VNĐ feels good
-  
-Practical implication for lending:
-  Customer who has just paid off a loan (reference point reset):
-  → Framing next loan as "getting back 20M you had before" 
-    feels better than "taking on 20M debt"
-  → Retention offers should frame as restore, not borrow
-```
-
-**Loss aversion trong repayment behavior:**
-
-```text
-Experiment (Beshears et al., 2021):
-  Group A: "Pay now and SAVE 50,000 VNĐ in interest"
-  Group B: "Don't pay now and PAY 50,000 VNĐ extra in interest"
-  
-  Mathematically identical.
-  Group B payment rate: 34% HIGHER than Group A.
-  
-  → Loss framing more motivating than gain framing
-  → "You're losing 50,000" > "You're saving 50,000"
-
-Application: Payment reminders
-  ❌ "Thanh toán sớm để tiết kiệm 50,000 đồng lãi"
-  ✓  "Nếu không thanh toán trước ngày 25, bạn sẽ phải trả thêm 50,000 đồng lãi"
-  
-  Second framing triggers loss aversion → higher payment rate
-  (But must be accurate — cannot fabricate penalties)
-```
-
-### Present Bias: Tại sao người ta vay quá nhiều
-
-**Khái niệm:**
+### Thiên kiến hiện tại: vì sao người ta vay nhiều
 
 :::key
-**Present bias** *(thiên kiến hiện tại)*: Người ta overweight hiện tại so với tương lai - ngay cả khi biết điều đó không rational.
+**Thiên kiến hiện tại** *(present bias)*: người ta coi trọng hiện tại quá mức so với tương lai, kể cả khi biết điều đó không hợp lý.
 :::
 
-**β-δ model (Laibson, 1997):**
+Mô hình β-δ (Laibson, 1997) mô tả điều này:
 
 ```text
-Standard discounting (rational):
-  Utility at time t = δ^t × future_utility
-  
-  Ví dụ: δ = 0.95 (5% annual discount)
-  100,000 hôm nay = 95,000 năm sau = 90,250 hai năm sau...
-  
-  Consistent preferences over time
+Chiết khấu chuẩn (nhất quán theo thời gian):
+  Giá trị hôm nay của lợi ích ở năm t = δ^t × lợi ích
+  δ = 0.95: 100,000 năm sau đáng 95,000 hôm nay, hai năm sau đáng 90,250
 
-Hyperbolic discounting (behavioral reality):
-  Utility at time t = β × δ^t × future_utility (for t > 0)
-  Where β < 1 (present bias factor, typically 0.6-0.8)
-  
-  100,000 hôm nay >> β × 95,000 năm sau
-  (Present valued disproportionately higher)
-  
-  "I'll start saving next month" — but next month never comes
-  Because when next month arrives: NOW is the present too!
+Chiết khấu gần hyperbol (mô hình β-δ):
+  Giá trị hôm nay = β × δ^t × lợi ích, với mọi t > 0
+  β < 1 là hệ số thiên kiến hiện tại
+
+  Mọi thứ trong tương lai bị giảm thêm một lần bởi β,
+  còn hiện tại thì không. Khi "tháng sau" đến, nó trở thành hiện tại,
+  và kế hoạch "tháng sau mình sẽ tiết kiệm" lại bị đẩy lùi.
 ```
 
-**Ví dụ số - vay tiêu dùng:**
+**Ví dụ với khoản vay của chị Lan:**
 
 ```text
-Chị Lan muốn mua laptop 18,500,000 VNĐ:
+Chị Lan cần 18,500,000 VNĐ cho một chiếc laptop phục vụ công việc.
 
-Option A: Save 12 months, buy with savings
-  Cost: 18,500,000 VNĐ (no interest)
-  But: Wait 12 months → significant present cost (delay)
-  
-Option B: Borrow now, pay back over 18 months
-  Cost: 18,500,000 × (1 + 15.5%×1.5) = 22,800,000 VNĐ
-  Monthly payment: 1,267,000 VNĐ/month
-  Extra cost: 4,300,000 VNĐ (23% premium for immediacy)
-  
-  But: Get laptop NOW
-  Present bias: Future 4,300,000 VNĐ discounted heavily
+Phương án A: tiết kiệm 12 tháng rồi mua
+  Chi phí: 18,500,000 VNĐ, không có lãi
+  Nhưng: phải chờ 12 tháng, và laptop cũ đang làm chậm công việc
 
-For chị Lan (β = 0.7):
-  Present value of "wait 12 months" pain: HIGH (β undershoots future)
-  Present value of "4,300,000 extra in 18 months": LOW (β + δ discount)
-  
-  → Rational to borrow even at 23% premium given her actual preferences!
-
-This is NOT irrationality — it's hyperbolic discounting.
-System design implication: 
-  Leverage present bias for GOOD: design savings-as-default
-  Don't EXPLOIT present bias to sell unnecessary debt
+Phương án B: vay ngay, trả trong 12 tháng (khoản vay của sách)
+  Lãi suất 18%/năm, phí khởi tạo 1%
+  Tổng tiền lãi: 1,852,957 VNĐ, phí: 185,000 VNĐ
+  Chi phí thêm: 2,037,957 VNĐ, khoảng 11% giá laptop
+  Đổi lại: có laptop ngay hôm nay
 ```
 
-:::summary[Behavioral Economics Foundations]
-System 1 vs System 2: financial decisions mostly
-System 1 → cognitive load exploitation is easy
-but unethical
-Loss aversion λ≈2.25: "lose 50K" motivates more
-than "save 50K" - use in payment reminders
-Present bias: over-borrowing is predictable, not
-stupid - design systems that help, not exploit
+Với chị Lan, vay có thể là quyết định hợp lý: laptop là công cụ làm việc, và giá trị của việc có nó sớm 12 tháng có thể lớn hơn 2 triệu đồng. Thiên kiến hiện tại trở thành vấn đề khi nó đẩy người ta vay cho những thứ mà chính họ ở tương lai sẽ hối tiếc. Bài học cho thiết kế hệ thống: dùng thiên kiến hiện tại theo hướng tốt (tiết kiệm tự động làm mặc định), và không khai thác nó để bán khoản vay không cần thiết.
+
+:::summary[Mục 13.1]
+Quyết định tài chính thường do Hệ 1 dẫn dắt, nên khai thác những lúc tải nhận thức cao là dễ nhưng không có đạo đức. Né tránh mất mát (λ ≈ 2.25) gợi ý rằng thông điệp nhắc nợ đóng khung theo mất mát có thể hiệu quả hơn, miễn là con số đúng sự thật. Thiên kiến hiện tại giải thích vì sao vay quá nhiều là điều dự đoán được, và hệ thống nên được thiết kế để giúp chứ không khai thác điều đó.
 :::
 
-## 13.2 Cognitive Biases trong vay mượn
+## 13.2 Thiên kiến nhận thức khi vay
 
-### Anchoring: Kẻ thù của Informed Decision
+### Hiệu ứng mỏ neo
 
-::::story[Tình huống - bài tập]
-Trước khi đọc tiếp, ghi ra: bạn sẵn sàng trả bao nhiêu tiền/tháng cho một khoản vay 15 triệu VNĐ?
+::::story[Thử ngay]
+Trước khi đọc tiếp, hãy ghi ra: bạn sẵn sàng trả bao nhiêu mỗi tháng cho một khoản vay 15 triệu đồng?
 ::::
 
-**Nếu bạn vừa thấy con số "750,000" ở đâu đó trong 30 giây qua**, nghiên cứu cho thấy bạn có 40% khả năng trả lời gần 750,000 hơn so với nhóm vừa thấy "1,500,000."
+Nếu bạn vừa thấy con số 750,000 ở đâu đó, câu trả lời của bạn có xu hướng gần 750,000 hơn so với khi bạn vừa thấy 1,500,000. Đó là hiệu ứng mỏ neo, và nó ảnh hưởng trực tiếp đến quyết định tín dụng.
 
-Đây là anchoring - và nó ảnh hưởng trực tiếp đến credit decisions.
+Bằng chứng thực địa nổi tiếng nhất đến từ Bertrand và cộng sự (2010), một thí nghiệm với thư chào vay ở Nam Phi: những chi tiết không liên quan đến giá, như ảnh một phụ nữ trên thư chào hay việc chỉ đưa một ví dụ khoản vay thay vì nhiều ví dụ, làm thay đổi nhu cầu vay với mức độ tương đương một đợt giảm lãi suất đáng kể. Cách trình bày quan trọng gần như giá.
 
-**Anchoring trong loan presentation:**
+Trong luồng nộp đơn, mỏ neo mạnh nhất là con số đầu tiên khách hàng thấy về số tiền vay:
 
-```text
-Research finding (Bertrand et al., 2010, South Africa):
-  Loan offer letters with PHOTO of attractive person:
-  → Men approved 8% more often (gender effect of anchor)
-  
-  Loan offer with comparison table showing competitor rate 30%:
-  → Our rate of 22% looks much better → higher acceptance
-  → "Anchored" to 30%, even though 22% may still be expensive
+| | Cách A: hiện hạn mức tối đa trước | Cách B: hiện số tiền khuyến nghị trước |
+|---|---|---|
+| Khách hàng thấy | "Bạn được duyệt tối đa 50,000,000 VNĐ" | "Dựa trên thu nhập, chúng tôi khuyến nghị 15,000,000 VNĐ" |
+| Hệ quả | Nhiều người xin gần mức tối đa: "được 50 triệu thì 30 triệu cũng hợp lý" | Nhiều người xin gần mức khuyến nghị |
 
-Trong consumer lending application flow:
-  Scenario A: Show maximum approved amount first
-    Customer sees: "Bạn được duyệt tối đa 50,000,000 VNĐ"
-    Most customers then request amount close to maximum
-    → "If I'm approved for 50M, 30M seems reasonable"
-    
-  Scenario B: Show recommended amount based on DTI
-    Customer sees: "Dựa trên thu nhập, chúng tôi khuyến nghị 15,000,000 VNĐ"
-    Most customers request amount close to recommendation
-    → Lower default rate, higher customer wellbeing
+Vela Finance đã thử chuyển từ cách A sang cách B trên kênh số. Số tiền vay bình quân giảm 18%, tỷ lệ vỡ nợ giảm 22%, doanh thu ngắn hạn giảm 8% vì khối lượng thấp hơn. Đó là căng thẳng cốt lõi: vay ít hơn nghĩa là doanh thu ngắn hạn thấp hơn, nhưng khả năng chi trả tốt hơn nghĩa là ít vỡ nợ hơn về dài hạn, và khách hàng có kết quả tốt sẽ tin tưởng và quay lại.
 
-Real experiment: Change "Show max first" to "Show recommended first"
-  → Average loan amount: -18%
-  → Default rate: -22%
-  → Customer satisfaction (long-term): +15%
-  → Short-term revenue: -8% (less volume)
-  
-The tension: Less loan = less revenue SHORT TERM
-             Better affordability = less default LONG TERM
-             Better customer outcome = trust + retention FOREVER
-```
-
-### Optimism Bias: "Mình sẽ không gặp vấn đề"
-
-**Khái niệm:**
+### Thiên kiến lạc quan
 
 :::key
-**Optimism bias** *(thiên kiến lạc quan)*: Người ta systematic overestimate khả năng positive outcomes và underestimate khả năng negative outcomes cho chính họ.
+**Thiên kiến lạc quan** *(optimism bias)*: người ta đánh giá cao một cách hệ thống khả năng điều tốt xảy ra và đánh giá thấp khả năng điều xấu xảy ra với chính mình.
 :::
 
-**Ví dụ số trong lending:**
-
 ```text
-Survey kết quả (1,000 borrowers trước khi vay):
-  "Bạn có nghĩ bạn sẽ gặp khó khăn trả nợ không?"
-  
-  Answered "definitely not": 72%
-  Answered "unlikely": 20%
-  Answered "possible": 7%
-  Answered "likely": 1%
-  
-  But actual outcome after 18 months:
-  "No difficulty": 68%
-  "Some difficulty": 19%
-  "Significant difficulty": 9%
-  "Defaulted": 4%
-  
-  → 72% thought "definitely not" → only 68% actually fine
-  → 8% thought "possible to likely" → 13% actually had difficulty/default
-  
-  EVERYONE underestimates their own risk.
+Khảo sát của Vela Finance với 1,000 người vay, trước khi giải ngân:
+  "Bạn có nghĩ mình sẽ gặp khó khăn khi trả nợ không?"
+    Chắc chắn không: 72%
+    Khó xảy ra:      20%
+    Có thể:           7%
+    Nhiều khả năng:   1%
+
+Kết quả thực tế sau 18 tháng:
+    Không khó khăn:        68%
+    Có chút khó khăn:      19%
+    Khó khăn đáng kể:       9%
+    Vỡ nợ:                  4%
+
+8% nghĩ khó khăn "có thể" hoặc "nhiều khả năng" xảy ra,
+nhưng 13% thực sự gặp khó khăn đáng kể hoặc vỡ nợ.
 ```
 
-**Tại sao này quan trọng cho system design:**
+Nếu ai cũng đánh giá thấp rủi ro của chính mình, thì tự đánh giá khả năng chi trả luôn lạc quan: hỏi "bạn có trả được 1,696,080 mỗi tháng không?" thì câu trả lời gần như luôn là "có", vì người trả lời đang nghĩ đến kịch bản tốt nhất. Hệ thống không nên chỉ dựa vào tự đánh giá mà phải đưa kiểm tra sức chịu đựng vào tính toán ("nếu thu nhập giảm 20%, bạn còn trả được không?", "nếu có khoản chi bất ngờ 3 triệu?"), và nói rõ rủi ro với khách hàng: "Với thu nhập hiện tại, nếu bạn mất việc hoặc thu nhập giảm 20%, khoản trả hằng tháng có thể trở thành gánh nặng. Bạn đã có dự phòng cho tình huống này chưa?" Mục đích không phải làm khách hàng sợ mà giúp họ quyết định có hiểu biết.
 
-```text
-If everyone underestimates risk:
-  Self-reported affordability → systematically optimistic
-  "Can you afford 1,267,000/month?" → "Yes" (thinking of best case)
-  But stress scenarios never considered
-
-System response:
-  Don't rely solely on self-reported affordability
-  Stress test in affordability calculation:
-    "If your income drops 20%, can you still service this loan?"
-    "If you have an unexpected expense of 3M, can you still pay?"
-  
-  Communicate risk explicitly:
-    "Với thu nhập hiện tại, nếu bạn mất việc hoặc thu nhập giảm 20%,
-     khoản trả hàng tháng 1,267,000 VNĐ có thể là gánh nặng.
-     Bạn có dự phòng cho tình huống này không?"
-  
-  → Not to scare customer away, but to help them make informed decision
-  → Some will reconsider. Those who don't: at least they were warned.
-```
-
-### Mental Accounting: Tiền trong các "ngăn" khác nhau
-
-**Khái niệm (Richard Thaler, Nobel 2017):**
+### Kế toán tâm lý
 
 :::key
-**Mental accounting** *(kế toán tâm lý)*: Người ta treat money differently depending on its mental "bucket" - salary, bonus, windfall, savings đều là tiền nhưng behave khác nhau.
+**Kế toán tâm lý** *(mental accounting, Richard Thaler, Nobel 2017)*: người ta đối xử với tiền khác nhau tùy "ngăn" tâm lý mà nó thuộc về. Lương, thưởng, tiền bất ngờ và tiền tiết kiệm đều là tiền, nhưng được tiêu theo những cách khác nhau.
 :::
 
-**Ví dụ phổ biến:**
+Một khoản thưởng bất ngờ 3 triệu đồng thường được tiêu vì nó là "tiền từ trên trời rơi xuống", kể cả khi người nhận đang có khoản vay 18%/năm. Về lý trí, dùng nó trả bớt nợ sẽ tiết kiệm được lãi. Ngược lại, khoản tiền được dán nhãn "học phí cho con" thì rất khó bị đụng đến. Cùng một đồng tiền, khác ngăn, khác hành vi.
 
-```text
-Case 1: Unexpected windfall
-  Chị Lan nhận thưởng bất ngờ 3,000,000 VNĐ
-  → Typically SPENT (it's "found money," not "earned money")
-  → Even if she has outstanding loan at 18%
-  
-  Rational behavior: Use windfall to pay down loan → save interest
-  Actual behavior: "Bonus money" → buy something nice
-  
-  Mental accounting explanation: Bonus ≠ regular money in her mind
+Ứng dụng vào thiết kế trả nợ: giúp khách hàng tạo một ngăn "trả nợ". Trích nợ tự động vào ngày nhận lương làm tiền trả nợ không bao giờ đi vào ngăn "chi tiêu". Ở Vela Finance, khách hàng dùng trích nợ tự động trả đúng hạn 94% số kỳ, so với 76% ở khách hàng tự thanh toán. Một phần chênh lệch đến từ chính những khách hàng chủ động chọn trích nợ tự động vốn đã kỷ luật hơn, nên muốn đo đúng tác động phải thử nghiệm có phân nhóm ngẫu nhiên, như ở mục 13.3.
 
-Case 2: Tax refund
-  Same effect: Tax refund feels like "free money"
-  → Higher spend rate than equivalent salary income
-  
-Case 3: Earmarked savings
-  "Money for child's education": very hard to touch
-  "General savings": easier to spend
-  → Same money, different mental bucket → different behavior
-
-Application for repayment design:
-  Help customer create "loan repayment" mental bucket
-  Auto-debit on salary day: money never enters "spending" bucket
-  → Much higher repayment rate than "remember to pay manually"
-  
-  Outcome: Auto-debit customers: 94% on-time payment
-            Manual payment customers: 76% on-time payment
-```
-
-:::summary[Cognitive Biases Trong Vay Mượn]
-Anchoring: "Show recommended amount" not max →
--18% avg loan, -22% default rate
-Optimism bias: everyone underestimates own risk →
-stress test affordability, communicate risk
-Mental accounting: auto-debit on salary day →
-94% vs 76% on-time (same customer, different
-design)
+:::summary[Mục 13.2]
+Con số đầu tiên khách hàng thấy trở thành mỏ neo, nên hiện số tiền khuyến nghị thay vì hạn mức tối đa giúp giảm số tiền vay và tỷ lệ vỡ nợ. Thiên kiến lạc quan khiến tự đánh giá khả năng chi trả luôn quá lạc quan, nên cần kiểm tra sức chịu đựng và nói rõ rủi ro. Kế toán tâm lý giải thích vì sao trích nợ tự động vào ngày nhận lương hiệu quả.
 :::
 
-## 13.3 Nudge Design: Thiết kế để giúp
+## 13.3 Thiết kế cú hích
 
-### Default Options: Lựa chọn mặc định mạnh nhất
-
-**Khái niệm:**
+### Lựa chọn mặc định
 
 :::key
-**Default option** *(lựa chọn mặc định)*: Kết quả xảy ra nếu customer không actively chọn gì khác. Research nhất quán: most people accept defaults.
+**Lựa chọn mặc định** *(default option)*: điều sẽ xảy ra nếu khách hàng không chủ động chọn gì khác. Phần lớn người ta chấp nhận mặc định.
 :::
 
-**Classic example - organ donation:**
+Ví dụ kinh điển là hiến tạng (Johnson và Goldstein, 2003): ở Áo, nơi mặc định là đồng ý và ai không muốn phải tự rút tên, tỷ lệ đồng ý gần như 100%; ở Đức, nơi phải tự đăng ký, tỷ lệ chỉ khoảng 12%. Hai nước có văn hóa gần nhau; khác biệt chủ yếu nằm ở mặc định.
+
+**Mặc định trong cho vay tiêu dùng, theo các thử nghiệm của Vela Finance:**
 
 ```text
-Austria (opt-out): 99.98% donation rate
-Germany (opt-in): 12% donation rate
+TRÍCH NỢ TỰ ĐỘNG
 
-Exact same population, different DEFAULT.
-→ Default is the most powerful design decision you can make
+Thiết kế cũ (phải tự chọn):
+  "Bạn có muốn đăng ký trả nợ tự động không? [ ] Có"
+  Tỷ lệ đăng ký: 45%
+
+Thiết kế mới (bật sẵn, có thể tắt):
+  "Trả nợ tự động đã được bật cho tài khoản của bạn.
+   Nếu muốn tắt: [ ] Tắt trả nợ tự động"
+  Tỷ lệ dùng: 82%
+
+Kết quả: thêm 37 điểm phần trăm khách hàng dùng trích nợ tự động
+  → Ít kỳ trả trễ hơn, ít phí trễ hạn hơn cho khách hàng
+  → Có lợi cho cả khách hàng và bên cho vay
+
+SỐ TIỀN VAY
+
+Thiết kế cũ: ô "Số tiền" để trống
+  Số tiền bình quân khách tự nhập: 24 triệu
+Thiết kế mới: ô "Số tiền" điền sẵn mức khuyến nghị theo thu nhập
+  Số tiền bình quân: 17 triệu
+  → Mặc định giúp khách hàng không vay quá mức
+
+NGÀY TRẢ NỢ
+
+Thiết kế cũ: "Chọn ngày trả nợ" [1 ... 28]
+Thiết kế mới: mặc định 3 ngày sau ngày nhận lương
+  → Khách hàng không phải nghĩ; lương về, nợ được trả
+  Tỷ lệ trả đúng hạn: +11 điểm phần trăm
 ```
 
-**Defaults trong consumer lending:**
-
-```text
-AUTO-DEBIT DEFAULT:
-
-Current design (opt-in):
-  Application form: "Bạn có muốn đăng ký trả nợ tự động không? [ ] Có"
-  Opt-in rate: 45%
-  
-Better design (default-on, opt-out):
-  Application form: "Trả nợ tự động đã được bật cho tài khoản của bạn.
-                    Nếu bạn muốn tắt: [ ] Tắt tự động trả"
-  Opt-in rate: 82% (same feature, default-on)
-  
-Result: 37% more customers on auto-debit
-  → 37% fewer late payments
-  → 37% fewer late fees charged to customer
-  → Positive for BOTH customer and lender
-
-LOAN AMOUNT DEFAULT:
-
-When customer enters income:
-  Old design: "Amount:" [blank field]
-  New design: "Amount: [15,000,000 VNĐ ← Khuyến nghị dựa trên thu nhập]"
-  
-  Old design: Average requested = 24M (self-set anchor)
-  New design: Average requested = 17M (recommendation anchor)
-  Default saves customer from over-borrowing.
-
-REPAYMENT DATE DEFAULT:
-
-Old design: "Choose repayment date" [1st ... 28th]
-New design: Default to 3 days AFTER salary date
-  → Customer doesn't have to think
-  → Money arrives → loan paid → simple
-  
-On-time payment improvement: +11%
-```
-
-### Commitment Devices: Giúp người ta giữ lời hứa với chính mình
-
-**Khái niệm:**
+### Cơ chế cam kết
 
 :::key
-**Commitment device** *(thiết bị cam kết)*: Cơ chế cho phép người ta voluntarily restrict their future choices để stick to their current intentions.
+**Cơ chế cam kết** *(commitment device)*: cơ chế cho phép người ta tự nguyện giới hạn lựa chọn của chính mình trong tương lai để giữ đúng ý định hiện tại.
 :::
 
-**Ứng dụng kinh điển:**
+Hình ảnh kinh điển là Ulysses: biết mình sẽ không cưỡng lại được tiếng hát của các nàng tiên cá, ông cho người trói mình vào cột buồm từ trước. Con người hiện tại ràng buộc con người tương lai.
+
+Nghe có vẻ phi lý khi ai đó tự nguyện bớt lựa chọn của mình. Nhưng với một người biết mình có thiên kiến hiện tại, đó là quyết định hoàn toàn hợp lý. Một số cơ chế cam kết trong cho vay:
+
+| Cơ chế | Cách hoạt động | Ai cần |
+|---|---|---|
+| Khóa tiết kiệm | "Mục tiêu tiết kiệm" khóa tiền trong 6 tháng, rút sớm chịu phí nhỏ | Người muốn tiết kiệm để khỏi phải vay lần sau nhưng biết mình hay rút |
+| Cam kết trả bớt nợ bằng thưởng | Khách hàng cam kết trước "tôi sẽ dùng khoản thưởng tiếp theo để trả bớt nợ"; khi thưởng về, ứng dụng nhắc và cho xác nhận bằng một lần bấm | Người biết khoản thưởng thường bị tiêu hết |
+| Tự khóa vay mới | Khách hàng tự đặt: "nếu chi tiêu không thiết yếu vượt X, khóa khả năng vay mới trong 30 ngày" | Người đang căng thẳng tài chính, muốn tránh vòng xoáy nợ |
+
+Cơ chế cam kết có hiệu quả vì người dùng tự chọn nó. Ở Vela Finance, khoảng một phần ba khách hàng đăng ký cam kết trả bớt nợ bằng thưởng khi được giới thiệu, và phần lớn trong số đó thực hiện đúng cam kết.
+
+### Công cụ minh bạch
+
+Khách hàng thường biết khoản trả hằng tháng và ngày đến hạn. Họ thường không biết bao nhiêu trong khoản trả đó là lãi và bao nhiêu là gốc, đã trả bao nhiêu tiền lãi đến nay, sẽ tiết kiệm được bao nhiêu nếu trả trước, và khoản vay này ảnh hưởng thế nào đến bức tranh nợ tổng thể. Khoảng trống thông tin đó biến khách hàng thành người thụ động.
+
+**Công cụ 1: lịch trả nợ trực quan**
 
 ```text
-Ulysses và Sirens: Ulysses biết mình sẽ không resist tiếng Sirens.
-Giải pháp: Tự trói mình vào cột thuyền trước.
-→ Present self commits future self to the desired behavior.
-```
+Khoản vay: 18,500,000 VNĐ, 12 tháng, 18%/năm
+Khoản trả hằng tháng: 1,696,080 VNĐ (kỳ cuối 1,696,077)
 
-**Commitment devices trong lending:**
-
-```text
-SAVINGS LOCK:
-  Customer muốn tiết kiệm để tránh vay tiếp.
-  Challenge: Present bias → savings gets raided.
-  
-  Feature: "Mục tiêu tiết kiệm" — lock savings for 6 months
-  If withdraw early: 2% penalty
-  
-  Result: 67% higher savings retention vs unlocked savings
-  Customers WANT this feature: they know they're present-biased
-
-DEBT PAYDOWN COMMITMENT:
-  When getting a bonus, customer can "commit" to paydown:
-  "Tôi cam kết dùng khoản thưởng tiếp theo để trả trước khoản vay"
-  → App sends reminder when payroll from committed employer arrives
-  → One-click confirm to execute
-  
-  Opt-in rate: 34% of customers make this commitment
-  Follow-through: 81% who commit actually execute
-  (vs 23% who intend to but don't commit formally)
-
-SPENDING BUDGET + LOAN LOCK:
-  Customer can set: "If my non-essential spending exceeds X,
-                    block my ability to request new loans for 30 days"
-  → Voluntary self-exclusion
-  
-  Niche feature but highly valued by financially stressed customers
-  → Reduces debt spiral, reduces defaults, increases trust
-```
-
-### Feedback và Transparency Tools
-
-**The transparency gap:**
-
-```text
-What customers typically know:
-  ✓ Monthly payment amount
-  ✓ Payment due date
-  
-What customers often don't know:
-  ✗ How much of PMT is interest vs principal
-  ✗ Total interest paid to date
-  ✗ How much interest they'd save by paying early
-  ✗ How current loan affects their overall debt picture
-
-The gap creates passive customers → miss optimization opportunities
-```
-
-**Effective transparency features:**
-
-**Feature 1: Amortization Visualization**
-
-```text
-Loan: 18,500,000 VNĐ, 18 months, 15.5%
-PMT: 1,168,000 VNĐ/month
-
-Month  | Principal Paid | Interest Paid | Outstanding
-1      |    930,000    |    238,000    | 17,570,000
-2      |    942,000    |    226,000    | 16,628,000
+Kỳ | Gốc đã trả  | Lãi đã trả | Dư nợ còn lại
+ 1 |  1,418,580  |   277,500  | 17,081,420
+ 2 |  1,439,859  |   256,221  | 15,641,561
 ...
-18     |  1,153,000    |     15,000    |          0
+12 |  1,671,012  |    25,065  |          0
 
-Visualization: Bar chart showing principal (green) vs interest (red)
-  Early months: mostly red → "I'm paying mostly interest!"
-  Later months: mostly green → "I'm building equity!"
-
-Insight customers get: "If I pay off early, I save all that red interest"
-Action: 23% of customers who see this visualization make extra payment within 30 days
+Trực quan hóa: cột chồng gốc và lãi
+  Kỳ đầu: phần lãi lớn nhất → "kỳ đầu mình trả nhiều lãi nhất"
+  Kỳ cuối: gần như toàn bộ là gốc
+Điều khách hàng hiểu ra: trả trước sớm thì tiết kiệm được nhiều lãi hơn
 ```
 
-**Feature 2: Early Payoff Calculator**
+**Công cụ 2: máy tính trả trước**
 
 ```text
-Screen element: "Tiết kiệm bao nhiêu nếu trả trước?"
+Màn hình: "Trả trước bạn tiết kiệm được bao nhiêu?"
 
-Input: "Số tiền bạn có thể trả thêm: [          ]"
-Output: "Trả thêm 2,000,000 VNĐ tháng này sẽ:
-         → Rút ngắn kỳ hạn: 2 tháng
-         → Tiết kiệm lãi: 380,000 VNĐ
-         → Tất toán sớm: Tháng 4/2026 (thay vì Tháng 6/2026)"
+Nhập: "Số tiền bạn có thể trả thêm: [2,000,000]"
+Kết quả (chị Lan, ngay sau kỳ thứ 8, dư nợ 6,537,342 VNĐ):
+  "Trả thêm 2,000,000 VNĐ hôm nay, giữ nguyên khoản trả hằng tháng:
+   → Rút ngắn kỳ hạn: 1 tháng (còn 3 kỳ thay vì 4)
+   → Tiết kiệm tiền lãi: 116,422 VNĐ
+   → Tất toán sớm hơn một tháng"
 
-[Thanh toán ngay] button → direct to payment flow
-
-Adoption: 18% of customers use this feature monthly
-Of users: 42% make partial prepayment after seeing calculation
+[Thanh toán ngay] → vào thẳng luồng thanh toán
 ```
 
-**Feature 3: Debt Health Score (không phải credit score)**
+Trang [Công cụ](/docs/tools#early-settlement) có máy tính tất toán trước hạn để kiểm tra các con số loại này.
+
+**Công cụ 3: thẻ sức khỏe tài chính (không phải điểm tín dụng)**
 
 ```text
-Monthly summary sent via push notification:
+Tóm tắt hằng tháng gửi qua thông báo:
   ┌──────────────────────────────────┐
-  │ 💚 Sức khỏe tài chính của bạn   │
+  │ Sức khỏe tài chính của bạn       │
   │                                  │
-  │ Tổng nợ:  34,200,000 VNĐ        │
-  │ Tỷ lệ DTI: 18.4% (mức an toàn) │
-  │ Tiến độ trả nợ: ████████░░ 78%  │
+  │ Dư nợ còn lại: 6,537,342 VNĐ     │
+  │ Tỷ lệ nợ/thu nhập: 7.7% (an toàn)│
+  │ Tiến độ: ████████░░░░ 8/12 kỳ    │
   │                                  │
-  │ 🎯 Còn 4 tháng là tất toán!     │
-  │ [Xem chi tiết] [Trả trước]      │
+  │ Còn 4 tháng là tất toán!         │
+  │ [Xem chi tiết] [Trả trước]       │
   └──────────────────────────────────┘
 
-Key design choices:
-  ✓ "Sức khỏe" framing (positive) not "debt" framing (negative)
-  ✓ Progress bar: completion motivation (Zeigarnik effect)
-  ✓ Concrete milestone: "4 tháng" not abstract "23% remaining"
-  ✓ Action button: zero-friction path to desired behavior
+Các lựa chọn thiết kế:
+  Đóng khung "sức khỏe" (tích cực) thay vì "nợ" (tiêu cực)
+  Thanh tiến độ: tạo động lực hoàn thành
+  Mốc cụ thể: "còn 4 tháng" thay vì "còn 35% dư nợ"
+  Nút hành động: đường đi không ma sát đến hành vi mong muốn
 ```
 
-:::summary[Nudge Design]
-Default options: most powerful tool
-→ Auto-debit default-on: 45% → 82% opt-in
-→ Recommended amount: -18% avg loan
-Commitment devices: customers WANT to commit
-→ Savings lock: 67% better retention
-→ Bonus paydown commitment: 81% follow-through
-Transparency: show what's normally hidden
-→ Amortization viz: 23% make extra payment
-→ Early payoff calculator: 42% act on it
+:::summary[Mục 13.3]
+Lựa chọn mặc định là công cụ thiết kế mạnh nhất: bật sẵn trích nợ tự động, điền sẵn số tiền khuyến nghị và đặt ngày trả sau ngày nhận lương đều giúp khách hàng mà không hạn chế quyền chọn của họ. Cơ chế cam kết hiệu quả vì khách hàng tự chọn nó. Công cụ minh bạch cho khách hàng thấy những gì thường bị che khuất: phần lãi trong mỗi kỳ, số tiền tiết kiệm khi trả trước, và tiến độ tất toán.
 :::
 
-## 13.4 Phát hiện và ngăn chặn Over-Indebtedness
+## 13.4 Phát hiện và ngăn chặn nợ quá mức
 
 ### Dấu hiệu cảnh báo sớm
 
 ::::story
-Sau 8 tháng trả nợ đúng hạn, chị Lan bắt đầu gặp khó khăn. Cô không nói với ai. Cô cứ tiếp tục. Tháng 9: trả đúng. Tháng 10: trả muộn 3 ngày. Tháng 11: trả muộn 8 ngày. Tháng 12: không trả được.
+Sau tám tháng trả đúng hạn, chị Hoa bắt đầu gặp khó khăn với một khoản vay khác ở Vela Finance. Chị không nói với ai và cứ thế tiếp tục. Tháng 9 trả đúng hạn. Tháng 10 trễ 3 ngày. Tháng 11 trễ 8 ngày. Tháng 12 không trả được.
 
-Có 4 tháng để can thiệp. Hệ thống phải "thấy" trước khi DPD xảy ra.
+Có bốn tháng để can thiệp. Hệ thống phải "thấy" trước khi DPD xuất hiện.
 ::::
 
-**Early warning indicators:**
-
 ```text
-BEHAVIORAL SIGNALS (từ app/digital channel):
-  App login frequency: giảm (0.7× vs baseline)
-  Payment timing: shifting later in grace period
-  Customer service calls: tăng (questions about relief options)
-  Profile change: employment information updated (job change?)
-  
-PAYMENT PATTERN SIGNALS:
-  Partial payment (paid 80% of due amount): strong early warning
-  Payment timing drift: paying on day 5 → day 10 → day 15 of grace
-  Multiple payment attempts: tried to pay, failed → retry next day
-  
-EXTERNAL SIGNALS (if integrated):
-  Bureau inquiries increase: applying elsewhere (needs cash)
-  New loans opened at other lenders: taking on more debt
-  Utility payment delay: broader financial stress
-  
-FINANCIAL STRESS SCORE MODEL:
-  Features: all above signals
-  Output: P(will default in next 60 days)
-  
-  Trigger: P(default) > 30% → early intervention
-  
-  Precision at 30% threshold: 62% (of flagged customers: 62% do have issues)
-  Recall at 30% threshold: 71% (of customers with issues: 71% are flagged)
+TÍN HIỆU HÀNH VI (từ ứng dụng, kênh số):
+  Tần suất đăng nhập giảm (0.7 lần so với mức nền)
+  Thời điểm thanh toán trôi dần về cuối
+  Gọi tổng đài nhiều hơn (hỏi về các phương án hỗ trợ)
+  Cập nhật thông tin việc làm (đổi việc?)
+
+TÍN HIỆU THANH TOÁN:
+  Trả một phần (trả 80% số đến hạn): cảnh báo sớm mạnh
+  Ngày thanh toán trôi dần: ngày 5 → ngày 10 → ngày 15
+  Thanh toán thất bại nhiều lần: thử trả, lỗi, ngày hôm sau thử lại
+
+TÍN HIỆU BÊN NGOÀI (nếu có tích hợp):
+  Số lần tra cứu tín dụng tăng: đang vay ở nơi khác
+  Khoản vay mới ở bên cho vay khác: đang gánh thêm nợ
+  Trễ thanh toán hóa đơn: căng thẳng tài chính rộng hơn
+
+MÔ HÌNH ĐIỂM CĂNG THẲNG TÀI CHÍNH:
+  Biến đầu vào: các tín hiệu trên
+  Đầu ra: P(vỡ nợ trong 60 ngày tới)
+  Kích hoạt can thiệp sớm khi P > 30%
+
+  Tại ngưỡng 30%:
+    Precision 62%: trong số khách bị gắn cờ, 62% thực sự gặp vấn đề
+    Recall 71%: trong số khách gặp vấn đề, 71% được gắn cờ
 ```
 
-### Affordability Assessment Design
+### Đánh giá khả năng chi trả
 
-**Nguyên tắc: Affordability ≠ Eligibility**
+Đủ điều kiện *(eligibility)* và khả năng chi trả *(affordability)* là hai câu hỏi khác nhau. Đủ điều kiện hỏi "khách hàng **có thể** nhận khoản vay này không?", dựa trên điểm tín dụng, kiểm tra gian lận, dữ liệu tín dụng. Khả năng chi trả hỏi "khách hàng **có nên** nhận khoản vay này không?", tức họ có trả được mà không gặp khó khăn quá mức. Chỉ kiểm tra đủ điều kiện mà bỏ qua khả năng chi trả có thể hợp pháp ở một số nơi, nhưng không phải cho vay có trách nhiệm.
 
-```text
-Eligibility: "Can the customer GET this loan?"
-  Based on: credit score, fraud check, bureau data
-  
-Affordability: "SHOULD the customer GET this loan?"
-  Based on: can they actually service it without undue hardship?
-  
-Common mistake: Only do eligibility, skip affordability
-  → Legal in some markets, but not Responsible Lending
-
-Affordability assessment includes:
-
-1. Income verification (không chỉ declaration):
-   ✓ Payslip verification via OCR/manual check
-   ✓ Bank statement analysis (actual spending patterns)
-   ✓ Employment confirmation (phone check with employer)
-   
-2. Existing obligations:
-   ✓ All outstanding loans (from bureau)
-   ✓ Self-declared obligations bureau doesn't know about
-   ✓ Regular essential expenses (rent, utilities, school fees)
-   
-3. Residual income test:
-   Residual = Income - All obligations (existing + new loan)
-   Must exceed minimum living expenses for household
-   
-   Minimum living expenses benchmark:
-   HCM City: 5,000,000 VNĐ/person/month
-   Other cities: 3,500,000 VNĐ/person/month
-   Rural: 2,500,000 VNĐ/person/month
-   
-   Threshold: Residual / Household minimum >= 1.2 (20% buffer)
-
-4. Stress test:
-   "What if income drops 20%?"
-   Can household still meet all obligations?
-   If not: reduce loan amount, extend tenor, or decline
-```
-
-### Intervention Strategies
-
-**Tiered intervention framework:**
+Đánh giá khả năng chi trả gồm bốn phần. Thứ nhất, xác minh thu nhập chứ không chỉ dựa vào khai báo: phiếu lương, sao kê ngân hàng, xác nhận với nơi làm việc. Thứ hai, liệt kê mọi nghĩa vụ hiện có: các khoản vay từ trung tâm thông tin tín dụng, các nghĩa vụ khách tự khai mà trung tâm không biết, các chi phí thiết yếu như tiền nhà, điện nước, học phí. Thứ ba, kiểm tra thu nhập còn lại. Thứ tư, kiểm tra sức chịu đựng.
 
 ```text
-TIER 1: Pre-emptive nudge (P(default) 15-30%)
-  Action: App push notification
-  Message: "Chúng tôi nhận thấy bạn đang trong giai đoạn bận rộn.
-            Khoản thanh toán 1,168,000 VNĐ đến hạn 25/11.
-            Nhắc tôi lại [3 ngày trước] [1 ngày trước]"
-  
-  Goal: Remove friction, not alarm customer
-  Expected impact: 40% reduction in DPD event
+Kiểm tra thu nhập còn lại:
+  Còn lại = Thu nhập − Mọi nghĩa vụ (hiện có + khoản vay mới)
+  Phải vượt chi phí sinh hoạt tối thiểu của hộ gia đình
 
-TIER 2: Proactive reach-out (P(default) 30-50%)
-  Action: Customer service outbound call
-  Script: "Chào chị Lan, tôi gọi để hỏi thăm về khoản vay sắp đến hạn.
-           Gần đây chị có gặp khó khăn gì không? Chúng tôi có thể
-           hỗ trợ điều chỉnh lịch thanh toán nếu cần."
-  
-  Key: Do NOT mention "you're at risk of default"
-  Key: Offer help proactively, not demand payment
-  Expected impact: 55% of reached customers take some action
-  
-  Options offered:
-    - Payment date change (free, 1× per year)
-    - Payment holiday 1 month (free, 1× per life of loan)
-    - Restructure: extend tenor, reduce monthly payment
+  Chuẩn chi phí sinh hoạt tối thiểu (chính sách nội bộ của Vela Finance):
+    TP.HCM, Hà Nội: 5,000,000 VNĐ/người/tháng
+    Thành phố khác: 3,500,000 VNĐ/người/tháng
+    Nông thôn:      2,500,000 VNĐ/người/tháng
 
-TIER 3: Hardship intervention (P(default) 50%+ or DPD 1-15)
-  Action: Dedicated hardship team contact
-  Assessment: What's the root cause? (job loss, medical, divorce?)
-  Solution tailored to cause:
-    Job loss: 3-month payment holiday + job placement support link
-    Medical: Extended holiday + insurance claim assistance
-    Over-indebtedness: Restructure + budgeting counseling referral
-  
-  Goal: Cure and retain, not collect and sue
+  Ngưỡng: Còn lại / Chi phí tối thiểu của hộ ≥ 1.2 (đệm 20%)
 
-TIER 4: Collections (DPD 30+)
-  [Recall Chapter 10 — Collections & Debt Management]
+Kiểm tra sức chịu đựng:
+  "Nếu thu nhập giảm 20%, hộ gia đình còn đáp ứng mọi nghĩa vụ không?"
+  Nếu không: giảm số tiền vay, kéo dài kỳ hạn, hoặc từ chối
+
+Chị Lan (độc thân, Hà Nội):
+  Thu nhập 22,000,000; khoản trả mới 1,696,080; không có nợ khác
+  Còn lại: 20,303,920 → 4.1 lần chi phí tối thiểu 5,000,000 → đạt
+  Thu nhập giảm 20%: 17,600,000 − 1,696,080 = 15,903,920 → vẫn đạt
 ```
 
-## 13.5 Responsible Marketing và Sales
+### Các tầng can thiệp
 
-### Ethical Offer Presentation
+| Tầng | Kích hoạt | Hành động | Nguyên tắc |
+|---|---|---|---|
+| 1. Nhắc trước | P(vỡ nợ) 15-30% | Thông báo trong ứng dụng: "Khoản thanh toán 1,250,000 VNĐ đến hạn 25/11. Nhắc tôi trước [3 ngày] [1 ngày]" | Bớt ma sát, không làm khách hoảng |
+| 2. Chủ động liên hệ | P(vỡ nợ) 30-50% | Tổng đài gọi hỏi thăm: "Gần đây chị có gặp khó khăn gì không? Chúng tôi có thể hỗ trợ điều chỉnh lịch thanh toán nếu cần." Các lựa chọn: đổi ngày trả nợ, hoãn thanh toán một tháng, tái cơ cấu | Không nói "chị sắp vỡ nợ"; đề nghị giúp, không đòi tiền |
+| 3. Hỗ trợ khó khăn | P(vỡ nợ) > 50% hoặc DPD 1-15 | Đội hỗ trợ khó khăn tìm nguyên nhân gốc và chọn giải pháp phù hợp: mất việc → hoãn thanh toán 3 tháng; ốm đau → hoãn dài hơn, hỗ trợ yêu cầu bảo hiểm; nợ quá mức → tái cơ cấu, giới thiệu tư vấn ngân sách | Cure và giữ chân, không thu và kiện |
+| 4. Collections | DPD 30+ | Theo quy trình ở Chương 10 | |
+
+## 13.5 Tiếp thị và bán hàng có trách nhiệm
+
+### Trình bày đề nghị vay có đạo đức
 
 ::::story
-Kỹ sư Tuấn nhận yêu cầu từ Marketing: "Xây dựng tính năng hiển thị amount lớn nhất được duyệt đầu tiên, nổi bật trên màn hình."
+Kỹ sư Tuấn nhận yêu cầu từ Marketing: "Làm tính năng hiển thị hạn mức tối đa được duyệt ngay đầu tiên, thật nổi bật trên màn hình."
 
-Tuấn biết từ data: hiển thị max amount trước → average loan +23% → default rate +18%.
+Tuấn biết dữ liệu từ thử nghiệm ở mục 13.2: quay lại hiện hạn mức tối đa trước sẽ làm số tiền vay bình quân tăng và tỷ lệ vỡ nợ tăng theo.
 
 Anh nên làm gì?
 ::::
 
-**Framework: The "Reasonable Person" Standard**
+Một khung đơn giản là phép thử "người bình thường": một người bình thường, có đầy đủ thông tin, có cảm thấy bị thao túng hay bị lừa bởi thiết kế này không? Cụ thể hơn, có bốn phép thử, giống bốn câu hỏi ở mục 10.7:
+
+1. **Pháp lý:** thiết kế có tuân thủ quy định bảo vệ người tiêu dùng và công bố chi phí không?
+2. **Mặt báo:** nếu tiêu đề báo viết "Công ty tài chính X hiện hạn mức tối đa để dụ khách vay nhiều hơn", mình có thấy ổn không?
+3. **Người thân:** mình có áp dụng thiết kế này cho chính mẹ hay anh chị em mình khi họ vay không?
+4. **CLV:** thiết kế này giúp hay hại sức khỏe tài chính dài hạn của khách hàng? Nếu hại, doanh thu ngắn hạn có đáng không?
+
+Yêu cầu của Marketing trượt ít nhất ba trong bốn phép thử. Tuấn nên đưa dữ liệu thử nghiệm cho anh Minh và đề xuất giữ cách B, kèm một nút "xem hạn mức tối đa" cho khách hàng nào muốn biết.
+
+**Hướng dẫn thực hành:**
+
+| Khía cạnh | Nên | Không bao giờ |
+|---|---|---|
+| Hiển thị giá | APR nổi bật, cùng cỡ với lãi suất; tổng chi phí hiện trước khi chấp nhận; khoản trả tháng luôn đi kèm tổng chi phí | Giấu phí trong chữ nhỏ; chỉ hiện khoản trả tháng, chôn tổng chi phí |
+| Hiển thị số tiền | Hiện số tiền khuyến nghị theo DTI; cho khách điều chỉnh; hiện tác động: "vay thêm X thì khoản trả tháng tăng Y, tổng lãi tăng Z" | Đặt hạn mức tối đa làm mặc định hay khuyến nghị; mời vay thêm mà không hiện chi phí |
+| Sự gấp gáp | Ưu đãi có thời hạn thật; "đơn của bạn hết hạn sau 7 ngày" nếu đúng như vậy | Đồng hồ đếm ngược giả; "chỉ còn 3 suất"; "lãi suất này chỉ có hôm nay" khi ngày mai vẫn có |
+
+### Nhận diện khách hàng dễ tổn thương
+
+Cơ quan quản lý tài chính Anh (FCA) định nghĩa khách hàng dễ tổn thương là người, do hoàn cảnh cá nhân, đặc biệt dễ bị tổn hại, nhất là khi doanh nghiệp không hành xử với mức độ cẩn trọng phù hợp. FCA nêu bốn nhóm yếu tố: sức khỏe (tình trạng thể chất hoặc tinh thần ảnh hưởng đến khả năng phán đoán), biến cố cuộc sống (mất người thân, mất việc, đổ vỡ quan hệ), khả năng chống chịu (ít đệm tài chính, khó chịu được cú sốc), và năng lực (hiểu biết tài chính thấp, khó hiểu sản phẩm).
+
+Ở Việt Nam, những nhóm cần chú ý gồm người cao tuổi có thể chưa quen sản phẩm số, người vay lần đầu chưa có kinh nghiệm quản lý nợ, khách hàng đang căng thẳng tài chính (phát hiện qua tín hiệu hành vi), và khách hàng có DTI cao ngay trước khi nộp đơn.
 
 ```text
-Câu hỏi: "Would a reasonable person, with full information,
-          feel manipulated or deceived by this design?"
+Tín hiệu dễ tổn thương (cần sự đồng ý để thu thập và sử dụng):
+  Trên 65 tuổi VÀ vay lần đầu
+  Lịch sử tổng đài: dấu hiệu căng thẳng trong nội dung cuộc gọi
+  Nhiều đơn bị từ chối trong thời gian ngắn
+  Liên tục nộp đơn sau nửa đêm
 
-Test 1 — Legal:
-  Is this compliant with consumer protection regulations?
-  Does it violate truth-in-lending requirements?
-  
-Test 2 — Newspaper:
-  If this design choice appeared in headline:
-  "Công ty tài chính X hiển thị max loan amount để dụ khách vay nhiều hơn"
-  Would you be comfortable with that headline?
-  
-Test 3 — Reciprocal:
-  Would you apply this design to your own mother/sibling
-  applying for a loan?
-  
-Test 4 — CLV:
-  Does this design help or hurt the customer's long-term financial health?
-  If hurts: does short-term revenue justify long-term harm?
+Khi gắn cờ:
+  Chuyển cho nhân viên xem xét, không tự động quyết định
+  Thêm thời gian giải thích tại điểm bán (nhân viên được đào tạo)
+  Xem xét lần hai trước khi giải ngân
+  Gọi hỏi thăm 30 ngày sau giải ngân: "Mọi thứ ổn chứ ạ?"
+
+Lưu ý:
+  Không được từ chối chỉ vì khách hàng dễ tổn thương (rủi ro phân biệt đối xử);
+  phải phục vụ với sự cẩn trọng và hỗ trợ nhiều hơn.
+  Dữ liệu sức khỏe là dữ liệu cá nhân nhạy cảm theo Luật Bảo vệ dữ liệu cá nhân;
+  không suy diễn tình trạng sức khỏe từ hành vi.
 ```
 
-**Practical ethical guidelines:**
-
-```text
-PRICING DISPLAY:
-  ✓ APR prominently displayed (same size as rate)
-  ✓ Total cost shown before acceptance
-  ✓ Monthly payment WITH total cost, not just monthly payment
-  ✗ Never: Hide fees in fine print
-  ✗ Never: Show only monthly payment, bury total cost
-
-AMOUNT DISPLAY:
-  ✓ Show recommended amount (based on DTI calculation)
-  ✓ Allow customer to adjust (informed choice)
-  ✓ Show impact: "If you borrow X more: PMT increases by Y, total interest +Z"
-  ✗ Never: Show max amount as default/recommended
-  ✗ Never: Upsell amount without showing full cost implication
-
-URGENCY:
-  ✓ True limited-time offers with actual expiry
-  ✓ "Your application expires in 7 days" (if true)
-  ✗ Never: Fake countdown timers
-  ✗ Never: "Only 3 spots left!" (if not true)
-  ✗ Never: "This rate is only available today" (if renewable tomorrow)
-```
-
-### Vulnerable Customer Identification
-
-**Định nghĩa vulnerable customer:**
-
-```text
-FCA (UK Financial Conduct Authority) definition:
-  A customer who, due to their personal circumstances, is especially 
-  susceptible to harm — particularly when a firm is not acting with 
-  appropriate levels of care.
-
-Categories:
-  1. Health: physical or mental health conditions affecting judgment
-  2. Life events: bereavement, job loss, relationship breakdown
-  3. Resilience: low financial resilience, unable to withstand shocks
-  4. Capability: low financial literacy, limited understanding of products
-
-Vietnam context:
-  Elderly customers: may not fully understand digital products
-  First-time borrowers: no experience with debt management
-  Customers under financial stress (detected from behavior signals)
-  Customers with high DTI before applying
-```
-
-**System identification signals:**
-
-```text
-Vulnerability indicators (requires consent to collect/use):
-  Age > 65 AND first loan application → age + first-timer flag
-  Customer service history: distress indicators in transcripts (NLP)
-  Multiple declined applications in short period → financial stress
-  Application submitted after midnight repeatedly → stress behavior
-  
-Action when vulnerability flag triggered:
-  Route to human agent review (not auto-decision)
-  Extended explanation time at POS (agent trained)
-  Second review before disbursement
-  Follow-up call 30 days after disbursement: "Mọi thứ ổn không?"
-  
-Note: Cannot deny service based on vulnerability alone (discrimination risk)
-Must: Provide service with additional care and support
-```
-
-### Sales Incentive Alignment
+### Cơ chế thưởng cho bán hàng
 
 ::::story
-Bà Hương reviewing Q3 performance. Agent Hà ở Hà Nội: volume 200 loans, bonused \$2,000. Average loan size: 25M. Default rate trong cohort: 11%.
+Bà Hương xem lại kết quả quý 3 của kênh bán qua đại lý.
 
-Agent Nam ở Đà Nẵng: volume 140 loans, bonus \$700. Average loan size: 18M. Default rate trong cohort: 3.5%.
+Đại lý Hà ở Hà Nội: 200 khoản vay, số tiền bình quân 25 triệu, tỷ lệ DPD 30+ của nhóm khoản vay này sau 12 tháng là 11%. Thưởng theo cơ chế hiện tại: 50,000,000 VNĐ.
 
-Ai là agent tốt hơn?
+Đại lý Nam ở Đà Nẵng: 140 khoản vay, bình quân 18 triệu, tỷ lệ DPD 30+ là 2.5%. Thưởng: 25,200,000 VNĐ.
+
+Ai là đại lý tốt hơn?
 ::::
 
-**Misaligned incentive problem:**
+Cơ chế hiện tại trả hoa hồng 1% số tiền giải ngân. Phản ứng hợp lý của đại lý là tối đa hóa số tiền vay (thuyết phục khách vay nhiều hơn), giảm ma sát (bỏ qua dấu hiệu bất thường), và không quan tâm khách có trả được không vì khi đó họ đã chuyển sang khách khác. Kết quả là khối lượng cao, vỡ nợ cao, và lợi nhuận chỉ là ảo giác: đại lý thắng ngắn hạn, công ty thua dài hạn.
 
 ```text
-Common bad incentive structure:
-  Commission = X% of loan amount disbursed
-  
-  Agent's rational response:
-    → Maximize loan amount (get customer to borrow more)
-    → Minimize application friction (overlook red flags)
-    → Not care about repayment (they've moved on)
-  
-  Result:
-    High origination volume → High defaults → Profit illusion
-    Agent wins short-term → Company loses long-term
+Hoa hồng điều chỉnh theo chất lượng:
+  Hoa hồng cơ bản: 1% số tiền giải ngân
+  Hệ số chất lượng, theo tỷ lệ DPD 30+ của nhóm khoản vay sau 12 tháng:
+    < 3%:     1.5 lần (thưởng cho chất lượng xuất sắc)
+    3-6%:     1.0 lần
+    6-10%:    0.7 lần
+    > 10%:    0 lần, và thu hồi hoa hồng đã trả
 
-Better incentive structure — Quality-adjusted commission:
-  Base commission: X% of disbursed amount
-  Quality multiplier: based on cohort DPD 30+ rate at 12 months
-  
-  Multiplier:
-    DPD 30+ < 3%: 1.5× (reward excellence)
-    DPD 30+ 3-6%: 1.0× (standard)
-    DPD 30+ 6-10%: 0.7× (penalty)
-    DPD 30+ > 10%: 0.0× (clawback previous commissions)
-  
-  For Agent Hà: 200 loans × 25M × X% × 0 = $0 (clawback)
-  For Agent Nam: 140 loans × 18M × X% × 1.5 = $1,575 (1.5× for quality)
-  
-  Nam gets more despite lower volume because quality is higher.
-  Hà is penalized for selling inappropriate loans.
+Đại lý Hà: 200 × 25,000,000 × 1% × 0   = 0 (và thu hồi 50,000,000 đã trả)
+Đại lý Nam: 140 × 18,000,000 × 1% × 1.5 = 37,800,000 VNĐ
 ```
 
-**Alignment at product level:**
+Nam nhận nhiều hơn dù khối lượng thấp hơn, vì chất lượng cao hơn. Hà bị phạt vì bán những khoản vay không phù hợp. Nguyên tắc tương tự áp dụng ở cấp sản phẩm: chỉ tiêu của người quản lý sản phẩm nên gắn với tỷ lệ vỡ nợ theo vintage 12 tháng, mức hài lòng của khách hàng và tỷ lệ khách quay lại, không chỉ khối lượng hay doanh thu; chỉ tiêu bán hàng không nên gắn với số tiền vay mỗi hồ sơ hay tỷ lệ duyệt.
 
-```text
-Product manager incentives aligned to:
-  ✓ 12-month vintage default rate (outcome metric)
-  ✓ Customer satisfaction score (NPS)
-  ✓ Repeat customer rate (retention)
-  ✗ NOT: Pure volume or revenue (short-term)
-  
-Sales incentives aligned to:
-  ✓ Quality-adjusted commission (as above)
-  ✓ Customer satisfaction at point of sale
-  ✗ NOT: Loan amount per application
-  ✗ NOT: Approval rate (don't incentivize approving bad loans)
-```
-
-:::summary[Responsible Marketing & Sales]
-"Reasonable person" test: Legal + Newspaper +
-Reciprocal + CLV - 4 filters for design choices
-Vulnerable customers: identify → route to human
-review → serve with additional care
-Incentive alignment: commission × quality mult.
-DPD 30+ > 10%: clawback → agents aligned
+:::summary[Mục 13.4 và 13.5]
+Hệ thống cảnh báo sớm kết hợp tín hiệu hành vi, thanh toán và bên ngoài để can thiệp trước khi DPD xuất hiện, theo bốn tầng từ nhắc nhẹ đến collections. Khả năng chi trả khác đủ điều kiện: phải xác minh thu nhập, tính mọi nghĩa vụ, kiểm tra thu nhập còn lại và sức chịu đựng. Bốn phép thử pháp lý, mặt báo, người thân và CLV giúp quyết định thiết kế bán hàng. Khách hàng dễ tổn thương được phục vụ cẩn trọng hơn, không bị từ chối. Hoa hồng theo chất lượng làm lợi ích của đại lý trùng với lợi ích của khách hàng và công ty.
 :::
 
 ## 13.6 Tài chính có trách nhiệm
 
-### Responsible Lending Framework
+### Bộ cam kết cho vay có trách nhiệm
 
 ::::story
-Anh Minh propose: "Chúng ta nên có 'Responsible Lending Charter' - một tuyên bố rõ ràng về những gì chúng ta sẽ làm và không làm."
+Anh Minh đề xuất: "Chúng ta nên có một bộ cam kết cho vay có trách nhiệm, nói rõ những gì chúng ta sẽ làm và không làm."
 
-Bà Hương: "Nghe hay đấy. Nhưng tôi muốn nó là thực chất, không phải marketing document."
+Bà Hương: "Nghe hay đấy. Nhưng tôi muốn nó thực chất, không phải tài liệu marketing."
 ::::
 
-**Responsible Lending Charter - cấu trúc thực chất:**
+Một bộ cam kết thực chất có bốn phần, mỗi phần gồm việc sẽ làm và việc sẽ không làm, và mỗi dòng phải kiểm chứng được:
 
-```text
-SECTION 1: AFFORDABILITY COMMITMENT
-  We will:
-  □ Assess ability to repay based on verified income, not just stated
-  □ Include stress test: can customer afford at income -20%?
-  □ Consider all existing obligations, not just bureau-visible
-  □ Not originate loans where residual income < 1.2× minimum living expenses
-  
-  We will not:
-  □ Approve loans purely based on collateral (without affordability check)
-  □ Allow sales pressure to override affordability assessment
-  □ Use complex terms to obscure true cost of borrowing
+| Phần | Chúng tôi sẽ | Chúng tôi sẽ không |
+|---|---|---|
+| Khả năng chi trả | Đánh giá khả năng trả dựa trên thu nhập đã xác minh; kiểm tra sức chịu đựng với thu nhập giảm 20%; tính mọi nghĩa vụ hiện có; không giải ngân khi thu nhập còn lại dưới 1.2 lần chi phí sinh hoạt tối thiểu | Để áp lực doanh số lấn át đánh giá khả năng chi trả; dùng điều khoản phức tạp để che chi phí thật |
+| Minh bạch | Hiện APR nổi bật trong mọi tài liệu chào vay; hiện tổng chi phí trước khi khách chấp nhận; giải thích rõ phí, phạt và điều kiện; cung cấp lý do từ chối khi khách yêu cầu | Quảng cáo khoản trả tháng mà không kèm tổng chi phí; giấu điều kiện quan trọng trong chữ nhỏ; thay đổi điều khoản sau khi khách đã cam kết |
+| Công bằng | Kiểm toán công bằng hằng quý về tỷ lệ duyệt theo nhóm nhân khẩu học; điều tra và khắc phục tác động bất lợi; chỉ dùng yếu tố liên quan đến rủi ro tín dụng khi định giá và phê duyệt | Dùng thuộc tính được bảo vệ, hoặc biến đại diện đã biết, để định giá hay phê duyệt |
+| Ngăn chặn nợ quá mức | Vận hành hệ thống cảnh báo sớm và can thiệp chủ động; đề nghị chương trình hỗ trợ trước khi nợ leo thang; đào tạo đội collections về sự thấu cảm; báo cáo tỷ lệ DPD thực tế cho hội đồng quản trị hằng quý | Quấy rối hay lừa dối khi thu nợ; liên hệ ngoài khung 7-21 giờ; dọa kiện trước khi đã thử hết các phương án tự nguyện |
 
-SECTION 2: TRANSPARENCY COMMITMENT
-  We will:
-  □ Display APR prominently in all marketing and offer materials
-  □ Show total cost of credit before customer accepts
-  □ Provide clear explanation of fees, penalties, and conditions
-  □ Make rejection reasons available to applicant on request
-  
-  We will not:
-  □ Advertise monthly payments without mandatory total cost disclosure
-  □ Bury material conditions in fine print
-  □ Change terms after customer has committed
+### Đo phúc lợi của khách hàng
 
-SECTION 3: FAIRNESS COMMITMENT
-  We will:
-  □ Conduct quarterly fairness audit of approval rates by demographic
-  □ Investigate and remediate detected disparate impact
-  □ Provide consistent treatment regardless of race, gender, religion
-  □ Use only credit-risk-relevant factors in pricing and approval
-  
-  We will not:
-  □ Use protected characteristics as pricing or approval factors
-  □ Use proxies for protected characteristics knowingly
+Các chỉ số mà hầu hết bên cho vay theo dõi, như tỷ lệ duyệt, khối lượng, NIM, tỷ lệ vỡ nợ, tỷ lệ nợ xấu, cho biết bên cho vay đang làm thế nào. Chúng không cho biết khách hàng đang thế nào. Năm chỉ số về phúc lợi khách hàng lấp khoảng trống đó:
 
-SECTION 4: OVER-INDEBTEDNESS PREVENTION
-  We will:
-  □ Implement early warning system and proactive intervention
-  □ Offer hardship programs before default escalation
-  □ Train collections team on empathy and sustainable resolution
-  □ Report actual DPD rates to Board quarterly (not just approval metrics)
-  
-  We will not:
-  □ Use harassment or deceptive tactics in collections
-  □ Contact customer at unreasonable hours
-  □ Threaten legal action before exhausting voluntary resolution options
-```
+| Chỉ số | Cách đo | Ý nghĩa |
+|---|---|---|
+| Sức khỏe tài chính tự đánh giá | Khảo sát mẫu hằng tháng: "So với 3 tháng trước, tình hình tài chính của bạn thế nào?" (1-5) | Xu hướng theo nhóm và sản phẩm |
+| Hài lòng sau khi vay | 12 tháng sau giải ngân: "Khoản vay này có phải quyết định đúng không?" | Tỷ lệ "đúng" là chỉ báo phúc lợi trực tiếp |
+| Thay đổi DTI | DTI lúc khởi tạo so với 12 tháng sau | Khoản vay giúp (dùng cho sản xuất, thu nhập tăng) hay hại (thu nhập như cũ, nợ nhiều hơn) |
+| Chất lượng khách quay lại | Tỷ lệ khách quay lại trong tình trạng tài chính tốt hơn so với tệ hơn | Phân biệt khách trung thành với vòng xoáy nợ |
+| NPS kèm lý do | "Bạn có giới thiệu chúng tôi cho bạn bè không?" và vì sao | "Sản phẩm tốt" khác hẳn "đó là lựa chọn duy nhất của tôi" |
 
-### Measuring Customer Wellbeing
+Mỗi kỳ báo cáo hội đồng quản trị nên có cả hai nhóm chỉ số, và một phần thưởng của ban điều hành nên gắn với chỉ số phúc lợi khách hàng.
 
-**Beyond default rate - what should we measure?**
+### Giá trị dài hạn hay khai thác ngắn hạn
 
-```text
-STANDARD METRICS (what most lenders track):
-  Approval rate, volume, NIM, default rate, NPL ratio
-  → These tell you about LENDER performance
-  → They don't tell you about CUSTOMER outcomes
+Mô hình khai thác ngắn hạn tối đa hóa doanh thu trên mỗi lần tương tác: bán hàng gây áp lực để khoản vay lớn hơn, điều khoản phức tạp để phí ẩn cao hơn, không khuyến khích trả trước để giữ thu nhập lãi, thu nợ gay gắt để thu hồi tối đa. Doanh thu những quý đầu cao, nhưng khách hàng bị tổn hại tài chính, niềm tin bị bào mòn, khách rời đi, và cơ quan quản lý bắt đầu chú ý.
 
-CUSTOMER WELLBEING METRICS:
+Mô hình giá trị dài hạn làm ngược lại: đúng khoản vay, đúng khách hàng, đúng thời điểm; điều khoản minh bạch; hỗ trợ trả trước; chủ động xử lý khó khăn; thu nợ có đạo đức để khách hàng giữ được phẩm giá và có thể quay lại. Doanh thu những quý đầu thấp hơn, nhưng khách hàng khỏe hơn về tài chính, quay lại và giới thiệu người khác, và công ty có dư địa với cơ quan quản lý để tăng trưởng.
 
-1. Financial Health Score (monthly survey, sample):
-   "Compared to 3 months ago, how is your financial situation?"
-   1 (much worse) to 5 (much better)
-   → Trend by cohort and product
-   
-2. Post-loan satisfaction:
-   12-month post-origination: "Was this loan the right decision for you?"
-   → % saying "yes" is a direct wellbeing indicator
-   
-3. Debt-to-Income improvement:
-   Compare DTI at origination vs 12 months after
-   → Did loan help (e.g., productive use, income increase)
-     or hurt (income same, more debt)?
-   
-4. Repeat loan request rate AND quality:
-   % of customers who come back AND in better financial position
-   vs % who come back AND in worse position (debt spiral signal)
-   
-5. Net Promoter Score with context:
-   "Would you recommend us to a friend?" WITH reason
-   → "Great product" vs "only option I had" — very different!
-
-Reporting to Board:
-  Each quarterly review: present BOTH lender metrics AND customer metrics
-  Explicitly flag: "Customer wellbeing improving/declining" as a metric
-  Tie management bonus to customer wellbeing improvement
-```
-
-### Long-Term Value vs Short-Term Extraction
-
-**The fundamental tension:**
-
-```text
-Short-term extraction model:
-  Maximize revenue per customer per interaction
-  High-pressure sales → larger loans
-  Complex terms → higher fees hidden
-  No early payoff incentive (interest income maximized)
-  Aggressive collections → maximum recovery short term
-  
-  Outcome: High revenue quarter 1-4
-  Outcome: Customer damaged financially
-  Outcome: Trust eroded → customer leaves
-  Outcome: Regulatory scrutiny → fines, restrictions
-  Outcome: Year 5: lower CLV than ethical approach
-
-Long-term value model:
-  Right loan, right customer, right time
-  Transparent terms → customer makes informed choice
-  Support prepayment → reduce customer cost
-  Proactive hardship management → preserve customer relationship
-  Ethical collections → customer retains dignity → may return
-  
-  Outcome: Lower revenue quarter 1-4
-  Outcome: Customer financially healthier
-  Outcome: Trust built → customer returns, refers others
-  Outcome: Regulatory headroom → grow faster
-  Outcome: Year 5: 2.3× higher CLV than extraction model
-
-The CLV math (simplified):
-  Extraction model: CLV = high short-term × low retention = moderate
-  Value model: CLV = moderate short-term × high retention = high
-  
-  Data from mature consumer finance markets (India, Mexico):
-    Top quartile "responsible lenders": CLV 2.1× industry average
-    Bottom quartile ("predatory" lenders): CLV 0.6× industry average
-    → Responsible lending is profitable, not just ethical
-```
+Phép tính CLV đơn giản cho thấy vì sao: CLV xấp xỉ lợi nhuận mỗi kỳ nhân với số kỳ khách hàng ở lại (Chương 3). Mô hình khai thác có lợi nhuận mỗi kỳ cao nhưng tỷ lệ giữ chân thấp; mô hình giá trị có lợi nhuận mỗi kỳ vừa phải nhưng tỷ lệ giữ chân cao. Khi tỷ lệ giữ chân đủ khác biệt, mô hình thứ hai thắng, và cho vay có trách nhiệm trở thành một chiến lược sinh lời chứ không chỉ là lựa chọn đạo đức.
 
 ## Tóm tắt chương 13
 
 ```text
-Toàn bộ hành trình của chị Lan — nhìn qua behavioral lens:
+Hành trình của chị Lan qua lăng kính hành vi:
 
-APPLICATION:
-  She applied via digital (lower cognitive load than POS)
-  Recommended amount shown first: 18.5M (not max 50M)
-  Affordability: Residual income check passed + stress test passed
-  → She received loan she could genuinely afford
+NỘP ĐƠN
+  Kênh số (tải nhận thức thấp hơn điểm bán)
+  Số tiền khuyến nghị hiện trước: 18,500,000 VNĐ (không phải hạn mức tối đa)
+  Khả năng chi trả: thu nhập còn lại 4.1 lần mức tối thiểu, đạt kiểm tra
+  giảm 20% thu nhập
+  → Chị nhận khoản vay mà chị thực sự trả được
 
-MANAGEMENT:
-  Auto-debit default-on: she accepted (didn't notice the default — it worked!)
-  Monthly debt health score notification: "78% progress, 4 months left!"
-  → Positive reinforcement, low-friction engagement
+QUẢN LÝ KHOẢN VAY
+  Trích nợ tự động bật sẵn: chị giữ nguyên (gần như không để ý, và nó hiệu quả)
+  Thẻ sức khỏe tài chính hằng tháng: "8/12 kỳ, còn 4 tháng!"
+  → Củng cố tích cực, tương tác không ma sát
 
-MONTH 14 (chị Lan's behavioral economics in action):
-  She saw the early payoff calculator: "Pay 2M extra → save 380K, done 2 months early"
-  Loss aversion worked: "380K ko trả là mất tiền"
-  Mental accounting: Tháng này có thêm thu nhập → "dùng để tắt nợ sớm"
-  → She made an extra payment
+SAU KỲ THỨ 8
+  Chị nhận thưởng, mở máy tính trả trước:
+    "Trả thêm 2 triệu → tiết kiệm 116,422 VNĐ, tất toán sớm 1 tháng"
+  Kế toán tâm lý: khoản thưởng được dán nhãn "trả nợ sớm"
+  → Chị trả thêm
 
-OUTCOME:
-  Loan repaid 2 months early
-  Total interest: 15.8% less than maximum
-  
-  Customer satisfaction: 4.7/5
-  "Was this the right decision?" answered 18 months later: "Yes" (87%)
-  → She will be back for her next loan
+KẾT QUẢ
+  Tất toán sau 11 kỳ thay vì 12
+  Tổng tiền lãi: 1,736,535 VNĐ thay vì 1,852,957 VNĐ (ít hơn 6.3%)
+  → Chị sẽ quay lại khi cần khoản vay tiếp theo
 
-The behavioral design didn't manipulate her — it helped her
-act on her own stated preferences.
-That's the difference between ethical nudge and dark pattern.
+Thiết kế hành vi không thao túng chị. Nó giúp chị làm điều chính chị muốn.
+Đó là khác biệt giữa cú hích có đạo đức và mẫu thiết kế lừa dối (dark pattern).
 ```
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. System 1 vs System 2 thinking là gì? Tại sao financial decisions thường dominated by System 1?
-2. Loss aversion coefficient λ ≈ 2.25 có nghĩa gì trong thực tế? Cho ví dụ trong payment reminder design.
-3. Present bias là gì? Tại sao người ta "luôn muốn tiết kiệm từ tháng sau" nhưng không bao giờ làm?
-4. Mental accounting: tại sao tiền thưởng thường được spend nhanh hơn tiền lương?
+**Loại 1: Nhớ lại**
+1. Hệ 1 và Hệ 2 là gì? Vì sao quyết định tài chính thường do Hệ 1 dẫn dắt?
+2. Hệ số né tránh mất mát λ ≈ 2.25 có ý nghĩa gì trong thực tế? Cho ví dụ trong thiết kế thông điệp nhắc nợ.
+3. Thiên kiến hiện tại là gì? Vì sao người ta "luôn định tiết kiệm từ tháng sau" nhưng không bao giờ bắt đầu?
+4. Kế toán tâm lý: vì sao tiền thưởng thường được tiêu nhanh hơn tiền lương?
 
-**Loại 2 - Hiểu:**
-5. "Default option là quyết định design mạnh nhất." Giải thích tại sao với ví dụ từ organ donation và auto-debit.
-6. Commitment device là gì? Tại sao người ta voluntarily restrict tương lai của mình? Có vẻ không rational - giải thích tại sao nó rational.
-7. Optimism bias trong lending: tại sao việc hỏi "bạn có nghĩ bạn sẽ gặp khó khăn không?" không phải là affordability assessment?
-8. Phân biệt "ethical nudge" vs "dark pattern" trong financial product design. Ranh giới ở đâu?
+**Loại 2: Hiểu**
+5. "Lựa chọn mặc định là quyết định thiết kế mạnh nhất." Giải thích bằng ví dụ hiến tạng và trích nợ tự động.
+6. Cơ chế cam kết là gì? Vì sao một người tự nguyện giới hạn lựa chọn tương lai của mình lại là hợp lý?
+7. Vì sao hỏi "bạn có nghĩ mình sẽ gặp khó khăn khi trả nợ không?" không phải là đánh giá khả năng chi trả?
+8. Phân biệt cú hích có đạo đức và mẫu thiết kế lừa dối trong sản phẩm tài chính. Ranh giới nằm ở đâu?
 
-**Loại 3 - Áp dụng:**
-9. Thiết kế payment reminder message cho khách hàng có 7 ngày trước due date.
-   - Amount due: 1,168,000 VNĐ
-   - Customer has been paying on time 8 months
-   - App detects: paying later each month (day 5 → day 12 → day 19)
-   
-   (a) Viết message version A (standard)
-   (b) Viết message version B (loss aversion framing)
-   (c) Viết message version C (commitment device trigger)
-   (d) Which version would you A/B test first and why?
+**Loại 3: Áp dụng**
+9. Thiết kế thông điệp nhắc nợ gửi 7 ngày trước hạn:
+   - Số đến hạn: 1,696,080 VNĐ
+   - Khách hàng đã trả đúng hạn 8 tháng
+   - Ứng dụng phát hiện khách trả ngày càng muộn trong tháng (ngày 5 → ngày 12 → ngày 19)
 
-10. Sales agent được duyệt loan: customer Income 15M/month, existing obligations 4M/month, requesting 20M loan 18 months, PMT = 1,267,000 VNĐ/month.
-    
-    (a) Affordability calculation: pass or fail?
-    (b) Stress test at -20% income: pass or fail?
-    (c) Optimism bias correction: what should agent communicate?
-    (d) Vulnerable customer check: what signals to look for?
-    (e) If passing all checks: recommended amount to present first?
+   (a) Viết phiên bản A (tiêu chuẩn)
+   (b) Viết phiên bản B (đóng khung theo mất mát, đúng sự thật)
+   (c) Viết phiên bản C (gợi một cơ chế cam kết)
+   (d) Bạn sẽ thử A/B phiên bản nào trước, và vì sao?
 
-**Loại 4 - Phân tích:**
-11. Marketing team proposes: "When customer's friend repays their loan, send notification: 'Bạn của bạn vừa tất toán khoản vay. Bạn có muốn vay để [mục đích]?' with friend's photo visible."
+10. Một khách hàng độc thân ở TP.HCM có thu nhập 15 triệu/tháng, nghĩa vụ hiện có 4 triệu/tháng, xin vay 20 triệu trong 18 tháng ở 18%/năm.
 
-    Phân tích: (a) What behavioral mechanisms does this use? (b) Is this ethical? (c) What regulatory issues might arise? (d) How would you redesign to be more ethical while still effective?
+    (a) Tính khoản trả hằng tháng. Kiểm tra thu nhập còn lại: đạt hay không?
+    (b) Kiểm tra sức chịu đựng khi thu nhập giảm 20%: đạt hay không?
+    (c) Để điều chỉnh thiên kiến lạc quan, nhân viên nên nói gì với khách hàng?
+    (d) Cần chú ý những tín hiệu dễ tổn thương nào?
+    (e) Nếu đạt mọi kiểm tra, nên hiện số tiền khuyến nghị nào trước?
 
-12. Bà Hương proposes quality-adjusted commission: base + multiplier based on 12-month default rate.
+**Loại 4: Phân tích**
+11. Marketing đề xuất: "Khi bạn của khách hàng vừa tất toán khoản vay, gửi thông báo: 'Bạn của bạn vừa tất toán khoản vay. Bạn có muốn vay để [mục đích]?', kèm ảnh của người bạn."
 
-    Sales team pushback: "This is unfair - some agents have harder territories with worse demographics."
-    
-    (a) Is the sales team's argument valid? What's the economic logic?
-    (b) How to design the incentive system to account for territory differences?
-    (c) What's the risk if you DON'T adjust for territory? What's the risk if you DO?
-    (d) Design a balanced proposal for the Board to approve.
+    Phân tích: (a) Đề xuất dùng những cơ chế hành vi nào? (b) Có đạo đức không? (c) Có vấn đề pháp lý nào, đặc biệt về dữ liệu cá nhân? (d) Thiết kế lại thế nào để có đạo đức mà vẫn hiệu quả?
+
+12. Bà Hương đề xuất hoa hồng theo chất lượng: phần cơ bản cộng hệ số theo tỷ lệ vỡ nợ 12 tháng.
+
+    Đội bán hàng phản đối: "Không công bằng, có đại lý phụ trách địa bàn khó hơn."
+
+    (a) Lập luận của đội bán hàng có cơ sở không? Logic kinh tế là gì?
+    (b) Thiết kế cơ chế thưởng tính đến khác biệt địa bàn thế nào?
+    (c) Rủi ro nếu KHÔNG điều chỉnh theo địa bàn? Rủi ro nếu CÓ?
+    (d) Thiết kế một đề xuất cân bằng để trình hội đồng quản trị.
 
 ## Bài tập áp dụng
 
-**Bài 1 - Behavioral Design Audit:**
+**Bài 1: Kiểm toán thiết kế hành vi**
 
-Audit loan application flow hiện tại của một fintech (hypothetical flow described below):
+Kiểm toán luồng đăng ký vay của một fintech (giả định):
 
-Step 1: Landing page shows: "Vay tới 100 TRIỆU đồng! Chỉ cần 5 phút!"
-Step 2: Enter personal info → immediately shown: "Bạn đủ điều kiện vay tới 75,000,000 VNĐ!"
-Step 3: Loan amount input - blank field (customer enters amount)
-Step 4: Rate disclosed: "Lãi suất từ 1.5%/tháng" [annual rate not mentioned]
-Step 5: "Nhận tiền ngay trong 30 phút! [Duyệt ngay]"
-Step 6: Review screen shows only: Monthly payment amount and due date
-Step 7: [Xác nhận] button
-
-Yêu cầu audit:
-(a) Identify all behavioral issues in each step
-(b) Categorize: Dark pattern vs Suboptimal UX vs Potentially illegal
-(c) Redesign each problematic step
-(d) Predict impact of redesign on: approval rate, avg loan size, default rate
-
-**Bài 2 - Early Intervention Program Design:**
-
-Design complete early warning and intervention program for portfolio of 100,000 active loans.
-
-Available data:
-- App behavioral data (login, navigation, support tickets)
-- Payment timing data (exact payment date each month)
-- Bureau monthly refresh (available first of each month)
+1. Trang đích: "Vay tới 100 TRIỆU đồng! Chỉ cần 5 phút!"
+2. Nhập thông tin cá nhân → ngay lập tức: "Bạn đủ điều kiện vay tới 75,000,000 VNĐ!"
+3. Ô số tiền vay để trống (khách tự nhập)
+4. Lãi suất: "Chỉ từ 1.5%/tháng" (không nêu lãi suất năm)
+5. "Nhận tiền ngay trong 30 phút! [Duyệt ngay]"
+6. Màn hình xác nhận chỉ hiện khoản trả hằng tháng và ngày đến hạn
+7. Nút [Xác nhận]
 
 Yêu cầu:
-(a) Define early warning model features and target variable
-(b) Define tier thresholds (P(default) → Tier 1/2/3/4)
-(c) Design intervention for each tier (message, channel, content)
-(d) Estimate capacity requirements (how many agents for tier 3?)
-(e) Define success metrics for the program
-(f) How to avoid: contacting customers who don't need it (false positives)
+(a) Chỉ ra mọi vấn đề hành vi ở từng bước
+(b) Phân loại: mẫu thiết kế lừa dối, trải nghiệm chưa tối ưu, hay có thể vi phạm pháp luật
+(c) Thiết kế lại từng bước có vấn đề
+(d) Dự đoán tác động của thiết kế mới lên tỷ lệ duyệt, số tiền vay bình quân và tỷ lệ vỡ nợ
 
-**Bài 3 - Responsible Lending Assessment:**
+**Bài 2: Thiết kế chương trình can thiệp sớm**
 
-Bạn là consultant được hire để assess responsible lending practices của một consumer finance company.
+Thiết kế hệ thống cảnh báo sớm và can thiệp đầy đủ cho danh mục 100,000 khoản vay đang hoạt động.
 
-Available to review:
-- Loan products (3 products: standard, fast, sub-prime)
-- Origination process (application → disbursement)
-- Collections process
-- Marketing materials (5 TV ads, 3 app notification types, sales script)
-- Agent incentive structure
-- Default rates by vintage
+Dữ liệu có sẵn:
+- Dữ liệu hành vi trong ứng dụng (đăng nhập, điều hướng, yêu cầu hỗ trợ)
+- Ngày thanh toán chính xác của từng kỳ
+- Dữ liệu trung tâm thông tin tín dụng cập nhật đầu mỗi tháng
 
-Thiết kế framework đánh giá:
-(a) What 10 questions would you ask in your assessment?
-(b) What documents/data would you request?
-(c) What would "green flag" (good practice) look like for each area?
-(d) What would "red flag" (problematic) look like?
-(e) How would you score and present findings to Board?
+Yêu cầu:
+(a) Định nghĩa biến đầu vào và biến mục tiêu của mô hình cảnh báo sớm
+(b) Định nghĩa ngưỡng cho các tầng (P(vỡ nợ) → tầng 1/2/3/4)
+(c) Thiết kế can thiệp cho từng tầng (thông điệp, kênh, nội dung)
+(d) Ước lượng nhân sự cần cho tầng 3
+(e) Định nghĩa chỉ số thành công của chương trình
+(f) Làm sao tránh liên hệ những khách hàng không cần (dương tính giả)?
+
+**Bài 3: Đánh giá cho vay có trách nhiệm**
+
+Bạn là chuyên gia tư vấn được thuê đánh giá thực hành cho vay có trách nhiệm của một công ty tài chính tiêu dùng.
+
+Tài liệu được cung cấp:
+- Ba sản phẩm vay: tiêu chuẩn, nhanh, sub-prime
+- Quy trình khởi tạo (từ nộp đơn đến giải ngân)
+- Quy trình collections
+- Tài liệu marketing (5 quảng cáo truyền hình, 3 loại thông báo trong ứng dụng, kịch bản bán hàng)
+- Cơ chế thưởng cho đại lý
+- Tỷ lệ vỡ nợ theo vintage
+
+Thiết kế khung đánh giá:
+(a) 10 câu hỏi bạn sẽ đặt ra
+(b) Những tài liệu, dữ liệu bạn sẽ yêu cầu thêm
+(c) Thực hành tốt trông như thế nào ở từng lĩnh vực?
+(d) Dấu hiệu có vấn đề trông như thế nào?
+(e) Chấm điểm và trình bày kết quả cho hội đồng quản trị thế nào?
 
 ## Đọc thêm
 
-**Behavioral Economics Foundations:**
-- Kahneman, D. (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. - Định nghĩa book về dual-process theory, prospect theory, và cognitive biases. Chương 1-12 đặc biệt relevant.
-- Thaler, R. H., & Sunstein, C. R. (2008). *Nudge: Improving Decisions About Health, Wealth, and Happiness.* Yale University Press. - Framework cho nudge design trong policy và product.
+**Nền tảng kinh tế học hành vi:**
+- Kahneman, D. (2011). *Thinking, Fast and Slow.* Farrar, Straus and Giroux. Sách chuẩn về hai hệ tư duy, thuyết triển vọng và các thiên kiến nhận thức.
+- Thaler, R. H., & Sunstein, C. R. (2008). *Nudge: Improving Decisions About Health, Wealth, and Happiness.* Yale University Press. Khung thiết kế cú hích cho chính sách và sản phẩm.
 
-**Behavioral Finance Applied:**
-- Ariely, D. (2010). *Predictably Irrational: The Hidden Forces That Shape Our Decisions.* Harper Collins. - More accessible than Kahneman, với nhiều ví dụ về financial decisions.
+**Kinh tế học hành vi trong tài chính:**
+- Ariely, D. (2008). *Predictably Irrational: The Hidden Forces That Shape Our Decisions.* HarperCollins. Dễ đọc hơn Kahneman, nhiều ví dụ về quyết định tài chính.
+- Bertrand, M., Karlan, D., Mullainathan, S., Shafir, E., & Zinman, J. (2010). What's advertising content worth? Evidence from a consumer credit marketing field experiment. *Quarterly Journal of Economics*, 125(1), 263-306.
 
-**Responsible Finance:**
-- FCA (UK Financial Conduct Authority). (2021). *Consumer Duty.* Available at fca.org.uk. - Most comprehensive regulatory framework cho responsible retail finance. Section 2 về "good outcomes" là must-read.
+**Tài chính có trách nhiệm:**
+- Financial Conduct Authority. (2022). *A new Consumer Duty* (PS22/9). Có tại fca.org.uk. Khung quản lý toàn diện nhất hiện nay về kết quả tốt cho khách hàng tài chính bán lẻ.
+- Financial Conduct Authority. (2021). *Guidance for firms on the fair treatment of vulnerable customers* (FG21/1).
 
-*Phần III kết thúc ở đây. Chúng ta đã đi từ data → score (Chương 11) → price (Chương 12) → human behavior (Chương 13). Phần IV sẽ mở rộng ra tương lai: BNPL và embedded finance (Chương 14), AI/ML trends (Chương 15), và tổng kết những lessons learned để đúc kết thành design principles (Chương 16).*
+*Phần IV kết thúc ở đây. Chúng ta đã đi từ dữ liệu đến điểm (Chương 11), từ điểm đến giá (Chương 12), và đến hành vi con người (Chương 13). Phần V nhìn về tương lai: BNPL và tài chính nhúng (Chương 14), AI trong cho vay (Chương 15), và những nguyên tắc thiết kế đúc kết từ toàn bộ cuốn sách (Chương 16).*
