@@ -799,7 +799,7 @@ Check 2: LAS ↔ STS
 
 Check 3: LAS ↔ DRG
   LAS.CurrentBalance.overdue_debt
-  == DRG.DebtRegister.totalOverdueDebt (current record: validTo = 3333-01-01)
+  == DRG.DebtRegister.totalOverdueDebt (current record: validTo = UNREACHABLE_FUTURE_DATE)
   
   Allowed gap: small lag (milliseconds to seconds via Kafka + daily cron)
   DRG uses SCD Type 2 — must query WHERE validTo = UNREACHABLE_FUTURE_DATE

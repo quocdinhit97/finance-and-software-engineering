@@ -402,6 +402,8 @@ CREATE TABLE eom_completion_log (
 );
 ```
 
+Lược đồ trên là bản rút gọn để minh họa. Giá trị mặc định 3333-01-01 của `fee_component.valid_to` là lựa chọn của lược đồ mẫu này; hằng số `DateUtil.UNREACHABLE_FUTURE_DATE` của VLP là 3000-01-01, còn 3333-01-01 là canh gác riêng của `PostingUnit.firstPrescribeDate` (bảng ở mục A.6). Khi viết truy vấn "bản ghi đang hiệu lực", luôn so với đúng hằng số của thực thể đang truy vấn.
+
 ## A.9 Kiến trúc triển khai
 
 ```mermaid
