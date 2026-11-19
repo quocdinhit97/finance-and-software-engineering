@@ -165,7 +165,9 @@ Khoản vay 18,500,000 VNĐ của chị Lan vừa được giải ngân. Trên �
 
 :::key[Rủi ro đạo đức]
 **Rủi ro đạo đức** (moral hazard) xảy ra **sau** giao dịch. Khi đã có tiền, người vay ít động lực hơn để giữ cam kết ban đầu, vì một phần hậu quả đã chuyển sang người cho vay.
-::: Rủi ro đạo đức không nhất thiết là gian lận có chủ ý; thường nó là phản ứng tự nhiên khi gánh nặng hậu quả được chia sẻ, kiểu suy nghĩ "nếu tôi không trả được, công ty tài chính lớn như vậy cũng không phá sản".
+:::
+
+Rủi ro đạo đức không nhất thiết là gian lận có chủ ý; thường nó là phản ứng tự nhiên khi gánh nặng hậu quả được chia sẻ, kiểu suy nghĩ "nếu tôi không trả được, công ty tài chính lớn như vậy cũng không phá sản".
 
 | Cam kết trước khi vay | Hành vi có thể xảy ra sau khi vay |
 |---|---|

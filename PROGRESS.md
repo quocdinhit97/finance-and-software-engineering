@@ -49,7 +49,7 @@ Cập nhật lần cuối: 2026-11-18, phiên 4 (logo mới, giao diện kiểu 
 | Phụ lục D | **edited** | Phiên 7. Viết lại theo văn bản còn hiệu lực đến 11/2026: phân loại nợ theo Thông tư 31/2024/TT-NHNN (nhóm 2 là 10-90 ngày; bản cũ ghi 11-30) và dự phòng theo Nghị định 86/2024/NĐ-CP; tỷ lệ an toàn vốn 9% theo Thông tư 23/2020/TT-NHNN; Luật Bảo vệ dữ liệu cá nhân 2025 thay Nghị định 13/2023; Open API theo Thông tư 64/2024 (không phải 15/2022); nhắc nợ: không liên hệ người không có nghĩa vụ trả nợ (bản cũ ghi "tối đa 3 lần/ngày"); bỏ "trần APR 24% năm 2024" không có thật và "AWS/Azure/GCP có region Việt Nam"; khung quốc tế sửa theo Ch.14 |
 | Cách đọc, Về cuốn sách, 5 trang giới thiệu phần, Phụ lục index, Công cụ | edited (mới) | Có bản EN |
 
-Bản tiếng Anh: giao diện, trang chủ, Cách đọc, Về cuốn sách, 5 trang giới thiệu phần, trang phụ lục, Công cụ. Các chương hiển thị tiếng Việt kèm thông báo "chưa dịch".
+Bản tiếng Anh: giao diện, trang chủ, Cách đọc, Về cuốn sách, 5 trang giới thiệu phần, trang phụ lục, Công cụ, Ch.1, Ch.2 (phiên 7; heading `##` của chương dịch đặt id bằng slug tiếng Việt, ví dụ `{/* #11-tín-dụng-là-gì */}`, để liên kết neo giữa các chương vẫn chạy ở bản EN; khối code Java giữ nguyên, khối `text` và Mermaid được dịch). Các chương khác hiển thị tiếng Việt kèm thông báo "chưa dịch".
 
 ## Quyết định quan trọng (không đảo ngược nếu không có lý do)
 
@@ -114,5 +114,5 @@ Lưu ý: cảnh báo KaTeX "Unrecognized Unicode character" bị tắt (`strict:
 4. ~~Biên tập Ch.6, 7, 10~~ (xong ở phiên 6). Cùng phiên: `transform.py` và `check-content.mjs` xử lý cả dạng số nhiều của định danh kỹ thuật (`AccountItems`, `TariffItems`), sửa các chỗ còn sót ở Ch.3, 8, 9, 12.
 5. ~~Biên tập Ch.11-16, Phụ lục A, D, Thuật ngữ, Lời mở đầu~~ (xong ở phiên 7). Ghi chú: `scripts/entities.json` (chỉ có ở máy cục bộ) đã bổ sung `SHOPEE_VN → CHOSAO_VN` và các mẫu cấm `shopee` (không còn `\b`), `zalo\s*pay`, `gojek`, `sea group`, `zalo`.
 6. Sau mỗi chương: chạy `docs-internal/quality-checklist.md`, cập nhật bảng trên.
-7. Dịch tiếng Anh các chương đã biên tập (Ch.1, Ch.2), đặt `lang: en`.
+7. ~~Dịch tiếng Anh các chương đã biên tập (Ch.1, Ch.2), đặt `lang: en`~~ (xong ở phiên 7). Cùng phiên sửa khung `:::` đóng sai ở Ch.1 mục rủi ro đạo đức.
 8. Phase 8: đọc lại toàn bộ theo thứ tự.
