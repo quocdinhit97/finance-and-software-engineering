@@ -746,30 +746,6 @@
     "message": "Glossary",
     "description": "Sidebar and pagination label of an untranslated doc"
   },
-  "doc.label.intelligence/ch11-credit-scoring": {
-    "message": "11. Credit scoring",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.intelligence/ch12-risk-based-pricing": {
-    "message": "12. Risk-based pricing",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.intelligence/ch13-behavioral-economics": {
-    "message": "13. Behavioral economics and responsible finance",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.future/ch14-embedded-finance-bnpl": {
-    "message": "14. BNPL and embedded finance",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.future/ch15-ai-future-of-lending": {
-    "message": "15. AI and the future of lending",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.future/ch16-timeless-principles": {
-    "message": "16. Timeless design principles",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
   "doc.label.appendices/a-architecture-reference": {
     "message": "Appendix A. Reference architecture",
     "description": "Sidebar and pagination label of an untranslated doc"
