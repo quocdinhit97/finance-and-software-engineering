@@ -729,5 +729,9 @@
   },
   "settle.a3": {
     "message": "The prepayment fee is a percentage of outstanding principal. The actual fee and method are set by the contract and by each market's regulations."
+  },
+  "sidebar.part.chapters": {
+    "message": "Chapters {range}",
+    "description": "Chapter range under a part title in the sidebar"
   }
 }
