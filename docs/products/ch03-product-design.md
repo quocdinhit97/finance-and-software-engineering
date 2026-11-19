@@ -449,7 +449,7 @@ Tariff: STANDARD_2024
   version: 3
   validFrom: 2024-01-01
   validTo: 2024-12-31           ← half-open: validTo là exclusive
-  tariffItems: [
+  feeComponents: [
     INTEREST_CASH_STANDARD,
     INTEREST_CASHLESS_STANDARD,
     LATEFEE1_STANDARD,
@@ -464,7 +464,7 @@ Tariff: STANDARD_2025  // illustrative — actual codes are short (e.g., "SVCFEE
   validTo: null  ← null trong DB → Java convert sang sentinel date
                    (3000-01-01 cho AccountParameter, tùy entity — xem Phụ lục B)
                    Ý nghĩa: tariff này còn hiệu lực không xác định
-  tariffItems: [
+  feeComponents: [
     INTEREST_CASH_STANDARD_V2,  ← Rate có thể đã thay đổi
     ...
   ]

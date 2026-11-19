@@ -304,7 +304,7 @@ Load vào memory:
   - ContractServices: ACCMAINT, ACCSTMT, PAYM, LIFEINS (active)
   - Tariff: STANDARD_2025 (illustrative name — actual: short code e.g. "SVCFEE"), version 4
   - AccountFeeComponentType mappings
-  - Outstanding TechnicalAccountItems (chưa fully prescribed)
+  - Outstanding PostingUnits (chưa fully prescribed)
   - PeriodBalanceSnapshot từ tháng 2 (previous period snapshot)
 ```
 
@@ -792,7 +792,7 @@ Check 1: LAS ↔ PeriodBalanceSnapshot
   Allowed gap: 0 VNĐ (exact match required)
 
 Check 2: LAS ↔ STS
-  Sum of all AccountItems in billing period
+  Sum of all LedgerEntries in billing period
   == Statement total charges
   
   Allowed gap: 0 VNĐ

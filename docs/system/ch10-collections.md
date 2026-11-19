@@ -4,544 +4,468 @@ sidebar_label: "10. Quản lý nợ và thu hồi"
 sidebar_position: 4
 chapter: 10
 subtitle: "Debt Management & Collections"
-reading_time: 30
+reading_time: 35
+description: "Collections từ ba góc độ: kinh tế học của cure rate và DPD bucket, ràng buộc pháp lý và đạo đức khi nhắc nợ, và kiến trúc của DRG module (DebtRegister theo SCD Type 2, cập nhật theo sự kiện và theo lịch). Kèm hardship program, write-off và recovery."
 source_file: "phan-2-chuong-10.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Collections không phải là chiến tranh giữa lender và borrower. Đó là cuộc đàm phán giữa một người có tiền cần trả và một người muốn được trả - trong bối cảnh mà cả hai đều muốn vấn đề kết thúc tốt đẹp nhất có thể."*
+> *"Collections không phải là cuộc chiến giữa bên cho vay và người vay. Đó là cuộc thương lượng giữa một người có khoản phải trả và một người muốn được trả, trong bối cảnh cả hai đều muốn vấn đề kết thúc tốt đẹp nhất có thể."*
 
-## Dẫn nhập: Hai cuộc điện thoại
-
-::::story
-**Cuộc điện thoại 1 - Ngày 7/4:**
-
-"Xin chào, đây là Ngân hàng ABC. Chúng tôi nhận thấy tài khoản của anh đang quá hạn 2 ngày. Anh vui lòng thanh toán ngay hôm nay để tránh phát sinh thêm phí."
-
-Anh Tùng trả lời: "Vâng, tôi biết rồi. Tôi sẽ chuyển khoản ngay chiều nay." - Anh cúp máy và chuyển khoản. DPD 2, không có vấn đề gì.
-
-**Cuộc điện thoại 2 - Ngày 7/4:**
-
-"Xin chào, đây là Công ty XYZ. Tài khoản của anh đang nợ 1,800,000 VNĐ. Nếu anh không thanh toán NGAY HÔM NAY, chúng tôi sẽ báo cáo lên cơ quan tín dụng, liên hệ người thân của anh, và có thể khởi kiện."
-
-Anh Minh - người vốn định trả hôm nay nhưng chưa kịp - nghe xong và tức giận. Thay vì chuyển khoản ngay, anh viết review xấu, khiếu nại lên cơ quan bảo vệ người tiêu dùng, và quyết tâm không bao giờ vay ở đây nữa.
-
-Hai khách hàng giống nhau (DPD 2, có tiền trả). Hai approach collections khác nhau. Hai kết quả hoàn toàn khác nhau - không chỉ cho khách hàng, mà cho business.
-::::
-
-Chương này phân tích collections từ cả ba góc độ: kinh tế học (tối ưu hóa thu hồi trong khi preserve CLV), pháp lý (ràng buộc về cách thu nợ), và kỹ thuật (DRG module, workflow, integrations).
-
-## 10.1 Collections như một Business Function
-
-### DPD Buckets: Tại sao phân loại theo ngày
+## Dẫn nhập: hai cuộc điện thoại
 
 ::::story
-Bà Hương yêu cầu Risk team: "Cho tôi biết tình trạng portfolio." Risk team có thể trả lời nhiều cách - nhưng cách hữu ích nhất là DPD bucket distribution.
+**Cuộc điện thoại thứ nhất, sáng 7/4:**
+
+"Xin chào anh Tùng, em gọi từ Vela Finance. Khoản thanh toán đến hạn ngày 5/4 của anh hiện chưa được ghi nhận. Anh có cần em gửi lại đường dẫn thanh toán không ạ?"
+
+Anh Tùng trả lời: "À, anh quên mất. Chiều nay anh chuyển." Anh cúp máy và chuyển khoản ngay. DPD 2, không có vấn đề gì.
+
+**Cuộc điện thoại thứ hai, cũng sáng 7/4, từ một công ty tài chính khác:**
+
+"Tài khoản của anh đang nợ 1,800,000 VNĐ. Nếu anh không thanh toán NGAY HÔM NAY, chúng tôi sẽ báo lên cơ quan tín dụng, liên hệ người thân của anh và khởi kiện."
+
+Anh Khoa vốn định trả trong ngày nhưng chưa kịp. Nghe xong, anh tức giận. Thay vì chuyển khoản, anh viết đánh giá xấu, gửi khiếu nại và quyết định không bao giờ vay ở đó nữa.
+
+Hai khách hàng giống nhau: cùng DPD 2, cùng có tiền để trả. Hai cách tiếp cận khác nhau. Hai kết quả hoàn toàn khác nhau, không chỉ cho khách hàng mà cho cả doanh nghiệp.
 ::::
 
-**DPD (Days Past Due) Bucket Standard:**
+Chương này nhìn collections từ ba góc độ: kinh tế học (tối đa hóa khoản thu hồi mà vẫn giữ được giá trị vòng đời khách hàng, CLV), pháp lý (những ràng buộc về cách nhắc nợ và thu hồi nợ), và kỹ thuật (DRG module, luồng sự kiện, ranh giới giữa VLP và hệ thống collections bên ngoài).
+
+## 10.1 Collections là một chức năng kinh doanh
+
+### DPD bucket: vì sao phân loại theo ngày
+
+::::story
+Bà Hương yêu cầu Risk team: "Cho tôi biết tình trạng portfolio." Risk team có thể trả lời theo nhiều cách, nhưng cách hữu ích nhất là phân bố theo DPD bucket.
+::::
+
+**Các DPD (Days Past Due) bucket tiêu chuẩn:**
 
 ```text
-DPD 0    : CURRENT — trả đúng hạn
-DPD 1-30 : BUCKET 1 — trễ nhưng sớm
-DPD 31-60: BUCKET 2 — trễ trung bình
-DPD 61-90: BUCKET 3 — trễ nghiêm trọng
-DPD 91+  : BUCKET 4 (NPL — Non-Performing Loan)
-           Stage 3 IFRS 9
-           Write-off candidate
+DPD 0    : CURRENT, trả đúng hạn
+DPD 1-30 : BUCKET 1, trễ sớm
+DPD 31-60: BUCKET 2, trễ trung bình
+DPD 61-90: BUCKET 3, trễ nghiêm trọng
+DPD 91+  : BUCKET 4, nợ xấu (NPL, Non-Performing Loan)
+           Stage 3 theo IFRS 9
+           Ứng viên write-off
 ```
 
-**Tại sao 30-ngày buckets:**
+Các mốc 30 ngày không tùy tiện. Chúng bám theo chu kỳ thanh toán hằng tháng: mỗi bucket tương ứng với số kỳ khách hàng đã bỏ lỡ.
 
-```text
-Không phải tùy tiện — phản ánh payment cycle:
-  DPD 1-30: Thường bỏ sót 1 tháng thanh toán
-             → Có thể là sơ sót, cash flow ngắn hạn
-             → Cure rate cao: 40-60%
+| Bucket | Ý nghĩa thường gặp | Cure rate điển hình |
+|---|---|---|
+| DPD 1-30 | Bỏ lỡ một kỳ: sơ suất, thiếu tiền ngắn hạn | 40-60% |
+| DPD 31-60 | Bỏ lỡ hai kỳ: vấn đề tài chính rõ rệt hơn | 15-30% |
+| DPD 61-90 | Bỏ lỡ ba kỳ: khả năng cao là không thể trả | 5-10% |
+| DPD 91+ | Mốc vỡ nợ theo chuẩn Basel, Stage 3 theo IFRS 9 | Rất thấp |
 
-  DPD 31-60: Bỏ 2 tháng
-              → Có vấn đề tài chính nghiêm túc hơn
-              → Cure rate giảm: 15-30%
+Mốc 90 ngày cũng khớp với cách phân loại nợ tại Việt Nam: theo quy định phân loại nợ của Ngân hàng Nhà nước, khoản nợ quá hạn từ 91 ngày trở lên rơi vào nhóm 3 đến nhóm 5, tức nợ xấu. Khoản quá hạn từ 10 đến 90 ngày là nhóm 2, nợ cần chú ý. Vì vậy DPD 10 cũng là một mốc mà hệ thống báo cáo phải nhìn thấy, dù nó không trùng ranh giới bucket.
 
-  DPD 61-90: Bỏ 3 tháng
-              → Khả năng cao là không thể trả
-              → Cure rate: 5-10%
-
-  DPD 91+:  Convention quốc tế (Basel III): NPL
-             → Phải stage 3 theo IFRS 9
-             → Thường là write-off trong 12-18 tháng
-```
-
-### Cure Rate Economics
-
-**Khái niệm:**
+### Kinh tế học của cure rate
 
 :::key
-**Cure rate** là tỷ lệ accounts từ một DPD bucket trở về current trong vòng một tháng - tự "chữa bệnh" mà không cần intensive intervention.
+**Cure rate** là tỷ lệ tài khoản trong một DPD bucket quay về trạng thái current trong vòng một tháng.
 :::
 
-**Ví dụ số - Economics của từng bucket:**
+Ví dụ dưới đây cho thấy vì sao can thiệp sớm đáng tiền đến vậy.
 
 ```text
-Portfolio: 100,000 accounts trong DPD 1-30
-Outstanding per account: 8,000,000 VNĐ
+Portfolio: 100,000 tài khoản ở DPD 1-30
+Dư nợ bình quân: 8,000,000 VNĐ/tài khoản
 LGD: 62%
 
-Scenario không có collections intervention:
-  Cure rate DPD 1-30 (natural): 35%
-  → 35,000 accounts tự cure
-  → 65,000 accounts roll to DPD 31-60
+Không can thiệp:
+  Cure rate DPD 1-30 (tự nhiên): 35%
+  → 35,000 tài khoản tự quay về current
+  → 65,000 tài khoản chuyển sang DPD 31-60
 
-  Cure rate DPD 31-60 (natural): 15%
-  → 9,750 accounts cure from this bucket
-  → 55,250 accounts roll to DPD 61-90 and beyond
+  Cure rate DPD 31-60 (tự nhiên): 15%
+  → 9,750 tài khoản cure ở bucket này
+  → 55,250 tài khoản chuyển tiếp sang DPD 61-90 và xa hơn
 
-  Eventually default: ~45,000 accounts
-  Loss: 45,000 × 8,000,000 × 62% = 223,200,000,000 VNĐ
-       = 223.2 tỷ VNĐ
+  Cuối cùng vỡ nợ: khoảng 45,000 tài khoản
+  → Tỷ lệ vỡ nợ của nhóm đã chuyển bucket: 45,000 / 65,000 ≈ 69.2%
+  Tổn thất: 45,000 × 8,000,000 × 62% = 223,200,000,000 VNĐ
+          = 223.2 tỷ VNĐ
 
-Collections intervention (DPD 1-30):
-  Cost: 200,000 VNĐ/account (SMS + call) × 100,000 = 20 tỷ VNĐ
-  Cure rate improvement: 35% → 55% (+20%)
-  Additional cures: 20,000 accounts
-  Losses avoided: 20,000 × 8,000,000 × 62% = 99,200,000,000 VNĐ
-                = 99.2 tỷ VNĐ
+Can thiệp ở DPD 1-30 (SMS + gọi điện):
+  Chi phí: 200,000 VNĐ/tài khoản × 100,000 = 20 tỷ VNĐ
+  Cure rate: 35% → 55% (+20 điểm phần trăm)
+  → Chỉ còn 45,000 tài khoản chuyển sang DPD 31-60 (thay vì 65,000)
+  → Vỡ nợ: 45,000 × 69.2% ≈ 31,154 tài khoản
+  → Số vụ vỡ nợ tránh được: 45,000 − 31,154 ≈ 13,846
 
-ROI: (99.2 - 20) / 20 = 396% → Cực kỳ cost-effective
+  Tổn thất tránh được: 13,846 × 8,000,000 × 62% ≈ 68.7 tỷ VNĐ
+
+ROI: (68.7 − 20) / 20 ≈ 243%
 ```
 
-**Collections economics tóm tắt:**
+Một lỗi tính thường gặp là nhân toàn bộ 20,000 tài khoản cure thêm với LGD, ra 99.2 tỷ và ROI 396%. Cách tính đó ngầm giả định rằng mọi tài khoản không cure ở bucket đầu đều vỡ nợ. Thực tế một phần trong số đó vẫn tự cure ở các bucket sau, nên chỉ khoảng 69% số tài khoản cure thêm thực sự là tổn thất tránh được. Ngay cả với con số thận trọng hơn, can thiệp sớm vẫn hoàn vốn hơn ba lần.
 
-```text
-Cost to collect:         Cure rate improvement:
-  DPD 1-30: thấp nhất      Cao nhất (20-30%)
-  DPD 31-60: trung bình    Trung bình (10-15%)
-  DPD 61-90: cao           Thấp (3-8%)
-  DPD 91+: cao nhất        Rất thấp (1-3%)
+Quy luật chung qua các bucket:
 
-→ Early intervention = best ROI
-→ Invest heavily in DPD 1-30 automation
-→ DPD 91+ còn tốn kém hơn legal costs thường >> recovery
-```
+| Bucket | Chi phí thu hồi/tài khoản | Mức cải thiện cure rate nhờ can thiệp |
+|---|---|---|
+| DPD 1-30 | Thấp nhất | Cao nhất (20-30 điểm phần trăm) |
+| DPD 31-60 | Trung bình | Trung bình (10-15 điểm) |
+| DPD 61-90 | Cao | Thấp (3-8 điểm) |
+| DPD 91+ | Cao nhất | Rất thấp (1-3 điểm) |
 
-### Collections Strategy Pyramid
+Hệ quả là nên đầu tư mạnh vào tự động hóa ở DPD 1-30. Ở DPD 91+, chi phí pháp lý thường vượt xa số tiền thu hồi được.
+
+### Kim tự tháp chiến lược collections
 
 ```text
                      ▲
                     /|\
                    / | \
                   /  |  \
-                 / LEGAL \        ← DPD 90+: Legal action, debt sale
+                 / LEGAL \        ← DPD 90+: Khởi kiện, bán nợ
                 /─────────\
-               / FIELD     \      ← DPD 60-90: Field agents, repossession
+               / FIELD     \      ← DPD 60-90: Nhân viên hiện trường, thu hồi tài sản
               /─────────────\
-             /  LATE DIGITAL  \   ← DPD 30-60: Outbound calls, intensive SMS
+             /  LATE DIGITAL  \   ← DPD 30-60: Gọi điện chủ động, SMS dày hơn
             /─────────────────\
-           /   EARLY DIGITAL   \  ← DPD 1-30: Automated SMS, in-app nudges
+           /   EARLY DIGITAL   \  ← DPD 1-30: SMS tự động, nhắc trong app
           /─────────────────────\
-         /     SELF-CURE         \ ← DPD 0 risk signals: Proactive outreach
+         /     SELF-CURE         \ ← DPD 0 có tín hiệu rủi ro: chủ động liên hệ
         /─────────────────────────\
 
 Nguyên tắc:
-  Càng lên cao: cost/account tăng, cure rate giảm
-  → Invest first at bottom, escalate only if needed
-  → Avoid jumping to legal prematurely (destroys CLV)
+  Càng lên cao: chi phí/tài khoản tăng, cure rate giảm
+  → Đầu tư ở đáy trước, chỉ leo lên khi cần
+  → Tránh nhảy sớm sang pháp lý (phá hủy CLV)
 ```
 
-:::summary[Collections Business Function]
-DPD buckets: 0, 1-30, 31-60, 61-90, 91+
-Cure rate: giảm nhanh theo bucket
-ROI: early intervention >> late stage
-Strategy: pyramid - bottom-up, cost-effective first
+:::summary[Mục 10.1]
+DPD bucket chia theo số kỳ khách hàng đã bỏ lỡ: 1-30, 31-60, 61-90 và 91+, trong đó mốc 90 ngày trùng với ngưỡng nợ xấu. Cure rate giảm nhanh qua từng bucket, nên can thiệp sớm có ROI cao nhất. Khi tính tổn thất tránh được, chỉ những tài khoản lẽ ra sẽ vỡ nợ mới được tính. Chiến lược collections đi từ đáy kim tự tháp lên: rẻ và nhẹ nhàng trước, tốn kém và cứng rắn sau.
 :::
 
-## 10.2 Early Collections: Self-Cure và Digital
+## 10.2 Collections giai đoạn sớm: tự cure và kênh số
 
-### Behavioral Triggers và Timing
+### Thời điểm liên hệ
 
 ::::story
-DPD counter update job chạy lúc 00:01 mỗi ngày. Account của anh Tùng trở thành DPD 1. Hệ thống phải quyết định: gửi SMS ngay lúc 00:01 không?
+Job cập nhật DPD chạy lúc 00:01 mỗi ngày. Tài khoản của anh Tùng vừa chuyển thành DPD 1. Hệ thống có nên gửi SMS ngay lúc 00:01 không?
 
-Câu trả lời rõ ràng: không. Gửi SMS lúc 12:02 sáng là harassment, không phải collections.
+Câu trả lời rõ ràng là không. Một tin nhắn đòi nợ lúc nửa đêm là quấy rối, không phải collections. Ở Việt Nam đó còn là vi phạm: công ty tài chính chỉ được nhắc nợ trong khung 7 giờ đến 21 giờ.
 ::::
 
-**Timing strategy dựa trên behavioral economics:**
+**Lịch liên hệ dựa trên hành vi khách hàng:**
 
 ```text
-DPD 0 (trước due date, pre-delinquency):
-  D-7:  "Nhắc nhở nhẹ nhàng" — in-app notification
-  D-3:  "Sao kê tháng X — thanh toán trước ngày Y để được ưu đãi"
-  D-1:  "Hạn thanh toán ngày mai"
+Trước ngày đến hạn (DPD 0):
+  D-7:  Nhắc nhẹ qua thông báo trong app
+  D-3:  "Sao kê tháng X: thanh toán trước ngày Y"
+  D-1:  "Hạn thanh toán là ngày mai"
   D-0:  "Hôm nay là hạn thanh toán"
 
 DPD 1:
-  09:00 sáng: Push notification "Thanh toán chưa được ghi nhận"
-  (Không 00:01 — không aggressive)
+  09:00: Push notification "Thanh toán chưa được ghi nhận"
+  (Không gửi lúc 00:01)
 
 DPD 2:
-  10:00 sáng: SMS với payment link
-  Evening: In-app pop-up khi mở app
+  10:00: SMS kèm đường dẫn thanh toán
+  Buổi tối (trước 21:00): pop-up khi khách mở app
 
 DPD 3:
-  Outbound call window: 9-11h hoặc 15-18h
-  (Không gọi buổi tối, không gọi cuối tuần nếu bình thường)
+  Khung gọi điện: 9-11 giờ hoặc 15-18 giờ
 
 DPD 7-14:
-  Daily SMS/push
-  Escalate to manual call nếu chưa response
+  SMS/push mỗi ngày
+  Chuyển sang gọi thủ công nếu chưa có phản hồi
 
 DPD 15-29:
-  Two outbound calls per day (trong khung giờ cho phép)
-  Offer payment arrangement (trả theo đợt nếu không trả được full)
+  Tối đa hai cuộc gọi chủ động mỗi ngày, trong khung giờ cho phép
+  Đề xuất thỏa thuận trả theo đợt nếu khách không trả đủ được
+
+Ràng buộc chung cho mọi kênh:
+  Tổng số lần nhắc nợ ≤ 5 lần/ngày, chỉ trong khung 7:00-21:00
 ```
 
-**Tối ưu send time bằng data:**
+**Tối ưu thời điểm gửi bằng dữ liệu:**
 
 ```text
-Từ historical data, response rate theo giờ gửi SMS:
+Tỷ lệ phản hồi SMS theo giờ gửi (dữ liệu lịch sử):
 
-08:00-09:00: response 12%
-09:00-10:00: response 18% ← peak
-12:00-13:00: response 15%
-17:00-18:00: response 16%
-20:00-21:00: response 8%  ← lower
+08:00-09:00: 12%
+09:00-10:00: 18% ← cao nhất
+12:00-13:00: 15%
+17:00-18:00: 16%
+20:00-21:00:  8% ← thấp
 
-Personalization: nếu khách hàng historically responds sáng sớm
-  → Gửi 08:30 thay vì 09:00 generic
+Cá nhân hóa: khách hàng thường phản hồi sớm
+  → Gửi lúc 08:30 thay vì mốc chung 09:00
 
-A/B test: "Hạn thanh toán của bạn đã qua 1 ngày" (factual)
-   vs:    "Tài khoản của bạn đang bị ảnh hưởng" (loss framing)
-   → Loss framing typically +20-30% response rate
-   → Nhưng phải honest — "tài khoản bị ảnh hưởng" là thật
-     (DPD được ghi nhận, ảnh hưởng đến credit history)
+A/B test: "Hạn thanh toán của bạn đã qua 1 ngày" (nêu sự thật)
+     vs:  "Tài khoản của bạn đang bị ảnh hưởng" (nhấn vào mất mát)
+  → Thông điệp nhấn vào mất mát thường tăng tỷ lệ phản hồi 20-30%
+  → Nhưng phải đúng sự thật: tài khoản thực sự bị ảnh hưởng
+    (DPD được ghi nhận và ảnh hưởng đến lịch sử tín dụng)
 ```
 
-### Automated Communication Pipeline
-
-**Architecture:**
+### Pipeline liên lạc tự động
 
 ```text
-DPD counter updated (00:01 daily)
+Cập nhật DPD (00:01 hằng ngày)
     │
     ▼
-DRG Module: DPD event → Kafka
+DRG module: sự kiện DPD → Kafka (debt.events)
     │
     ▼
-External Collections Workflow Engine ← (NOT part of DRG)
-  *(DRG publishes debt.events → external engine pulls/subscribes)*
+Collections workflow engine bên ngoài (không thuộc DRG)
+  (DRG publish debt.events, engine bên ngoài subscribe)
     │
-    ├─ Rule evaluation:
-    │   DPD level + customer segment + previous contact history
-    │   → Select appropriate action
+    ├─ Đánh giá rule:
+    │   Mức DPD + phân khúc khách hàng + lịch sử liên hệ
+    │   → Chọn hành động phù hợp
     │
-    ├─ Action scheduling:
-    │   → Queue SMS for 09:00
-    │   → Schedule outbound call for 10:00-11:00 window
-    │   → Set in-app flag
+    ├─ Lên lịch:
+    │   → Xếp SMS gửi lúc 09:00
+    │   → Đặt cuộc gọi trong khung 10:00-11:00
+    │   → Bật cờ hiển thị trong app
     │
-    └─ Execution:
-        SMS → SMS provider API
+    └─ Thực thi:
+        SMS  → API nhà cung cấp SMS
         Push → Mobile push service
-        Call → Auto-dialer (for early stage) or human queue (later)
+        Gọi  → Auto-dialer (giai đoạn sớm) hoặc hàng đợi nhân viên (giai đoạn sau)
 ```
 
-**Message personalization:**
+**Cá nhân hóa thông điệp:**
 
 ```text
-Template: "Xin chào {customer_name}, tài khoản {account_number} 
-           có khoản thanh toán {amount} VNĐ đến hạn {due_date}. 
+Template: "Xin chào {customer_name}, tài khoản {account_number}
+           có khoản thanh toán {amount} VNĐ đến hạn {due_date}.
            Thanh toán ngay tại: {payment_link}"
 
-Filled: "Xin chào anh Tùng, tài khoản ACC-2025-456789
-         có khoản thanh toán 1,800,000 VNĐ đến hạn 05/04.
-         Thanh toán ngay tại: pay.abc.vn/q8x3"
+Sau khi điền: "Xin chào anh Tùng, tài khoản ACC-2025-456789
+               có khoản thanh toán 1,800,000 VNĐ đến hạn 05/04.
+               Thanh toán ngay tại: pay.vela.vn/q8x3"
 
-Deep link: payment_link → one-tap payment trong app
-           → Reduce friction → increase cure rate
+Deep link: payment_link mở thẳng màn hình thanh toán một chạm trong app
+           → Giảm ma sát → tăng cure rate
 ```
 
-### Payment Arrangement Tools
+### Thỏa thuận thanh toán
 
 ::::story
-Anh Hùng (DPD 15) gọi điện: "Tôi không thể trả 1,800,000 VNĐ tháng này vì vừa mất việc. Tôi chỉ có thể trả 600,000 VNĐ hôm nay và 1,200,000 VNĐ vào tuần sau."
+Anh Hùng (DPD 15) gọi lên tổng đài: "Tháng này tôi không trả đủ 1,800,000 được vì vừa mất việc. Hôm nay tôi trả được 600,000, tuần sau trả nốt 1,200,000."
 
-Collections agent có thể làm gì?
+Nhân viên collections có thể làm gì?
 ::::
 
-**Payment Arrangement - Partial Payment Agreement:**
-
 ```text
-Business decision: Chấp nhận 600K hôm nay + 1.2M tuần sau
+Quyết định: chấp nhận 600,000 hôm nay + 1,200,000 sau 7 ngày
 
-System actions:
-  1. Create PaymentArrangement record:
+Hành động trong hệ thống:
+  1. Tạo bản ghi PaymentArrangement:
      accountId: ACC-xxx
      agentId: agent-007
-     date_created: today
+     date_created: hôm nay
      arrangement_type: SPLIT_PAYMENT
-     installment_1: 600,000 VNĐ, due=today
-     installment_2: 1,200,000 VNĐ, due=today+7
-     notes: "Customer lost job, partial arrangement agreed"
+     installment_1: 600,000 VNĐ, due = hôm nay
+     installment_2: 1,200,000 VNĐ, due = hôm nay + 7
+     notes: "Khách mất việc, đồng ý trả làm hai đợt"
 
-  2. DPD counter: HOLD (không tăng thêm trong khi arrangement active)
-     — nếu customer follows through
+  2. Collections: tạm dừng liên hệ trong thời gian thỏa thuận còn hiệu lực
+     (DPD vẫn được tính theo hợp đồng; thỏa thuận chỉ điều chỉnh
+      cách collections đối xử với tài khoản)
 
-  3. Collections intensity: REDUCE (không gửi SMS/call trong arrangement period)
+  3. Cảnh báo: nếu đến hạn + 1 ngày chưa nhận installment_1
+     → nối lại quy trình collections
 
-  4. Alert: nếu installment_1 not received by +1 day → resume collections
-
-Agent authority limits:
-  Level 1 (call center): can offer up to 30-day arrangement
-  Level 2 (supervisor): up to 60 days
-  Level 3 (manager): restructuring (require LAS module changes)
+Thẩm quyền của nhân viên:
+  Cấp 1 (tổng đài): thỏa thuận tối đa 30 ngày
+  Cấp 2 (giám sát): tối đa 60 ngày
+  Cấp 3 (quản lý): tái cơ cấu (cần thay đổi trong LAS)
 ```
 
-**Tại sao hệ thống cần track payment arrangements:**
+Phân biệt ở bước 2 rất quan trọng. DPD là sự thật kế toán: nó đo khoảng cách từ kỳ quá hạn sớm nhất chưa được thanh toán, và DRG tính nó từ dữ liệu LAS. Một thỏa thuận qua điện thoại không làm thay đổi lịch trả nợ trong hợp đồng, nên không làm DPD đứng yên. Muốn dời ngày đến hạn thì phải dùng payment holiday hoặc tái cơ cấu (mục 10.5), là những thay đổi thực sự trong LAS.
 
-```text
-Không track: Agent nói "okay" → Customer trả 600K → DPD tính tiếp
-              → Collections gọi tiếp → Customer frustrated (đã agree rồi!)
+Vì sao thỏa thuận phải nằm trong hệ thống chứ không chỉ trong ghi chú của nhân viên? Nếu không được ghi lại, anh Hùng trả 600,000 xong vẫn nhận cuộc gọi đòi nợ vào ngày hôm sau, dù anh đã thỏa thuận. Khi thỏa thuận có trong hệ thống, collections engine biết để không liên hệ trong thời gian thỏa thuận, biết lúc nào thỏa thuận bị vi phạm để nối lại quy trình, và để lại dấu vết kiểm toán: ai đồng ý, với điều kiện gì.
 
-Track trong system:
-  → Collections engine biết arrangement exists
-  → Không contact customer trong arrangement period
-  → Nếu vi phạm arrangement → escalate appropriately
-  → Audit trail: ai đồng ý arrangement, điều kiện gì
-```
-
-:::summary[Early Collections]
-Timing: based on behavioral data, không spam
-đêm khuya, không ngày nghỉ aggressive
-Automated pipeline: DPD event → external rule
-personalized message → right channel right time
-Payment arrangement: track trong system để tránh
-harassment và hỗ trợ khách hàng
+:::summary[Mục 10.2]
+Thời điểm liên hệ dựa trên dữ liệu hành vi và luôn nằm trong khung 7 giờ đến 21 giờ, tối đa 5 lần nhắc nợ mỗi ngày. Sự kiện DPD đi từ DRG qua Kafka đến collections engine bên ngoài, nơi chọn thông điệp, kênh và giờ gửi. Thỏa thuận thanh toán được ghi trong hệ thống để tránh quấy rối khách hàng đã hợp tác, nhưng không làm thay đổi cách tính DPD.
 :::
 
-## 10.3 Late-Stage Collections
+## 10.3 Collections giai đoạn muộn
 
-### DPD 30-60: Outbound Calls và Intensive Contact
+### DPD 30-60: gọi điện chủ động và liên hệ dày hơn
 
-**Khi DPD vượt qua 30 ngày, collections trở nên intensive hơn:**
+Khi DPD vượt 30 ngày, collections chuyển sang đội ngũ chuyên trách:
 
 ```text
-Collections team structure:
-  Early collections (DPD 1-30): Automated + light touch
-  Mid collections (DPD 30-60): Dedicated collectors, outbound calls
-  Late collections (DPD 60-90): Senior collectors + legal prep
-  Legal/recovery (DPD 90+): Specialized team
+Cơ cấu đội collections:
+  Giai đoạn sớm (DPD 1-30): tự động + liên hệ nhẹ
+  Giai đoạn giữa (DPD 30-60): collector chuyên trách, gọi điện chủ động
+  Giai đoạn muộn (DPD 60-90): collector cấp cao + chuẩn bị hồ sơ pháp lý
+  Pháp lý và thu hồi (DPD 90+): đội chuyên biệt
 ```
 
-**Skip tracing - khi không liên lạc được:**
+**Skip tracing, khi không liên lạc được khách hàng:**
+
+Khách hàng đổi số điện thoại hoặc không nghe máy. Đội collections cần tìm kênh liên hệ mới, nhưng ranh giới về những gì được phép là rất rõ.
+
+| Được phép | Không được phép |
+|---|---|
+| Kiểm tra thông tin liên hệ khách đã tự cập nhật trong app | Liên hệ người thân, bạn bè để nhắc nợ hoặc nhờ chuyển lời |
+| Gửi email (có khách phản hồi email dù không nghe máy) | Gây áp lực công khai trên mạng xã hội |
+| Thông tin liên hệ mới hơn từ trung tâm thông tin tín dụng, trong phạm vi được phép | Liên hệ nơi làm việc của khách hàng |
+| | Mua dữ liệu cá nhân của khách hàng từ bên thứ ba |
+
+Ở Việt Nam, công ty tài chính không được nhắc nợ, đòi nợ hoặc gửi thông tin về việc thu hồi nợ cho tổ chức, cá nhân không có nghĩa vụ trả nợ (Thông tư 18/2019/TT-NHNN sửa đổi Thông tư 43/2016/TT-NHNN). Người thân, đồng nghiệp hay người quản lý của khách hàng đều thuộc nhóm này, trừ khi họ là người bảo lãnh. Luật Bảo vệ dữ liệu cá nhân 91/2025/QH15, có hiệu lực từ 1/1/2026, cấm mua bán dữ liệu cá nhân, nên việc mua thông tin liên lạc của khách hàng từ bên thứ ba không còn là vùng xám.
+
+### DPD 60-90: gần ngưỡng pháp lý
+
+**Chuẩn bị cho khả năng khởi kiện:**
 
 ```text
-Khách hàng đổi số điện thoại, không trả lời
-Collections team cần tìm contact mới:
+Hồ sơ cần chuẩn bị:
+  1. Toàn bộ lịch sử giao dịch (từ LAS)
+  2. Nhật ký mọi lần liên hệ (từ hệ thống collections)
+  3. Các thỏa thuận thanh toán đã có
+  4. Bằng chứng khoản nợ (hợp đồng đã ký, từ DMS)
+  5. Mọi trao đổi liên quan đến khó khăn tài chính của khách
 
-Ethical skip tracing:
-  ✅ Check updated contact info in application (nếu customer updated)
-  ✅ Email attempts (customer may respond to email not calls)
-  ✅ LinkedIn profile research (public info)
-  ✅ Credit bureau contact update (if bureau has newer info)
-
-Unethical / illegal:
-  ❌ Contacting family/friends without customer permission
-  ❌ Social media pressure campaigns
-  ❌ Contacting customer's employer directly (in most jurisdictions)
-  ❌ Purchasing third-party data that customer didn't consent to share
-```
-
-### DPD 60-90: Gần ngưỡng Legal
-
-**Khi chuẩn bị cho khả năng legal action:**
-
-```text
-Documentation preparation:
-  1. Complete transaction history (từ LAS)
-  2. All communications log (từ Collections system)
-  3. Payment arrangement records
-  4. Proof of debt (signed contract từ DMS)
-  5. Any hardship communications
-
-Kết hợp với Pre-legal notice:
+Kèm theo là thông báo trước khi xử lý pháp lý:
   "Kính gửi [khách hàng],
    Tài khoản của bạn hiện đang nợ X VNĐ, quá hạn 65 ngày.
-   Chúng tôi muốn giúp bạn giải quyết vấn đề này trước khi
-   chuyển sang xử lý pháp lý. Vui lòng liên hệ trong 15 ngày.
-   
+   Chúng tôi muốn cùng bạn giải quyết trước khi chuyển sang
+   xử lý pháp lý. Vui lòng liên hệ trong vòng 15 ngày.
+
    Các lựa chọn của bạn:
    1. Thanh toán toàn bộ
    2. Thỏa thuận trả theo đợt
-   3. Tham vấn về restructuring"
+   3. Trao đổi về phương án tái cơ cấu"
 ```
 
-**Tại sao pre-legal notice quan trọng:**
+**Vì sao thông báo trước khi khởi kiện quan trọng:**
 
 ```text
-Business reason: Legal action rất tốn kém
-  Filing fee: 3-5% debt amount
-  Legal fees: 5-15% of collected amount
-  Time: 6-18 tháng quy trình pháp lý
+Lý do kinh tế: khởi kiện rất tốn kém (số liệu minh họa)
+  Án phí và chi phí tố tụng: vài phần trăm giá trị tranh chấp
+  Chi phí luật sư, thi hành án: 5-15% số tiền thu được
+  Thời gian: 6-18 tháng
 
-Net after legal: thường chỉ collect 40-60% of outstanding
-→ Pre-legal cure rate 10%: vẫn better ROI than legal
+Sau khi trừ chi phí: thường chỉ thu được 40-60% dư nợ
+→ Chỉ cần 10% khách hàng cure nhờ thông báo, ROI đã tốt hơn khởi kiện
 
-CLV reason: Legal action = relationship ended permanently
-  Legal action + win: customer never comes back
-  Legal action + lose: worse than never
-  
-  Pre-legal notice: một số khách hàng sẽ trả → saved
+Lý do CLV: khởi kiện là chấm dứt quan hệ vĩnh viễn
+  Kiện và thắng: khách hàng không bao giờ quay lại
+  Kiện và thua: tệ hơn không kiện
+
+  Thông báo trước: một số khách hàng sẽ trả, quan hệ được giữ lại
 ```
 
-### DPD 90+: Debt Sale vs Retain
+### DPD 90+: bán nợ hay giữ lại
 
 ::::story
-Portfolio của bà Hương có 2,000 accounts DPD 90+, tổng outstanding 80 tỷ VNĐ. Hai options:
+Portfolio của bà Hương có 2,000 tài khoản DPD 90+, tổng dư nợ 80 tỷ VNĐ. Có hai lựa chọn.
 ::::
 
-**Option A: Retain và tiếp tục collections**
+**Lựa chọn A: giữ lại và tiếp tục thu hồi**
 
 ```text
-Cost estimate:
-  Legal collections team: 3% outstanding/năm = 2.4 tỷ/năm
-  Recovery rate (DPD 90+ internal): ~25% over 2 years
-  Recovery amount: 80 tỷ × 25% = 20 tỷ VNĐ
-  Net after costs: 20 - (2.4 × 2) = 15.2 tỷ VNĐ
-  Collection period: 2+ years
+Ước tính:
+  Chi phí đội thu hồi pháp lý: 3% dư nợ/năm = 2.4 tỷ/năm
+  Tỷ lệ thu hồi nội bộ (DPD 90+): khoảng 25% trong 2 năm
+  Số tiền thu hồi: 80 tỷ × 25% = 20 tỷ VNĐ
+  Ròng sau chi phí: 20 − (2.4 × 2) = 15.2 tỷ VNĐ
+  Thời gian thu hồi: từ 2 năm trở lên
 ```
 
-**Option B: Sell to debt buyer**
+**Lựa chọn B: bán cho bên mua nợ**
 
 ```text
-Debt buyer offer: 15 cents on the dollar
-  Sale price: 80 tỷ × 15% = 12 tỷ VNĐ
-  Timing: immediate
-  Cost: minimal (due diligence + transfer)
-  Net: 12 tỷ VNĐ immediate
+Giá chào mua: 15% giá trị danh nghĩa
+  Giá bán: 80 tỷ × 15% = 12 tỷ VNĐ
+  Thời điểm: nhận ngay
+  Chi phí: thấp (thẩm định + chuyển giao)
+  Ròng: 12 tỷ VNĐ ngay lập tức
 
-Comparison:
-  Option A: 15.2 tỷ VNĐ over 2 years
-  Option B: 12 tỷ VNĐ immediate
+So sánh danh nghĩa:
+  A: 15.2 tỷ VNĐ trong 2 năm
+  B: 12 tỷ VNĐ ngay
 
-NPV comparison (discount rate 12%/năm):
-  Option A PV = 15.2 / 1.12^1.5 = 13.4 tỷ (assuming average 1.5 years)
-  Option B PV = 12 tỷ immediate
+So sánh theo giá trị hiện tại (lãi chiết khấu 12%/năm):
+  A: PV = 15.2 / 1.12^1.5 ≈ 12.82 tỷ (giả định dòng tiền bình quân sau 1.5 năm)
+  B: PV = 12 tỷ
 
-Decision: Option A slightly better (13.4 vs 12), but:
-  + Option A: operational burden, legal risk, brand risk
-  + Option B: clean slate, focus on live portfolio
+Kết luận: A nhỉnh hơn khoảng 0.8 tỷ, nhưng:
+  + A: gánh nặng vận hành, rủi ro pháp lý, rủi ro thương hiệu
+  + B: làm sạch sổ sách, tập trung nguồn lực cho portfolio đang sống
 ```
 
-**Debt sale considerations:**
+Chênh lệch 0.8 tỷ trên 80 tỷ dư nợ chỉ khoảng 1%, nhỏ hơn sai số của chính giả định "thu hồi 25% trong 2 năm". Khi hai lựa chọn gần nhau đến vậy, các yếu tố phi tài chính thường là thứ quyết định.
+
+**Các yêu cầu khi bán nợ:**
 
 ```text
-Regulatory requirements:
-  1. Customer must be notified of sale
-  2. Debt buyer must be licensed
-  3. Debt buyer must follow same fair collection standards
-  4. Customer rights (dispute, payment terms) transfer with debt
+Yêu cầu pháp lý:
+  1. Thông báo cho khách hàng về việc chuyển giao khoản nợ
+  2. Bên mua nợ phải là tổ chức đủ điều kiện theo quy định về mua bán nợ
+  3. Bên mua phải tuân thủ cùng các chuẩn mực thu hồi nợ công bằng
+  4. Quyền của khách hàng (khiếu nại, điều khoản thanh toán) đi theo khoản nợ
 
-System impact:
-  Account in LAS: status → WRITTEN_OFF (sau khi sold)
-  But records maintained for audit trail
-  Debt buyer gets: account data, transaction history, communication log
-  LAS: flags account so customer won't receive new origination offers
-      (some lenders do allow after rehabilitation period)
+Tác động hệ thống:
+  Tài khoản trong LAS: status → WRITTEN_OFF (sau khi bán)
+  Dữ liệu vẫn được lưu để phục vụ kiểm toán
+  Bên mua nhận: dữ liệu tài khoản, lịch sử giao dịch, nhật ký liên hệ
+  LAS gắn cờ để khách hàng không nhận đề nghị vay mới
+      (một số bên cho vay cho phép lại sau thời gian phục hồi)
 ```
 
-:::summary[Late-Stage Collections]
-DPD 30-60: intensive contact, skip tracing
-ethical boundaries strict
-DPD 60-90: pre-legal notice, documentation prep
-→ tạo cơ hội cure trước legal
-DPD 90+: debt sale decision based on NPV
-retain vs sell = economics + operational burden
-Debt sale: regulatory requirements, system
-cleanup, customer notification
+Ở Việt Nam còn một lưu ý: từ 1/1/2021, Luật Đầu tư 2020 đưa kinh doanh dịch vụ đòi nợ vào danh mục cấm. Bên cho vay vẫn tự thu hồi nợ của mình, và vẫn có thể bán khoản nợ theo quy định về mua bán nợ, nhưng không thể thuê một "công ty đòi nợ" làm thay.
+
+:::summary[Mục 10.3]
+Ở DPD 30-60, liên hệ dày hơn và có thể cần skip tracing, nhưng không được liên hệ người không có nghĩa vụ trả nợ và không được mua dữ liệu cá nhân. Ở DPD 60-90, hồ sơ pháp lý được chuẩn bị song song với một thông báo cho khách hàng cơ hội cure cuối cùng. Ở DPD 90+, quyết định giữ hay bán nợ dựa trên giá trị hiện tại của từng lựa chọn, cộng với gánh nặng vận hành và rủi ro thương hiệu.
 :::
 
-## 10.4 DRG Module: Debt Register Architecture
+## 10.4 DRG module: kiến trúc Debt Register
 
-### Tại sao tách khỏi LAS
+### Vì sao tách khỏi LAS
 
 ::::story
-Kỹ sư Tuấn hỏi: "Tại sao cần DRG module riêng? LAS đã có đủ data về delinquency rồi. Không phải đang duplicate data sao?"
+Kỹ sư Tuấn hỏi: "Sao phải có DRG module riêng? LAS đã có đủ dữ liệu quá hạn rồi. Như vậy không phải là trùng lặp dữ liệu sao?"
 ::::
 
-**Lý do 1: Separation of concerns - operational vs analytical**
+Có ba lý do.
 
-```text
-LAS job: Process transactions in real-time
-  → Tối ưu cho: write-heavy, transactional, ACID
-  → Schema: normalized, optimized for updates
+**Thứ nhất, hai bên tối ưu cho hai việc khác nhau.** LAS xử lý giao dịch theo thời gian thực: ghi nhiều, cần ACID, schema chuẩn hóa để cập nhật nhanh. DRG theo dõi tình trạng nợ theo thời gian và cung cấp dữ liệu cho collections: đọc nhiều, cần lịch sử, schema phi chuẩn hóa để truy vấn nhanh. Gộp lại thì các cập nhật thời gian thực của LAS phải tranh tài nguyên với các truy vấn phân tích của DRG, và schema phải thỏa hiệp đến mức không tối ưu cho bên nào.
 
-DRG job: Track delinquency over time, drive collections workflow
-  → Tối ưu cho: read-heavy, analytical, historical
-  → Schema: denormalized, optimized for queries
+**Thứ hai, vòng đời khác nhau.** Dữ liệu tài khoản trong LAS sống cùng tài khoản, cộng thời gian lưu trữ phục vụ kiểm toán. Dữ liệu nợ trong DRG phải sống lâu hơn, kể cả sau khi tài khoản đóng, để phục vụ báo cáo tín dụng, pháp lý và thu hồi. Sau write-off, tài khoản trong LAS gần như đóng băng ở trạng thái `WRITTEN_OFF`, còn DRG vẫn tiếp tục theo dõi các khoản thu hồi.
 
-If merged:
-  LAS's real-time updates compete with DRG's analytical queries
-  → Performance degradation for both
-  → Schema compromise neither is optimal
-```
+**Thứ ba, kiểu truy cập khác nhau.** LAS nhận các lời gọi REST từ LOS, BFF và các trigger collections: truy vấn từng tài khoản, tần suất cao. DRG phục vụ truy vấn theo lô cho portfolio collections, tính roll rate, tính dự phòng IFRS 9 và báo cáo cơ quan quản lý: truy vấn tổng hợp, tần suất vừa phải nhưng phức tạp. Vì vậy hai bên có thể chọn công nghệ lưu trữ khác nhau: LAS dùng PostgreSQL cho giao dịch, DRG có thể bổ sung kho dạng cột cho phân tích.
 
-**Lý do 2: Different lifecycle**
-
-```text
-LAS: Account data lives as long as account exists + 7 years audit
-DRG: Collections data lives longer — even after account closed
-    (for credit bureau reporting, legal, recovery)
-
-After write-off:
-  LAS: Account status = WRITTEN_OFF, mostly frozen
-  DRG: Still actively tracking recovery payments, legal status
-      → DRG has independent lifecycle
-```
-
-**Lý do 3: Different access patterns**
-
-```text
-LAS: REST API calls from LOS, BFF, collection triggers
-    → Individual account queries, high frequency
-
-DRG: Batch queries for collections portfolio, roll rate calculation,
-    IFRS 9 provision calculation, regulatory reporting
-    → Aggregate queries, moderate frequency but complex
-
-Different technology choices possible:
-  LAS: PostgreSQL (transactional)
-  DRG: PostgreSQL + columnar store possibility (analytical)
-```
-
-### Event-Driven Sync từ LAS
-
-**Sync mechanism thực tế:**
+### Đồng bộ từ LAS theo sự kiện
 
 ```text
 LAS → Kafka (CloudEvents, Avro) → DRG
 
-Event DRG subscribes to:
+Sự kiện DRG subscribe:
   transaction.confirmed (từ LAS):
-    → DRG nhận via Kafka (transaction.confirmed topic, Avro)
-    → DebtRegisterServiceFacade recalculates full debt state
-    → Creates new DebtRegister record (SCD Type 2)
+    → DRG nhận qua Kafka (topic transaction.confirmed, Avro)
+    → DebtRegisterServiceFacade tính lại toàn bộ trạng thái nợ
+    → Tạo bản ghi DebtRegister mới (SCD Type 2)
 
-DRG → Kafka (CloudEvents) → LAS, SRT, others:
+DRG → Kafka (CloudEvents) → LAS, SRT và các hệ thống khác:
   debt.events:
-    → Khi DPD crosses thresholds
-    → LAS subscribes: nhận signal → mark account WRITTEN_OFF nếu cần
+    → Khi DPD vượt các ngưỡng
+    → LAS subscribe: nhận tín hiệu để xử lý tiếp (ví dụ write-off)
 
-DRG ↔ CTM: REST call (lookup contract data)
+DRG ↔ CTM: gọi REST (tra cứu dữ liệu hợp đồng)
 
-Architecture:
-  LAS ──(transaction.confirmed)──→ DRG ──(debt.events)──→ LAS, SRT, others
+Kiến trúc:
+  LAS ──(transaction.confirmed)──→ DRG ──(debt.events)──→ LAS, SRT, ...
                                     ↑
                                 CTM (REST)
 ```
 
-**DRG core entity - DebtRegister (SCD Type 2):**
+**Thực thể trung tâm của DRG: DebtRegister theo SCD Type 2**
 
-> Đây là điểm quan trọng để hiểu DRG: thay vì update một row per account, DRG tạo **bản ghi lịch sử mới** mỗi khi có thay đổi - Slowly Changing Dimension Type 2. Mỗi DebtRegister record có `validFrom`/`validTo` - biết được debt state của account tại bất kỳ thời điểm nào trong quá khứ.
+Đây là điểm mấu chốt để hiểu DRG. Thay vì cập nhật một dòng cho mỗi tài khoản, DRG tạo một **bản ghi lịch sử mới** mỗi khi trạng thái nợ thay đổi, theo mô hình Slowly Changing Dimension Type 2. Mỗi bản ghi DebtRegister có `validFrom` và `validTo`, nên có thể biết trạng thái nợ của một tài khoản tại bất kỳ thời điểm nào trong quá khứ.
 
 ```text
 Table: V_DEBT_CATALOGUE (view trên base table)
@@ -568,751 +492,615 @@ DPD & Timing:
   dateOfFirstPayment, dateOfLatestPayment, latestPaymentAmount
 ```
 
-**Tại sao SCD Type 2:**
+**Vì sao SCD Type 2:**
 
 ```text
-Scenario: Account DPD tăng từ 0 → 5 → 10 → 15
+Tình huống: DPD của một tài khoản tăng từ 0 → 5 → 10 → 15
 
-Single-row-per-account:
-  UPDATE drg_account SET dpd=5 ... (mất history)
-  UPDATE drg_account SET dpd=10 ... (mất history)
-  UPDATE drg_account SET dpd=15 ... (mất history)
-  
-  Câu hỏi "DPD của account này ngày 15/3 là bao nhiêu?" → không trả lời được
+Một dòng cho mỗi tài khoản:
+  UPDATE drg_account SET dpd=5 ...  (mất lịch sử)
+  UPDATE drg_account SET dpd=10 ... (mất lịch sử)
+  UPDATE drg_account SET dpd=15 ... (mất lịch sử)
+
+  Câu hỏi "DPD của tài khoản này ngày 15/3 là bao nhiêu?" → không trả lời được
 
 SCD Type 2:
-  INSERT record (validFrom=10/3, validTo=14/3, dpd=5, prevId=null)
-  INSERT record (validFrom=15/3, validTo=19/3, dpd=10, prevId=previous)
-  INSERT record (validFrom=20/3, validTo=UNREACHABLE_DATE, dpd=15, prevId=previous)
-  
-  Query: "DPD ngày 15/3?" → SELECT WHERE validFrom<=15/3 AND validTo>=15/3 → 10
-  → Full audit history, no data loss
+  INSERT (validFrom=10/3, validTo=14/3, dpd=5, prevId=null)
+  INSERT (validFrom=15/3, validTo=19/3, dpd=10, prevId=bản ghi trước)
+  INSERT (validFrom=20/3, validTo=UNREACHABLE_DATE, dpd=15, prevId=bản ghi trước)
+
+  "DPD ngày 15/3?" → SELECT WHERE validFrom <= 15/3 AND validTo >= 15/3 → 10
+  → Đầy đủ lịch sử, không mất dữ liệu
 ```
 
-**DebtRegisterStatistics - Max historical:**
+**DebtRegisterStatistics: giá trị lớn nhất trong lịch sử**
 
 ```text
-Linked to DebtRegister, tracks all-time maximums:
-  maxHistoricalDPD         → Highest DPD ever (never decreases)
-  maxHistoricalOverdueDebt → Highest overdue amount ever
+Gắn với DebtRegister, lưu các giá trị lớn nhất từ trước đến nay:
+  maxHistoricalDPD         → DPD cao nhất từng có (không bao giờ giảm)
+  maxHistoricalOverdueDebt → Số tiền quá hạn cao nhất từng có
 
-Use case: Credit risk underwriting, IFRS 9 staging
-  "Even if account is current today, if max historical DPD was 90+
-   → flag as higher risk for staging purposes"
+Ứng dụng: thẩm định rủi ro tín dụng, phân stage theo IFRS 9
+  "Kể cả khi hôm nay tài khoản đang current, nếu DPD cao nhất
+   từng là 90+ thì vẫn gắn cờ rủi ro cao hơn khi phân stage"
 ```
 
-**DRG tạo khi nào:**
+**DebtRegister đầu tiên được tạo khi nào:**
+
+DRG không tạo DebtRegister khi hợp đồng được ký. Bản ghi đầu tiên chỉ xuất hiện khi một giao dịch làm phát sinh kỳ trả nợ quá hạn, tức lần đầu DPD lớn hơn 0. Với những tài khoản luôn trả đúng hạn, không có DebtRegister nào. DRG thực sự là hệ thống tập trung vào khoản nợ, không phải vào tài khoản.
+
+### Tần suất cập nhật DRG: hai cơ chế song song
+
+DRG không chỉ cập nhật khi có sự kiện từ LAS. Nó còn có một job chạy theo lịch:
 
 ```text
-NOT khi contract created.
-DRG creates first DebtRegister ONLY when:
-  first transaction causes overdue instalment (first DPD > 0)
-  
-For accounts that always pay on time: no DebtRegister exists
-→ DRG is truly debt-focused, not account-focused
-```
+Cơ chế 1: theo sự kiện (mỗi giao dịch)
+  LAS xác nhận giao dịch → publish transaction.confirmed
+  → DRG nhận → DebtRegisterServiceFacade tính lại
+  → Đóng bản ghi DebtRegister cũ (validTo = now)
+  → Tạo bản ghi DebtRegister mới (validFrom = now)
+  Độ trễ: từ mili giây đến vài giây
 
-### DRG Update Frequency: Dual Model
-
-**Quan trọng:** DRG không chỉ update khi có event từ LAS - có cả scheduled job:
-
-```text
-Model 1: Event-driven (mỗi transaction)
-  LAS confirms transaction → publishes transaction.confirmed
-  → DRG nhận via AMQP → DebtRegisterServiceFacade recalculates
-  → Archives previous DebtRegister (validTo = now)
-  → Creates new DebtRegister (validFrom = now)
-  Latency: milliseconds to seconds
-
-Model 2: Scheduled DPD recalculation (daily cron)
+Cơ chế 2: tính lại DPD theo lịch (cron hằng ngày)
   OverdueDebtJobLauncher (@Scheduled cron)
-  → Ensures DPD increments daily even without new LAS events
-  → Updates daysPastDue for all overdue accounts
+  → Bảo đảm DPD tăng mỗi ngày kể cả khi LAS không có sự kiện mới
+  → Cập nhật daysPastDue cho mọi tài khoản đang quá hạn
 
-Implication: Account với ZERO activity nhưng overdue
-  → Event-driven updates: none
-  → Cron job: DPD increases daily
-  → DebtRegister updated once/day by cron
+Hệ quả với tài khoản quá hạn nhưng không có giao dịch nào:
+  → Cơ chế 1: không cập nhật gì
+  → Cơ chế 2: DPD tăng mỗi ngày
+  → DebtRegister được cập nhật một lần mỗi ngày bởi cron
 ```
 
-### Collections Workflow: Managed Externally
+Nếu chỉ có cơ chế thứ nhất, một khách hàng ngừng trả hoàn toàn sẽ đứng yên ở DPD của lần giao dịch cuối cùng mãi mãi, đúng loại tài khoản mà collections cần thấy nhất.
 
-**Quan trọng:** DRG **không có** collections workflow engine. DRG chỉ là data catalog.
+### Collections workflow nằm ngoài VLP
 
-```text
-DRG scope (what DRG actually does):
-  ✓ DebtRegister calculation và SCD Type 2 storage
-  ✓ DPD tracking (event-driven + daily cron)
-  ✓ Publishing debt.events đến Kafka
-  ✓ Providing debt state via REST API
-  
-DRG does NOT have:
-  ✗ Collector assignments (không có collector_id field)
-  ✗ Collection call tracking (không có call history entities)
-  ✗ Promise-to-pay tracking
-  ✗ Escalation workflow (early → specialist → legal)
-  ✗ CRM integration
+DRG **không có** collections workflow engine. DRG là danh mục dữ liệu nợ: nó tính và lưu DebtRegister, theo dõi DPD, publish `debt.events` và cung cấp trạng thái nợ qua REST API. Những gì thuộc về nghiệp vụ collections hằng ngày nằm ở một hệ thống CRM/collections bên ngoài.
 
-Architecture of collections workflow:
-  DRG ──(debt.events, Kafka)──→ External CRM/Collections System
-                                ├── Collector assignments
-                                ├── Call history và outcomes
-                                ├── Promise-to-pay tracking
-                                └── Escalation workflows (DPD bucket rules)
-  
-Collections rules (contact frequency, hour restrictions, etc.) are
-enforced in the EXTERNAL CRM system, not in DRG or LAS.
-```
+| DRG làm | Hệ thống collections bên ngoài làm |
+|---|---|
+| Tính DebtRegister, lưu theo SCD Type 2 | Phân công collector |
+| Theo dõi DPD (theo sự kiện + cron hằng ngày) | Lịch sử cuộc gọi và kết quả |
+| Publish `debt.events` lên Kafka | Theo dõi cam kết thanh toán (promise-to-pay), thỏa thuận thanh toán |
+| Cung cấp trạng thái nợ qua REST API | Quy trình leo thang theo bucket (sớm → chuyên trách → pháp lý) |
+| | Áp dụng rule liên hệ: tần suất, khung giờ, kênh |
 
-**Tuy nhiên - business rules vẫn như đã mô tả:**
+Các nguyên tắc về DPD bucket, tần suất liên hệ, ranh giới đạo đức và hardship trong chương này đều là nghiệp vụ thật. Chúng được thực thi ở hệ thống bên ngoài, không phải trong DRG hay LAS. Với người đọc muốn hiểu nghiệp vụ, điều đó không thay đổi gì. Với kỹ sư, nó xác định rõ trách nhiệm: nếu khách hàng bị gọi lúc 22 giờ, lỗi nằm ở rule engine của hệ thống collections, còn nếu khách hàng bị gọi khi đã trả đủ, cần kiểm tra DRG có nhận được `transaction.confirmed` hay không.
 
-Các nguyên tắc về DPD buckets, contact frequency, ethical guidelines, hardship escalation - tất cả vẫn đúng về mặt business. Chúng được implement trong hệ thống CRM bên ngoài, không phải trong DRG module. Từ góc độ người đọc cần hiểu nghiệp vụ, không có gì thay đổi - chỉ là implementation detail khác.
-
-:::summary[DRG Module Architecture]
-DRG = data catalog, NOT workflow engine
-DebtRegister: SCD Type 2, per-transaction +
-daily DPD cron
-Collections workflow: external CRM system
-DRG cung cấp data, external system drives action
-DPD thresholds: configurable parameters (không
-hardcoded), passed via API
+:::summary[Mục 10.4]
+DRG tách khỏi LAS vì khác nhau về kiểu tối ưu, vòng đời dữ liệu và kiểu truy cập. DRG lưu trạng thái nợ theo SCD Type 2 để trả lời được câu hỏi "tại thời điểm X, khoản nợ thế nào", được cập nhật theo từng giao dịch và bởi một cron hằng ngày để DPD luôn tăng đúng. DRG cung cấp dữ liệu; hệ thống collections bên ngoài quyết định hành động.
 :::
 
-## 10.5 Hardship Programs
+## 10.5 Hardship program
 
 ### Khi khách hàng thực sự không thể trả
 
 ::::story
-Anh Hùng mất việc tháng 4 (đã nhắc đến ở phần 10.2). DPD 25. Collections agent biết tình huống này.
+Anh Hùng mất việc từ tháng 4 (mục 10.2). Hai đợt trả theo thỏa thuận đã không thực hiện được, tài khoản đã ở DPD 25 và nhân viên collections biết rõ hoàn cảnh của anh.
 
-Công ty có hai cách xử lý:
+Công ty có hai cách xử lý.
 ::::
 
-**Cách 1 (short-sighted):** Tiếp tục collections aggressive, ép anh trả
-→ Anh có thể bán đồ đạc để trả, hoặc vay chỗ khác để trả
-→ Relationship destroyed, never comes back
+Cách thứ nhất là tiếp tục thúc ép. Anh Hùng có thể bán đồ đạc hoặc vay chỗ khác để trả, hoặc không trả được và đi đến vỡ nợ. Dù kết quả nào, quan hệ cũng chấm dứt.
 
-**Cách 2 (CLV-optimized):** Offer hardship program
-→ Nếu anh tìm được việc trong 3 tháng → có thể resume payment
-→ CLV preserved
+Cách thứ hai là đề nghị một hardship program. Nếu anh tìm được việc trong vài tháng, anh có thể trả tiếp, và khách hàng được giữ lại.
 
-### Payment Holiday Mechanics
-
-**Khái niệm:**
+### Payment holiday
 
 :::key
-**Payment holiday** *(hoãn thanh toán)* là chính sách cho phép khách hàng không thanh toán trong một kỳ (thường 1-3 tháng) mà không bị tính phí phạt - nhưng lãi suất vẫn tiếp tục tích lũy.
+**Payment holiday** *(hoãn thanh toán)* cho phép khách hàng không phải thanh toán trong một số kỳ (thường 1-3 tháng) mà không bị tính phí trễ hạn. Lãi có thể vẫn tiếp tục tích lũy, tùy chính sách của sản phẩm.
 :::
 
-**Business rationale:**
+**Tính kinh tế của payment holiday** (số liệu minh họa, từ góc nhìn của Vela Finance):
 
 ```text
-Cost-benefit của payment holiday:
+Giả định:
+  Dư nợ của anh Hùng: 15,000,000 VNĐ, lãi suất 18%/năm, LGD 62%
+  Nếu không hoãn: khoản vay đi đến write-off
+  Lãi tích lũy trong 3 tháng hoãn: 15,000,000 × 1.5% × 3 = 675,000 VNĐ
+  Chi phí quản lý chương trình hoãn: 200,000 VNĐ
 
-Không có payment holiday:
-  Anh Hùng DPD 25 → 60 → 90 → write-off
-  Loss: 15,000,000 × 62% LGD = 9,300,000 VNĐ
-  Collections cost: 1,000,000 VNĐ
-  Total cost: 10,300,000 VNĐ
+Không hoãn thanh toán:
+  DPD 25 → 60 → 90 → write-off
+  Tổn thất: 15,000,000 × 62% = 9,300,000 VNĐ
+  Chi phí collections: 1,000,000 VNĐ
+  Tổng chi phí: 10,300,000 VNĐ
 
-Với payment holiday (3 tháng):
-  Scenario A (favorable): Anh tìm được việc sau 2 tháng
-    → Resume payment, cure fully
-    → Interest accrued (3 months): 450,000 VNĐ additional
-    → Total cost: 450,000 VNĐ
-  
-  Scenario B (unfavorable): Không tìm được việc
-    → DPD continues after holiday
-    → Collections same as without holiday, but 3 months delayed
-    → Additional interest: 450,000 VNĐ
-    → Total cost: 10,300,000 + 450,000 = 10,750,000 VNĐ
+Hoãn thanh toán 3 tháng:
+  Kịch bản A (thuận lợi): anh Hùng có việc lại
+    → Trả tiếp, trả cả phần lãi tích lũy
+    → Chi phí: 200,000 VNĐ (chỉ chi phí quản lý)
 
-If P(favorable) = 40%:
-  Expected cost without holiday: 10,300,000
-  Expected cost with holiday: 0.4 × 450,000 + 0.6 × 10,750,000
-                             = 180,000 + 6,450,000 = 6,630,000
+  Kịch bản B (không thuận lợi): không có việc lại
+    → Quá hạn tiếp sau khi hết hoãn, collections như cũ nhưng trễ 3 tháng
+    → Dư nợ lúc vỡ nợ đã gồm cả lãi tích lũy: 15,675,000 VNĐ
+    → Tổn thất: 15,675,000 × 62% = 9,718,500 VNĐ
+    → Tổng chi phí: 200,000 + 9,718,500 + 1,000,000 = 10,918,500 VNĐ
 
-Holiday is better! Even with only 40% chance of cure.
+Nếu P(thuận lợi) = 40%:
+  Chi phí kỳ vọng khi không hoãn: 10,300,000
+  Chi phí kỳ vọng khi hoãn: 0.4 × 200,000 + 0.6 × 10,918,500
+                          = 80,000 + 6,551,100 = 6,631,100
+
+Điểm hòa vốn: hoãn có lợi khi P(thuận lợi) > khoảng 6%
 ```
 
-**System implementation - payment holiday:**
+Kết quả nghe có vẻ ngược trực giác: chỉ cần khoảng một trong mười bảy khách hàng như anh Hùng phục hồi, chương trình đã có lãi. Lý do là kịch bản B gần như không làm tình hình tệ hơn so với việc không hoãn, chỉ thêm chi phí quản lý và phần tổn thất trên lãi tích lũy. Kịch bản A thì tiết kiệm gần như toàn bộ khoản tổn thất. Lưu ý rằng lãi tích lũy không phải là chi phí của bên cho vay: trong kịch bản A, khách hàng trả cả phần lãi đó.
+
+**Cài đặt payment holiday trong hệ thống:**
 
 ```text
-Ai khởi tạo? External API caller (Operations team qua UI/BFF).
-DRG và LAS không self-initiate — đây là human decision được execute via API.
+Ai khởi tạo? Một bên gọi API từ bên ngoài (Operations team qua UI/BFF).
+DRG và LAS không tự khởi tạo: đây là quyết định của con người, được thực thi qua API.
 
-Flow:
-  API caller → RepaymentPauseManager.createRepaymentPauseRequest()  // verified: verify-code-examples.md
-    → RepaymentPauseService creates RepaymentPauseRequest entity
+Luồng:
+  API caller → RepaymentPauseManager.createRepaymentPauseRequest()
+    → RepaymentPauseService tạo thực thể RepaymentPauseRequest
     → EventReplayManager.reprocessOnwardEvents(..., PAYMENT_HOLIDAY)
-    → Instalment due dates SHIFTED FORWARD
+    → Ngày đến hạn của các kỳ trả nợ được DỜI VỀ SAU
 
-RepaymentPauseRequest entity (LAS_REPAYMENT_PAUSE_REQUEST):
+RepaymentPauseRequest (LAS_REPAYMENT_PAUSE_REQUEST):
   account → Account
   deferredPeriodsNumber: N tháng (ví dụ: 3)
-  firstDeferredDueDate: ngày đầu tiên bị hoãn
+  firstDeferredDueDate: ngày đến hạn đầu tiên bị hoãn
   expectedLastDeferredDueDate: ngày kết thúc hoãn
-  billingPeriodNumberFrom: BP number bắt đầu hoãn
-  payholAccountBlockage: có block account không
-  payholInterestWaiving: có waive interest không
-  payholIPInterestCharging: IP interest vẫn tính không
+  billingPeriodNumberFrom: số thứ tự kỳ billing bắt đầu hoãn
+  payholAccountBlockage: có khóa tài khoản không
+  payholInterestWaiving: có miễn lãi không
+  payholIPInterestCharging: lãi của instalment plan có tiếp tục tính không
   status: PENDING → RUNNING → EXPIRED | CANCELLED
-  Linked to: RELPAYHOL contract service (validates eligibility)
+  Gắn với contract service RELPAYHOL (kiểm tra điều kiện được hoãn)
 
-EOM behavior DURING holiday:
-  Active check: currentBP >= billingPeriodFrom AND < billingPeriodFrom + deferredPeriods
-  If active:
-    Instalment due dates: SHIFTED FORWARD by deferral months
-    DPD: calculated from NEW deferred due date (not original)
-    Interest: depends on payholInterestWaiving flag (can be waived or accrued)
-    Late fees: typically WAIVED
+Hành vi của EOM trong thời gian hoãn:
+  Điều kiện: currentBP >= billingPeriodFrom AND < billingPeriodFrom + deferredPeriods
+  Nếu đang hoãn:
+    Ngày đến hạn: dời về sau đúng số tháng hoãn
+    DPD: tính từ ngày đến hạn MỚI (không phải ngày gốc)
+    Lãi: tùy cờ payholInterestWaiving (miễn hoặc tiếp tục tích lũy)
+    Phí trễ hạn: thường được miễn
 
-After holiday ends:
-  Deferred instalments DUE on new date (original + deferral months)
-  NO backdated charges — amounts calculated at request time
-  DPD starts from new due date
+Sau khi hết hoãn:
+  Các kỳ bị hoãn đến hạn vào ngày mới (ngày gốc + số tháng hoãn)
+  Không tính hồi tố: số tiền đã được xác định tại thời điểm tạo yêu cầu
+  DPD tính từ ngày đến hạn mới
 
-Note về restructure (tenor extension / rate change):
-  KHÔNG dùng RepaymentPause — đó chỉ là payment deferral
-  Restructure = new InstalmentPlan created (LPS REST call)
-  → External API → LAS InstalmentPlanCreationService → LPS → new plan
+Phân biệt với tái cơ cấu (kéo dài kỳ hạn, đổi lãi suất):
+  KHÔNG dùng RepaymentPause: đó chỉ là hoãn thanh toán
+  Tái cơ cấu = tạo InstalmentPlan mới (gọi REST sang LPS)
+  → API bên ngoài → LAS InstalmentPlanCreationService → LPS → kế hoạch mới
 ```
-  Monitoring: weekly check on customer's situation
 
-**Lãi suất trong payment holiday:**
+Sau khi kích hoạt, hệ thống collections bên ngoài vẫn nên theo dõi định kỳ tình hình của khách hàng trong thời gian hoãn, ví dụ mỗi tuần một lần.
 
-Câu hỏi phổ biến: "Không cần trả thì không phát sinh lãi sao?"
+**Lãi trong thời gian hoãn:**
 
-Không. Lãi vẫn tích lũy vì:
-  1. Vốn vẫn đang được anh Hùng sử dụng
-  2. Lender vẫn phải trả cost of funds
-  3. Lãi không tích lũy = lender subsidize khách hàng
-     → Không bền vững
+Câu hỏi thường gặp: "Không phải trả thì không phát sinh lãi chứ?" Không hẳn. Với chính sách tích lũy lãi, lãi vẫn chạy vì anh Hùng vẫn đang sử dụng khoản vốn, và Vela Finance vẫn phải trả chi phí vốn cho khoản tiền đó. Miễn lãi nghĩa là bên cho vay trợ cấp cho khách hàng. Đó là lựa chọn có thể làm có chủ đích (cờ `payholInterestWaiving` tồn tại cho trường hợp này), nhưng không thể là mặc định.
 
 ```text
-Regulatory requirement ở nhiều nước:
-  Phải clear disclosure trước khi agree to holiday:
+Yêu cầu công bố (ở nhiều nước, và là thực hành tốt ở mọi nơi):
+  Phải nói rõ trước khi khách đồng ý hoãn:
   "Lãi vẫn tích lũy trong thời gian hoãn.
-   Sau 3 tháng, bạn sẽ nợ thêm X VNĐ."
+   Sau 3 tháng, bạn sẽ nợ thêm 675,000 VNĐ."
 
-Behavioral consideration:
-  Khách hàng thường underestimate interest accrual
-  → Transparent disclosure reduces surprise và dispute sau này
+Yếu tố hành vi:
+  Khách hàng thường đánh giá thấp lãi tích lũy
+  → Công bố minh bạch giảm bất ngờ và tranh chấp về sau
 ```
 
-### Debt Restructuring: Thay đổi điều khoản hợp đồng
+### Tái cơ cấu nợ: thay đổi điều khoản hợp đồng
 
-**Khi payment holiday không đủ:**
+Payment holiday không đủ khi khó khăn kéo dài: anh Hùng tìm được việc nhưng lương thấp hơn trước 40%, khách hàng mất khả năng lao động lâu dài, hoặc người vay tự kinh doanh bị phá sản.
 
-Scenarios requiring restructuring:
-  - Anh Hùng tìm việc nhưng lương thấp hơn 40%
-  - Khách hàng có disability permanent
-  - Business failure (self-employed borrower)
-
-**Restructuring options:**
+**Các phương án tái cơ cấu:**
 
 ```text
-Option 1: Tenor extension
-  Original: 12,000,000 VNĐ remaining, 12 months, 1,200,000/month
-  Restructured: 12,000,000 VNĐ remaining, 24 months, 600,000/month
-  Trade-off: Lower monthly burden, more total interest for lender (good)
-             More time in portfolio, higher CLV potential (also good)
+Phương án 1: Kéo dài kỳ hạn
+  Hiện tại: dư nợ 12,000,000 VNĐ, còn 12 tháng, 18%/năm
+            → trả 1,100,160 VNĐ/tháng, tổng lãi còn lại 1,201,920
+  Tái cơ cấu: 12,000,000 VNĐ, 24 tháng, 18%/năm
+            → trả 599,089 VNĐ/tháng, tổng lãi 2,378,145
+  Đánh đổi: khoản trả hằng tháng giảm gần một nửa;
+            bên cho vay thu thêm lãi nhưng chịu rủi ro lâu hơn
 
-Option 2: Interest rate reduction (temporary)
-  Original: 18%/năm
-  Restructured: 10%/năm for 6 months, then back to 18%
-  Trade-off: Lower revenue short term, preserve relationship
+Phương án 2: Giảm lãi suất tạm thời
+  Hiện tại: 18%/năm
+  Tái cơ cấu: 10%/năm trong 6 tháng, sau đó trở lại 18%
+  Đánh đổi: giảm doanh thu ngắn hạn, giữ được quan hệ
 
-Option 3: Principal reduction (last resort)
-  Lender forgives portion of principal
-  Only when: NPV of restructured > NPV of write-off
-  Trade-off: Revenue loss, but better than nothing
+Phương án 3: Giảm gốc (giải pháp cuối cùng)
+  Bên cho vay xóa một phần gốc
+  Chỉ khi: NPV phương án tái cơ cấu > NPV của write-off
+  Đánh đổi: mất doanh thu, nhưng còn hơn mất cả
 
-Option 4: Balloon payment restructuring
-  Lower monthly payments now, larger final payment
-  Risk: final balloon may not be paid either
+Phương án 4: Dồn gốc cuối kỳ (balloon)
+  Trả ít hằng tháng, khoản trả cuối kỳ lớn
+  Rủi ro: khoản cuối có thể cũng không trả được
 ```
 
-**IFRS 9 implications của restructuring:**
+**Tác động IFRS 9 của tái cơ cấu:**
 
 ```text
-Before restructuring: Account might be Stage 2 (DPD 30+)
-After restructuring: MUST stay in Stage 2 for minimum 12 months
-  even if performing well on new terms
-  (Regulatory: "forbearance" flag — indicates heightened risk)
+Trước tái cơ cấu: tài khoản có thể đã ở Stage 2 (DPD 30+)
+Sau tái cơ cấu: tài khoản được gắn cờ forbearance
+  Nhiều cơ quan quản lý yêu cầu một thời gian thử thách
+  (ví dụ tối thiểu 12 tháng) trước khi được đưa về Stage 1,
+  kể cả khi khách hàng đang trả tốt theo điều khoản mới.
+  Chính sách của Vela Finance dùng mốc 12 tháng.
 
-Provisioning impact:
-  Stage 2: Lifetime ECL
-  Even if customer now paying on restructured terms:
-  → Provision stays high for 12 months → P&L impact
+Tác động dự phòng:
+  Stage 2: dự phòng ECL cho toàn bộ thời hạn
+  → Dự phòng giữ ở mức cao trong thời gian thử thách → ảnh hưởng P&L
 ```
-  
-This is the "IFRS 9 hardship cost" - transparent disclosure to investors
-that restructured loans require higher provisions even if performing
 
-## 10.6 Write-Off và Recovery
+Đây là "chi phí IFRS 9 của hardship": khoản vay đã tái cơ cấu đòi hỏi dự phòng cao hơn ngay cả khi đang được trả đều, và nhà đầu tư nhìn thấy điều đó trên báo cáo tài chính.
 
-### Write-Off Decision
+## 10.6 Write-off và thu hồi
 
-**Khi nào write-off:**
+### Quyết định write-off
 
-Standard policy (varies by company):
-  DPD 180 (6 months): Automatic write-off candidate
-  DPD 90-180: Case-by-case based on:
-    - Recovery prospects (collateral? guarantor? employment status?)
-    - Cost of continued collections vs expected recovery
-    - Regulatory guidance
+Chính sách write-off khác nhau giữa các công ty. Một chính sách điển hình: DPD 180 là ứng viên write-off tự động, còn trong khoảng DPD 90-180 thì xét từng trường hợp, dựa trên triển vọng thu hồi (có tài sản bảo đảm, người bảo lãnh, việc làm không), chi phí tiếp tục thu hồi so với số tiền kỳ vọng thu được, và hướng dẫn của cơ quan quản lý.
+
+Write-off không có nghĩa là tha nợ. Về kế toán, khoản vay được đưa ra khỏi bảng cân đối kế toán. Về pháp lý, nghĩa vụ trả nợ vẫn còn nguyên: khách hàng vẫn nợ, và bên cho vay vẫn tiếp tục thu hồi. Write-off chỉ có nghĩa là "không còn kỳ vọng được trả trong tương lai gần".
+
+**Hạch toán write-off:**
 
 ```text
-Write-off ≠ forgiveness:
-  Accounting write-off: remove from B/S (trên bảng cân đối kế toán)
-  Legal obligation: remains! Customer still owes the money
-  Continuing recovery: ongoing attempts to collect
-  Write-off just means: "không còn kỳ vọng được trả trong tương lai gần"
+Trước write-off (trên bảng cân đối):
+  Khoản vay: 10,000,000 VNĐ
+  Dự phòng: (6,200,000 VNĐ), tương ứng LGD 62%
+  Giá trị ghi sổ ròng: 3,800,000 VNĐ
+
+Bút toán write-off:
+  Nợ  Dự phòng                    6,200,000
+  Nợ  P&L (lỗ do write-off)       3,800,000
+  Có  Khoản vay                  10,000,000
+  → Khoản vay ra khỏi bảng cân đối
+  → P&L ghi nhận thêm 3,800,000 VNĐ (phần chưa được trích lập)
+
+Vì sao P&L không ghi nhận cả 10,000,000:
+  6,200,000 đã đi vào P&L khi trích lập dự phòng
+  Write-off chỉ hiện thực hóa tổn thất; dự phòng đã phản ánh nó từ trước
 ```
 
-**Accounting của write-off:**
+**Luồng write-off: DRG phát hiện, LAS thực thi**
+
+DRG không tự khởi tạo write-off. DRG phát hiện và phát tín hiệu, LAS thực thi.
 
 ```text
-Before write-off (on balance sheet):
-  Loan asset: 10,000,000 VNĐ
-  Provision: (6,200,000 VNĐ) — 62% LGD
-  Net book value: 3,800,000 VNĐ
+1. DRG theo dõi DPD. Khi DPD >= writeOffThreshold (cấu hình được, ví dụ 90):
+     DRG cung cấp: getDebtRegisterDPDByThresholds(writeOffThreshold=90)
+     DRG publish: debt.events (Kafka CloudEvents)
 
-Write-off decision:
-  Dr. Provision 6,200,000
-  Dr. P&L (Loss on write-off) 3,800,000
-  Cr. Loan asset 10,000,000
-  → Loan removed from B/S
-  → P&L hit: 3,800,000 VNĐ (the unprovision portion)
-
-Why P&L hit isn't 10M:
-  The 6.2M was already charged to P&L when provision was created
-  Write-off just "realizes" the loss, provision was forward-looking
-```
-
-**Write-off flow - DRG's role là detector, LAS là executor:**
-
-Important: DRG does NOT initiate write-off.
-DRG detects and signals; LAS executes.
-
-```text
-Flow:
-  1. DRG tracks DPD. When DPD >= writeOffThreshold (configurable, e.g. 90):
-     DRG provides: getDebtRegisterDPDByThresholds(writeOffThreshold=90)
-     DRG publishes: debt.events (Kafka CloudEvents)
-```
-  
-  2. Write-off trigger mechanism:
-     *(verified: ch10-dc-corrections.md - write-off trigger NOT found in code,
-     likely a manual/operational process or external signal)*
+2. Kích hoạt write-off:
+     Do quy trình vận hành quyết định dựa trên tín hiệu từ DRG
      Account.status: ACTIVE → WRITTEN_OFF
-  
-  3. After WRITTEN_OFF:
-     LAS stops interest accrual and billing charges (no new fees/interest)
-     Payment transactions: STILL ACCEPTED (off-balance-sheet recovery)
-     Outstanding AccountItems: remain as-is (not cancelled)
-     Transaction history: preserved for audit
-     
-  4. Collections may continue off-balance-sheet:
-     External system or DRG tracks recovery attempts
-     Regulatory: WRITTEN_OFF reported to CIC bureau
 
-```text
-Configurable threshold:
-  writeOffThreshold: passed as API parameter to DRG
-  (not hardcoded — allows different rules per product/segment)
-  Typical: DPD 90 for consumer unsecured, DPD 180 for secured
+3. Sau khi WRITTEN_OFF:
+     LAS ngừng tích lũy lãi và tính phí theo kỳ (không phát sinh lãi, phí mới)
+     Giao dịch thanh toán: VẪN ĐƯỢC CHẤP NHẬN (thu hồi ngoại bảng)
+     Các LedgerEntry còn dư nợ: giữ nguyên (không bị hủy)
+     Lịch sử giao dịch: được lưu để kiểm toán
+
+4. Thu hồi ngoại bảng tiếp tục:
+     Hệ thống bên ngoài hoặc DRG theo dõi các nỗ lực thu hồi
+     Báo cáo trạng thái WRITTEN_OFF lên CIC
 ```
 
-### Post Write-Off Recovery
-
-**Recovery pipeline:**
-
 ```text
-Internal recovery (first 12 months post write-off):
-  Collections team continues outreach
-  Settlement offers: "We will accept 40% to settle your account"
-  → Some customers will settle for cents on the dollar
-
-Debt sale (typically 12-24 months):
-  Sell to licensed debt buyer
-  Price: 5-15 cents on the dollar for old written-off debt
-  Transfers: obligation and data to buyer
-
-Asset recovery (if applicable):
-  Consumer finance: usually unsecured → minimal asset recovery
-  If secured (car loan): repossession → auction
-
-Statute of limitations:
-  Vietnam: civil debt claims generally 3-5 years
-  After statute: debt buyer can still try to collect
-  But legal action becomes unavailable
+Ngưỡng cấu hình được:
+  writeOffThreshold: truyền vào DRG như tham số API
+  (không hardcode, cho phép quy tắc khác nhau theo sản phẩm hoặc phân khúc)
+  Thường gặp: DPD 90 với vay tiêu dùng không bảo đảm, DPD 180 với vay có bảo đảm
 ```
 
-**System: post-write-off payments thực sự xảy ra như thế nào:**
+### Thu hồi sau write-off
 
 ```text
-WRITTEN_OFF accounts vẫn nhận được payments bình thường:
-  → Không có block trên payment transactions cho WRITTEN_OFF status
-  → Standard Transaction + EventRecord + LedgerEntry (CREDIT) được tạo
-  → MatchingService pairs bình thường với outstanding instalments
+Thu hồi nội bộ (12 tháng đầu sau write-off):
+  Đội collections tiếp tục liên hệ
+  Đề nghị tất toán: "Chúng tôi chấp nhận 40% để đóng khoản nợ"
+  → Một số khách hàng sẽ đồng ý tất toán với số tiền thấp hơn nhiều
+
+Bán nợ (thường sau 12-24 tháng):
+  Bán cho tổ chức đủ điều kiện mua nợ
+  Giá: 5-15% giá trị danh nghĩa với nợ đã write-off lâu
+  Chuyển giao: quyền đòi nợ và dữ liệu cho bên mua
+
+Thu hồi tài sản (nếu có):
+  Vay tiêu dùng: thường không có bảo đảm → gần như không có tài sản để thu hồi
+  Nếu có bảo đảm (vay mua xe): thu hồi xe → bán đấu giá
+
+Thời hiệu khởi kiện:
+  Việt Nam: 3 năm đối với tranh chấp hợp đồng (Bộ luật Dân sự 2015, Điều 429),
+  tính từ ngày bên cho vay biết hoặc phải biết quyền lợi của mình bị xâm phạm
+  Hết thời hiệu: khoản nợ không mất đi, nhưng không còn khởi kiện được
+```
+
+**Thanh toán sau write-off thực sự được xử lý thế nào:**
+
+```text
+Tài khoản WRITTEN_OFF vẫn nhận thanh toán bình thường:
+  → Không có chặn nào trên giao dịch thanh toán với trạng thái WRITTEN_OFF
+  → Tạo Transaction + EventRecord + LedgerEntry (CREDIT) như thường lệ
+  → MatchingService ghép với các kỳ còn dư nợ như thường lệ
   → CurrentBalance.outstandingDebt giảm, customerCredit tăng
-  
-KHÔNG có special transaction type cho recovery payments.
-KHÔNG có special accounting flag trong LAS.
-Recovery tracking via standard LedgerEntry + CurrentBalance updates.
 
-External finance/GL system (không phải LAS/DRG) handles:
-  → P&L recognition of recovery amounts
-  → Credit bureau update notification
-  → Off-balance-sheet tracking từ accounting perspective
+KHÔNG có loại giao dịch riêng cho khoản thu hồi.
+KHÔNG có cờ kế toán đặc biệt trong LAS.
+Theo dõi thu hồi qua LedgerEntry và CurrentBalance như mọi tài khoản khác.
+
+Hệ thống tài chính/GL bên ngoài (không phải LAS hay DRG) xử lý:
+  → Ghi nhận khoản thu hồi vào P&L
+  → Thông báo cập nhật lên trung tâm thông tin tín dụng
+  → Theo dõi ngoại bảng từ góc độ kế toán
 ```
 
-:::summary[Hardship, Write-off, Recovery]
-Payment holiday: economically optimal even with
-only 40% cure probability
-Lãi vẫn tích lũy trong holiday → transparent
-disclosure bắt buộc
-Restructuring: IFRS 9 forbearance flag → 12 month
-Stage 2 minimum → P&L impact
-Write-off: accounting removal ≠ debt forgiveness
-Recovery: off-balance-sheet tracking continues
+:::summary[Mục 10.5 và 10.6]
+Payment holiday có lợi về kinh tế ngay cả khi xác suất khách hàng phục hồi khá thấp, vì kịch bản xấu gần như không tệ hơn việc không hoãn. Nếu lãi vẫn tích lũy, khách hàng phải được thông báo rõ số tiền trước khi đồng ý. Tái cơ cấu thay đổi kế hoạch trả nợ thật sự và kéo theo cờ forbearance cùng thời gian thử thách trước khi giảm dự phòng. Write-off là bút toán kế toán, không phải tha nợ: DRG phát tín hiệu, LAS chuyển trạng thái, và thanh toán sau write-off vẫn được ghi nhận như mọi thanh toán khác.
 :::
 
-## 10.7 Regulatory Framework và Ethical Boundaries
+## 10.7 Khung pháp lý và ranh giới đạo đức
 
-### Fair Debt Collection Practices
+### Thu hồi nợ công bằng
 
 ::::story
-Anh Minh (Product Manager) đang review collections script mới của team. Script bao gồm câu: "Nếu bạn không trả trong 24 giờ, chúng tôi sẽ liên hệ sếp của bạn."
+Anh Minh (Product Owner) đang review kịch bản gọi điện mới của đội collections. Kịch bản có câu: "Nếu anh không trả trong 24 giờ, chúng tôi sẽ liên hệ sếp của anh."
 
-Anh Minh dừng review và hỏi Legal team: "Câu này có legal không?"
+Anh Minh dừng lại và hỏi Legal team: "Câu này có hợp pháp không?"
 ::::
 
-**Regulatory framework:**
+**Khung pháp lý tham chiếu:**
 
 ```text
-Các quy định chính tại Việt Nam:
-  Bộ luật Dân sự 2015: quyền và nghĩa vụ trong giao dịch dân sự
-  Luật bảo vệ người tiêu dùng 2010: quyền của người vay
-  Thông tư NHNN: về hoạt động thu hồi nợ của TCTD
-  Nghị định 144/2021: về vi phạm trong hoạt động tín dụng
+Tại Việt Nam:
+  Bộ luật Dân sự 2015: quyền và nghĩa vụ của các bên trong hợp đồng vay
+  Luật Các tổ chức tín dụng 2024 (32/2024/QH15)
+  Thông tư 43/2016/TT-NHNN về cho vay tiêu dùng của công ty tài chính,
+    sửa đổi bởi Thông tư 18/2019/TT-NHNN: quy định về nhắc nợ, thu hồi nợ
+  Luật Bảo vệ quyền lợi người tiêu dùng 2023 (19/2023/QH15)
+  Luật Bảo vệ dữ liệu cá nhân 2025 (91/2025/QH15)
+  Luật Đầu tư 2020: cấm kinh doanh dịch vụ đòi nợ từ 1/1/2021
 
-Global frameworks (reference):
-  US: Fair Debt Collection Practices Act (FDCPA)
+Tham chiếu quốc tế:
+  Mỹ: Fair Debt Collection Practices Act (FDCPA) và Regulation F
   EU: Consumer Credit Directive
-  UK: Financial Conduct Authority Guidelines
+  Anh: quy định của Financial Conduct Authority (FCA)
 ```
 
-**Prohibited actions - không được làm:**
+Quy định cụ thể nhất cho công ty tài chính là các yêu cầu về nhắc nợ trong Thông tư 18/2019/TT-NHNN: biện pháp thu hồi nợ không được bao gồm biện pháp đe dọa khách hàng, nhắc nợ tối đa 5 lần mỗi ngày, chỉ trong khoảng 7 giờ đến 21 giờ, và không được nhắc nợ hay gửi thông tin thu hồi nợ cho người không có nghĩa vụ trả nợ. Các văn bản này có thể tiếp tục được sửa đổi, nên đội Legal của Vela Finance rà soát lại rule của hệ thống collections mỗi khi có văn bản mới.
+
+**Những hành vi bị cấm:**
+
+| Nhóm | Hành vi |
+|---|---|
+| Quấy rối | Nhắc nợ ngoài khung 7:00-21:00; nhắc nợ quá 5 lần/ngày; ngôn ngữ đe dọa, xúc phạm; gọi liên tục để gây áp lực |
+| Lừa dối | Giả danh luật sư hoặc cơ quan nhà nước; dọa khởi kiện khi không có ý định thực hiện; nói sai số tiền nợ; dọa bắt giữ (không tồn tại trong tranh chấp dân sự) |
+| Xâm phạm riêng tư | Liên hệ nơi làm việc của khách hàng; thông báo khoản nợ cho người thân (trừ người bảo lãnh); bêu xấu trên mạng xã hội; dùng dữ liệu vượt mục đích khách hàng đã đồng ý |
+| Không công bằng | Thu các khoản không có trong hợp đồng; dọa làm xấu lịch sử tín dụng khi thực tế không báo cáo; ép đến mức khách hàng trả bằng mọi giá bất kể khả năng |
+
+Ngược lại, đội collections hoàn toàn được phép liên hệ khách hàng trong khung giờ cho phép, thông báo chính xác về khoản nợ, báo cáo đúng sự thật lên trung tâm thông tin tín dụng, khởi kiện theo đúng thủ tục, đề nghị tất toán hoặc thỏa thuận trả theo đợt, liên hệ người bảo lãnh, và tìm kênh liên lạc mới trong phạm vi pháp luật về dữ liệu cá nhân cho phép.
+
+### Giải quyết tranh chấp
+
+**Khách hàng có quyền khiếu nại:**
 
 ```text
-HARASSMENT:
-  ❌ Gọi điện trước 7h00 hoặc sau 21h00
-  ❌ Gọi nhiều hơn [quy định] lần/ngày
-  ❌ Sử dụng ngôn ngữ đe dọa, xúc phạm
-  ❌ Liên tục gọi để làm phiền (harassment calls)
+Các tranh chấp thường gặp:
+  "Tôi không thực hiện giao dịch này" (gian lận)
+  "Số tiền không đúng" (số tiền)
+  "Tôi đã trả nhưng không được ghi nhận" (thanh toán)
+  "Phí này không có trong hợp đồng" (phí)
 
-DECEPTION:
-  ❌ Giả mạo là luật sư hoặc cơ quan nhà nước
-  ❌ Đe dọa hành động pháp lý khi không có ý định thực hiện
-  ❌ Nói sai số tiền nợ
-  ❌ Đe dọa bắt giữ (không có trong dân sự)
+Hệ thống hỗ trợ:
+  Gắn cờ "đang tranh chấp" cho tài khoản
+  Collections: TẠM DỪNG khi tranh chấp chưa được giải quyết
+  LAS: điều tra giao dịch dựa trên dấu vết kiểm toán
+  DMS: lấy hợp đồng để đối chiếu điều khoản
 
-PRIVACY VIOLATIONS:
-  ❌ Liên hệ employer của khách hàng (trong hầu hết cases)
-  ❌ Nói với người thân về khoản nợ (trừ guarantor)
-  ❌ Public shaming (post trên mạng xã hội)
-  ❌ Collect data vượt ngoài purpose consented
+Mốc thời gian thường gặp:
+  Xác nhận đã nhận khiếu nại: trong 5-7 ngày làm việc
+  Giải quyết: 30-60 ngày làm việc
+  Nếu khách hàng đúng: đảo các khoản đã tính sai
 
-UNFAIR PRACTICES:
-  ❌ Collect amounts not owed (fees không có trong hợp đồng)
-  ❌ Threaten to damage credit report (khi thực ra không report)
-  ❌ Cho đến khi khách hàng "kiệt sức" và trả bất kể khả năng
+Trong thời gian tranh chấp:
+  Collections: tạm dừng
+  Phí trễ hạn trên khoản đang tranh chấp: tạm ngừng
+  Trung tâm thông tin tín dụng: có thể cần đánh dấu "đang tranh chấp"
 ```
 
-**Allowed actions:**
-
-✓ Liên hệ trong giờ hành chính
-✓ Thông báo chính xác về khoản nợ
-✓ Báo cáo đúng sự thật lên credit bureau
-✓ Pursue legal action theo đúng thủ tục
-✓ Offer settlement hoặc payment arrangement
-✓ Liên hệ guarantor (người bảo lãnh)
-✓ Skip tracing sử dụng public information
-
-### Dispute Resolution
-
-**Khách hàng có quyền dispute:**
+Trong VLP hiện tại, LAS và DRG không có thực thể `Dispute` hay trường đánh dấu tranh chấp. Việc xử lý tranh chấp nằm ở hệ thống bên ngoài (CRM hoặc hệ thống chăm sóc khách hàng). Nếu thiết kế lại, luồng lý tưởng sẽ như sau:
 
 ```text
-Common disputes:
-  "Tôi không thực hiện giao dịch này" (fraud dispute)
-  "Số tiền sai" (amount dispute)
-  "Tôi đã trả nhưng không được ghi nhận" (payment dispute)
-  "Phí này không có trong hợp đồng" (fee dispute)
-
-System support cho dispute:
-  DRG module: Flag account as "disputed"
-  Collections: SUSPEND khi dispute pending
-  LAS: Investigate transaction with evidence (audit trail)
-  DMS: Pull contract để verify terms
-
-Regulatory timeline:
-  Acknowledge dispute within: typically 5-7 business days
-  Resolution: typically 30-60 business days
-  If resolved in favor of customer: reverse charges
-
-During dispute:
-  DPD: frozen (không tăng)
-  Collections: paused
-  Credit bureau: may need to mark as "disputed"
-```
-
-**System design cho dispute handling:**
-
-```text
-// illustrative pseudo-code — dispute handling NOT implemented in LAS or DRG codebase
-// verified: verify-remaining-chapters.md
-// Note: Không có Dispute entity, disputed field, hay DisputeService trong LAS module
-// Dispute handling likely managed externally (LBS/CMS/CRM) or not yet implemented
-// Code này là ví dụ minh họa về thiết kế lý tưởng, KHÔNG phải code VLP thực tế
-
-// Conceptual flow cho dispute handling:
-// 1. Tạo dispute record (trong external CRM/LBS system)
-// 2. Flag account → suspend DPD counting
-// 3. Suspend active collections
-// 4. Create investigation case
-// 5. Send acknowledgment to customer
+// Luồng xử lý tranh chấp (minh họa thiết kế)
+// 1. Tạo bản ghi tranh chấp (trong CRM hoặc hệ thống chăm sóc khách hàng)
+// 2. Gắn cờ tài khoản → tạm ngừng phí trễ hạn trên khoản đang tranh chấp
+// 3. Tạm dừng các hoạt động collections đang chạy
+// 4. Tạo hồ sơ điều tra
+// 5. Gửi xác nhận đã nhận khiếu nại cho khách hàng
 //
-// Production implementation sẽ khác tùy theo system scope
+// Cài đặt cụ thể phụ thuộc vào phạm vi của từng hệ thống
 ```
 
-### Ranh giới đạo đức: Câu hỏi khó
+### Ranh giới đạo đức: những câu hỏi khó
 
-**Tiếp tục câu hỏi từ đầu chương:**
+Quay lại câu trong kịch bản: "Nếu anh không trả trong 24 giờ, chúng tôi sẽ liên hệ sếp của anh." Câu trả lời của Legal team rất ngắn: không được. Người quản lý của khách hàng là người không có nghĩa vụ trả nợ, nên liên hệ họ là vi phạm quy định nhắc nợ. Thêm vào đó, hạn chót 24 giờ kèm lời đe dọa là một hình thức gây áp lực không công bằng. Câu này phải bỏ.
 
-Câu script: "Nếu bạn không trả trong 24 giờ, chúng tôi sẽ liên hệ sếp của bạn."
+Nhưng có những trường hợp không rõ ràng như vậy:
 
-**Legal analysis:**
-- Liên hệ employer thường bị cấm (privacy violation)
-- Đe dọa "24 giờ" có thể là unfair pressure
-- Result: Câu này vi phạm fair debt collection
+| Tình huống | Hợp pháp? | Có đạo đức? | Kết luận |
+|---|---|---|---|
+| "Điểm tín dụng của anh sẽ bị ảnh hưởng" | Có, nếu đúng sự thật | Có, nêu rõ hệ quả | Chấp nhận |
+| "Gia đình anh sẽ biết về khoản nợ" | Không: người thân không có nghĩa vụ trả nợ | Không: dùng quan hệ gia đình làm đòn bẩy | Không chấp nhận |
+| Gọi lúc 22:45 | Không: ngoài khung 7:00-21:00 | | Không chấp nhận |
+| "Sau 30 ngày nếu chưa trả, chúng tôi sẽ báo cáo lên trung tâm thông tin tín dụng" | Có, nếu đúng như vậy | Có, minh bạch về hệ quả | Chấp nhận |
+| Cố tình gọi đúng lúc biết khách đang họp quan trọng | Chưa có quy định cấm trực tiếp | Không: quấy rối về bản chất | Không chấp nhận, chính sách công ty nên cấm |
 
-**Nhưng còn những cases khó hơn:**
+**Bốn câu hỏi cho đội collections:**
 
-```text
-Case 1: "Bạn sắp mất credit score"
-  Legal? Yes (it's true)
-  Ethical? Yes (transparent consequence)
-  ✅ Acceptable
+1. **Pháp lý:** có quy định nào cấm không?
+2. **Mặt báo:** nếu hành động này lên báo, công ty có xấu hổ không?
+3. **Đổi vai:** nếu mình là khách hàng, mình có chấp nhận không?
+4. **CLV:** hành động này giữ gìn hay phá hủy quan hệ với khách hàng?
 
-Case 2: "Gia đình bạn sẽ biết về khoản nợ"
-  Legal? Nghi vấn (privacy concern)
-  Ethical? No (using family relationship as leverage)
-  ❌ Not acceptable
+Qua được cả bốn thì chấp nhận được. Trượt bất kỳ câu nào thì cân nhắc lại hoặc chuyển lên cấp trên.
 
-Case 3: Gọi điện lúc 22h45 (nhưng quy định là 21h00)
-  Legal? No (vi phạm thời gian)
-  ❌ Not acceptable
-
-Case 4: "Chúng tôi sẽ báo cáo lên credit bureau sau 30 ngày nếu không trả"
-  Legal? Yes (nếu đúng thật)
-  Ethical? Yes (transparent về consequence)
-  ✅ Acceptable
-
-Case 5: Cố tình gọi khi biết khách hàng đang họp quan trọng
-  Legal? Possibly (chưa có law against this exactly)
-  Ethical? No (harassment in spirit)
-  ❌ Not acceptable (company policy should prohibit)
-```
-
-**Framework cho collections team:**
-
-Test 1 (Legal): "Có quy định nào cấm không?"
-Test 2 (Newspaper): "Nếu hành động này lên báo, công ty xấu hổ không?"
-Test 3 (Reciprocal): "Nếu đây là mình, mình có chấp nhận không?"
-Test 4 (CLV): "Hành động này có preserve hay destroy relationship?"
-
-Nếu PASS cả 4 tests → acceptable
-Nếu FAIL bất kỳ test nào → reconsider hoặc escalate
-
-:::summary[Regulatory & Ethics]
-Prohibited: harassment, deception, privacy
-violations, unfair practices
-Allowed: factual communication, credit bureau,
-legal action, settlement offers
-Dispute: handled externally (LAS không có Dispute entity); suspend collections + DPD freeze until
-resolved
-4-test ethical framework: Legal + Newspaper +
-Reciprocal + CLV
+:::summary[Mục 10.7]
+Tại Việt Nam, nhắc nợ của công ty tài chính bị giới hạn ở 5 lần mỗi ngày, trong khung 7 giờ đến 21 giờ, không đe dọa và không liên hệ người không có nghĩa vụ trả nợ; dịch vụ đòi nợ thuê đã bị cấm từ 2021. Các hành vi bị cấm chia thành bốn nhóm: quấy rối, lừa dối, xâm phạm riêng tư và không công bằng. Tranh chấp được xử lý ở hệ thống bên ngoài, với collections tạm dừng cho đến khi có kết luận. Bốn câu hỏi pháp lý, mặt báo, đổi vai và CLV giúp xử lý những trường hợp quy định chưa nói rõ.
 :::
 
 ## Tóm tắt chương 10
 
-Collections journey của một account từ DPD 1 đến resolution:
+Hành trình collections của một tài khoản từ DPD 1 đến khi được giải quyết:
 
 ```text
-DPD 1-7: Early digital
-  SMS 09:00, push notifications, one-click payment link
-  System: automated, throttled, behaviorally optimized
-  Goal: self-cure, minimal friction
+DPD 1-7: Kênh số giai đoạn sớm
+  SMS lúc 09:00, push notification, đường dẫn thanh toán một chạm
+  Hệ thống: tự động, giới hạn tần suất, tối ưu theo hành vi
+  Mục tiêu: khách tự cure, ít ma sát nhất
 
-DPD 8-29: Intensifying
-  Outbound calls (allowed windows), payment arrangement offer
-  System: External CRM rule engine (DRG là data catalog, không phải rule engine) + human queue
-  Goal: cure before DPD 30 (major lifecycle event)
+DPD 8-29: Tăng cường
+  Gọi điện trong khung giờ cho phép, đề xuất thỏa thuận thanh toán
+  Hệ thống: rule engine của collections bên ngoài + hàng đợi nhân viên
+  (DRG là danh mục dữ liệu, không phải rule engine)
+  Mục tiêu: cure trước DPD 30
 
-DPD 30: IFRS 9 Stage 2 migration
-  Lifetime ECL provision → P&L impact
-  Dedicated collector assigned
-  Pre-legal documentation starts
+DPD 30: Chuyển sang Stage 2 theo IFRS 9
+  Dự phòng ECL toàn thời hạn → ảnh hưởng P&L
+  Giao cho collector chuyên trách
 
-DPD 30-59: Mid collections
-  Intensive contact, skip tracing if needed
-  Hardship evaluation: is this situational or structural?
-  Hardship program if applicable
+DPD 30-59: Collections giai đoạn giữa
+  Liên hệ dày hơn, skip tracing trong giới hạn pháp luật
+  Đánh giá khó khăn: tạm thời hay lâu dài?
+  Hardship program nếu phù hợp
 
-DPD 60-89: Pre-legal
-  Pre-legal notice with deadline
-  Final cure opportunity
-  Case for debt sale evaluation starts
+DPD 60-89: Trước pháp lý
+  Chuẩn bị hồ sơ, thông báo kèm thời hạn
+  Cơ hội cure cuối cùng
+  Bắt đầu đánh giá phương án bán nợ
 
-DPD 90+: Legal/Write-off
-  IFRS 9 Stage 3
-  Write-off decision (accounting)
-  Legal action OR debt sale
-  Post write-off recovery tracking
+DPD 90+: Pháp lý và write-off
+  Stage 3 theo IFRS 9
+  Quyết định write-off (kế toán)
+  Khởi kiện HOẶC bán nợ
+  Theo dõi thu hồi sau write-off
 
-Throughout:
-  Fair treatment (regulatory + ethical)
-  Dispute handling (rights preserved)
-  Documentation (every action audited)
-  CLV thinking (relationship worth preserving when possible)
+Xuyên suốt:
+  Đối xử công bằng (pháp lý + đạo đức)
+  Xử lý tranh chấp (quyền của khách hàng được bảo vệ)
+  Lưu vết (mọi hành động đều được kiểm toán)
+  Tư duy CLV (giữ quan hệ khi còn có thể)
 
-The best collections outcome:
-  Not "we collected the money"
-  But "customer recovered, repaid, and may borrow again"
+Kết quả collections tốt nhất:
+  Không phải "chúng ta đã thu được tiền"
+  Mà là "khách hàng đã phục hồi, trả hết nợ và có thể vay lại"
 ```
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. DPD buckets tiêu chuẩn là gì? Tại sao chọn mốc 30, 60, 90 ngày?
-2. Cure rate là gì? Tại sao nó giảm theo DPD bucket?
-3. Payment holiday có bãi miễn lãi suất không? Điều gì vẫn xảy ra về mặt tài chính?
+**Loại 1: Nhớ lại**
+1. Các DPD bucket tiêu chuẩn là gì? Vì sao chọn mốc 30, 60, 90 ngày?
+2. Cure rate là gì? Vì sao nó giảm dần qua các bucket?
+3. Payment holiday có miễn lãi không? Về mặt tài chính, điều gì vẫn xảy ra?
 4. Write-off về mặt kế toán khác gì với tha nợ?
 
-**Loại 2 - Hiểu:**
-5. Tại sao ROI của early collections (DPD 1-30) cao hơn nhiều so với late collections (DPD 90+)? Tính toán cụ thể.
-6. Tại sao DRG module tồn tại tách khỏi LAS? Không phải LAS đã có đủ delinquency data rồi sao?
-7. IFRS 9 "forbearance" flag có nghĩa là gì? Tại sao account restructured vẫn phải ở Stage 2 tối thiểu 12 tháng dù đang paying well?
-8. Tại sao collections agent phải track payment arrangements trong system - không thể chỉ ghi chú cá nhân?
+**Loại 2: Hiểu**
+5. Vì sao ROI của collections sớm (DPD 1-30) cao hơn nhiều so với giai đoạn muộn (DPD 90+)? Hãy tính bằng số liệu cụ thể, và giải thích vì sao không được nhân toàn bộ số tài khoản cure thêm với LGD.
+6. Vì sao DRG tồn tại tách khỏi LAS, khi LAS đã có đủ dữ liệu quá hạn?
+7. Cờ forbearance nghĩa là gì? Vì sao khoản vay đã tái cơ cấu phải qua một thời gian thử thách trước khi giảm dự phòng, dù khách hàng đang trả tốt?
+8. Vì sao thỏa thuận thanh toán phải được ghi trong hệ thống, không chỉ trong ghi chú của nhân viên? Vì sao thỏa thuận đó không làm DPD đứng yên?
 
-**Loại 3 - Áp dụng:**
-9. Portfolio: 50,000 accounts DPD 1-30, outstanding 400 tỷ, LGD 60%.
-   Scenario A: No collections intervention, natural cure rate 35%
-   Scenario B: SMS + calls, cost 250,000/account, cure rate 55%
-   Scenario C: Intensive collections, cost 600,000/account, cure rate 65%
-   
-   (a) Tính expected loss cho mỗi scenario
-   (b) Tính net benefit (avoided loss - cost) cho B và C vs A
-   (c) Recommend optimal strategy
+**Loại 3: Áp dụng**
 
-10. Customer với DPD 45, outstanding 12,000,000 VNĐ, LGD 60%, rate 18%/năm.
-    Bạn offer payment holiday 2 tháng.
-    P(cure after holiday) = 35%
-    
-    (a) Tính interest accrual trong 2 tháng holiday
-    (b) Expected cost với holiday (NPV calculation)
-    (c) Expected cost without holiday
-    (d) Should you offer the holiday?
+9. Portfolio có 50,000 tài khoản ở DPD 1-30, tổng dư nợ 400 tỷ, LGD 60%. Giả định 69% số tài khoản không cure ở bucket này cuối cùng sẽ vỡ nợ.
+   - Kịch bản A: không can thiệp, cure rate tự nhiên 35%
+   - Kịch bản B: SMS và gọi điện, chi phí 250,000/tài khoản, cure rate 55%
+   - Kịch bản C: can thiệp tích cực, chi phí 600,000/tài khoản, cure rate 65%
 
-**Loại 4 - Phân tích:**
-11. Collections team đề xuất: "Dùng social media monitoring để detect customers who are spending money on luxuries while claiming they can't pay." Phân tích:
-    (a) Potential value: what insight could this provide?
-    (b) Legal risk: data collection without consent, GDPR implications
-    (c) Ethical risk: using social media in debt collection
-    (d) Operational risk: false positives (misidentification)
-    (e) Your recommendation
+   (a) Tính tổn thất kỳ vọng của từng kịch bản.
+   (b) Tính lợi ích ròng (tổn thất tránh được trừ chi phí) của B và C so với A.
+   (c) Đề xuất chiến lược tối ưu.
 
-12. Thiết kế collections strategy cho một new BNPL product:
-    - Average loan: 3,000,000 VNĐ
-    - Tenor: 3 months
-    - No credit bureau data for most customers (thin-file)
-    - Mobile-first customer base (app-native)
-    - High expected DPD 1-30 rate: 8% (vs 4% for standard products)
-    
-    Design: (a) Contact strategy và thời điểm (b) Channel selection (c) Cure rate targets (d) Write-off timing (e) How does thin-file affect collections strategy?
+10. Khách hàng ở DPD 45, dư nợ 12,000,000 VNĐ, LGD 60%, lãi suất 18%/năm. Bạn đề nghị hoãn thanh toán 2 tháng, lãi vẫn tích lũy. P(khách phục hồi sau thời gian hoãn) = 35%.
+
+    (a) Tính lãi tích lũy trong 2 tháng hoãn.
+    (b) Tính chi phí kỳ vọng khi có hoãn thanh toán.
+    (c) Tính chi phí kỳ vọng khi không hoãn.
+    (d) Có nên đề nghị hoãn không? Xác suất hòa vốn là bao nhiêu?
+
+**Loại 4: Phân tích**
+
+11. Đội collections đề xuất theo dõi mạng xã hội để phát hiện khách hàng chi tiêu xa xỉ trong khi nói rằng không trả được nợ. Phân tích:
+    (a) Giá trị tiềm năng: thông tin này cho biết điều gì?
+    (b) Rủi ro pháp lý: xử lý dữ liệu cá nhân không có sự đồng ý, theo Luật Bảo vệ dữ liệu cá nhân 2025 và GDPR
+    (c) Rủi ro đạo đức: dùng mạng xã hội trong thu hồi nợ
+    (d) Rủi ro vận hành: nhận diện nhầm người
+    (e) Đề xuất của bạn
+
+12. Thiết kế chiến lược collections cho một sản phẩm BNPL mới:
+    - Khoản vay bình quân: 3,000,000 VNĐ
+    - Kỳ hạn: 3 tháng
+    - Phần lớn khách hàng không có dữ liệu tín dụng (thin-file)
+    - Khách hàng dùng app là chính
+    - Tỷ lệ rơi vào DPD 1-30 dự kiến: 8% (so với 4% của sản phẩm thông thường)
+
+    Thiết kế: (a) chiến lược và thời điểm liên hệ, (b) chọn kênh, (c) mục tiêu cure rate, (d) thời điểm write-off, (e) thin-file ảnh hưởng thế nào đến chiến lược collections?
 
 ## Bài tập áp dụng
 
-**Bài 1 - Collections ROI Model:**
-Xây dựng collections ROI model cho portfolio 200,000 accounts, outstanding trung bình 10,000,000 VNĐ, LGD 62%.
+**Bài 1: Mô hình ROI cho collections**
 
-DPD distribution:
-- DPD 1-30: 8,000 accounts
-- DPD 31-60: 3,200 accounts
-- DPD 61-90: 1,500 accounts
-- DPD 91+: 800 accounts
+Xây dựng mô hình ROI cho portfolio 200,000 tài khoản, dư nợ bình quân 10,000,000 VNĐ, LGD 62%.
 
-Collections cost per account:
-- DPD 1-30: SMS/push = 100,000 VNĐ; add calls = +200,000 VNĐ
-- DPD 31-60: call center = 400,000 VNĐ
-- DPD 61-90: dedicated collector = 800,000 VNĐ
-- DPD 91+: legal = 2,000,000 VNĐ
+Phân bố DPD:
 
-Natural cure rates (no intervention): 35%, 15%, 7%, 2%
-With intervention cure rates: 55%, 28%, 12%, 4%
+| Bucket | Số tài khoản | Chi phí can thiệp/tài khoản | Cure rate tự nhiên | Cure rate khi can thiệp |
+|---|---|---|---|---|
+| DPD 1-30 | 8,000 | SMS/push 100,000; thêm gọi điện +200,000 | 35% | 55% |
+| DPD 31-60 | 3,200 | Tổng đài 400,000 | 15% | 28% |
+| DPD 61-90 | 1,500 | Collector chuyên trách 800,000 | 7% | 12% |
+| DPD 91+ | 800 | Pháp lý 2,000,000 | 2% | 4% |
 
-(a) Calculate expected losses with/without collections for each bucket
-(b) Calculate net ROI for each bucket's intervention
-(c) If total collections budget is 5 tỷ VNĐ, how to allocate across buckets?
-(d) Which accounts in DPD 91+ should get legal vs debt sale?
+(a) Tính tổn thất kỳ vọng có và không có can thiệp cho từng bucket. Nêu rõ giả định về tỷ lệ vỡ nợ của các tài khoản không cure.
+(b) Tính ROI ròng của can thiệp ở từng bucket.
+(c) Nếu tổng ngân sách collections là 5 tỷ VNĐ, phân bổ thế nào giữa các bucket?
+(d) Những tài khoản DPD 91+ nào nên khởi kiện, những tài khoản nào nên bán nợ?
 
-**Bài 2 - DRG Module Design:**
+**Bài 2: Thiết kế DRG module**
 
-Thiết kế DRG module data model và event processing cho portfolio 1.2M accounts.
+Thiết kế mô hình dữ liệu và xử lý sự kiện của DRG cho portfolio 1.2 triệu tài khoản.
 
-Requirements:
-- Real-time DPD tracking (within 5 minutes of LAS events)
-- Collections workflow automation
-- IFRS 9 stage calculation
-- Regulatory reporting (monthly DPD distribution)
-- Collections effectiveness analytics
+Yêu cầu:
+- Theo dõi DPD gần thời gian thực (trong vòng 5 phút sau sự kiện từ LAS)
+- Cung cấp dữ liệu cho tự động hóa collections
+- Tính stage theo IFRS 9
+- Báo cáo cơ quan quản lý (phân bố DPD hằng tháng)
+- Phân tích hiệu quả collections
 
-Deliverables:
-(a) Database schema (main tables)
-(b) Kafka event subscriptions: which events, what actions
-(c) Collections rule engine: design decision tree for DPD 1-30
-(d) IFRS 9 stage transition logic
-(e) Performance: how to handle 1.2M accounts with 5-minute SLA?
+Kết quả cần có:
+(a) Schema cơ sở dữ liệu (các bảng chính)
+(b) Các Kafka subscription: sự kiện nào, hành động gì
+(c) Rule engine collections cho DPD 1-30: thiết kế cây quyết định (đặt ở đâu, trong hay ngoài DRG?)
+(d) Logic chuyển stage theo IFRS 9
+(e) Hiệu năng: xử lý 1.2 triệu tài khoản với SLA 5 phút thế nào?
 
-**Bài 3 - Ethical Collections Program Design:**
+**Bài 3: Thiết kế chương trình collections có đạo đức**
 
-Bạn là Head of Collections tại một CFTC. Cần thiết kế complete collections program bao gồm:
-- Agent training và ethical guidelines
-- Communication templates
-- Technology controls (throttling, prohibited hour enforcement)
-- Customer rights và dispute handling
+Bạn là Head of Collections của một công ty tài chính tiêu dùng. Hãy thiết kế một chương trình collections hoàn chỉnh, gồm đào tạo nhân viên và hướng dẫn đạo đức, mẫu thông điệp, kiểm soát bằng công nghệ (giới hạn tần suất, chặn ngoài khung giờ), quyền của khách hàng và xử lý tranh chấp.
 
-Design:
-(a) Agent code of conduct: 10 specific rules
-(b) Technology controls: 5 automated enforcement mechanisms
-(c) Customer rights: communication that must be included in every first contact
-(d) Dispute handling SLA và process flow
-(e) Quality monitoring: how to verify agents are following ethical guidelines?
+(a) Bộ quy tắc ứng xử cho nhân viên: 10 quy tắc cụ thể
+(b) Kiểm soát bằng công nghệ: 5 cơ chế tự động bảo đảm tuân thủ
+(c) Quyền của khách hàng: những thông tin bắt buộc trong lần liên hệ đầu tiên
+(d) SLA và quy trình xử lý tranh chấp
+(e) Giám sát chất lượng: làm sao kiểm chứng nhân viên tuân thủ hướng dẫn đạo đức?
 
 ## Đọc thêm
 
-**Collections Management:**
-- McKinsey & Company. (2018). *The Future of Collections in Financial Services.* McKinsey Global Institute. - Available free at mckinsey.com - practical analysis của digital transformation trong collections.
+**Quy định:**
+- Consumer Financial Protection Bureau. (2020). *Debt Collection Practices (Regulation F), Final Rule.* Có tại consumerfinance.gov. Khung quy định hiện đại về thu hồi nợ công bằng, gồm cả giới hạn tần suất gọi điện và quy tắc cho kênh điện tử.
+- Thông tư 18/2019/TT-NHNN sửa đổi, bổ sung Thông tư 43/2016/TT-NHNN quy định cho vay tiêu dùng của công ty tài chính. Các yêu cầu về nhắc nợ được trích trong mục 10.7.
 
-**Regulatory:**
-- Consumer Financial Protection Bureau. (2021). *Debt Collection Rule (Regulation F).* - Available at consumerfinance.gov - modern framework về fair debt collection practices.
+**Kinh tế học hành vi:**
+- Thaler, R. H., & Sunstein, C. R. (2008). *Nudge: Improving Decisions About Health, Wealth, and Happiness.* Yale University Press. Nền tảng cho việc thiết kế thông điệp và thời điểm liên hệ trong collections.
 
-**Behavioral Collections:**
-- Sunstein, C. R. (2014). *Why Nudge? The Politics of Libertarian Paternalism.* Yale University Press. - Chương 3-5 về ứng dụng nudge theory trong financial decision-making, applicable cho collections design.
-
-*Đây là chương cuối của Phần II - Hệ Thống. Chúng ta đã đi từ kiến trúc tổng quan (Chương 6), qua origination (Chương 7), account management và billing (Chương 8-9), đến collections (Chương 10). Phần III sẽ chuyển sang tầng "Intelligence" - credit scoring, risk-based pricing, và behavioral economics trong practice. Đây là nơi data và algorithms gặp gỡ với domain knowledge để tạo ra competitive advantage thực sự.*
+*Chương 10 khép lại Phần III. Chúng ta đã đi từ kiến trúc tổng thể (Chương 6), qua origination (Chương 7), quản lý tài khoản và billing (Chương 8, 9), đến collections. Phần IV chuyển sang tầng "trí tuệ": credit scoring, định giá theo rủi ro và kinh tế học hành vi trong thực tế, nơi dữ liệu và thuật toán gặp hiểu biết nghiệp vụ để tạo ra lợi thế cạnh tranh thực sự.*

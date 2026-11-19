@@ -686,7 +686,7 @@ EventRecord
 [billEventChannel]       ← // verified: IntegrationConstants.Channels.BILL_EVENT
    │
    ▼ [internal processing chain]
-[calculateTariffItemsAndCreateAccountItemsChannel]  ← // verified
+[calculateFeeComponentsAndCreateLedgerEntriesChannel]  ← // verified
    │
    ▼ BillingContext (result)
 ```
@@ -700,8 +700,8 @@ public interface ChargingGateway {
     @Gateway(requestChannel = "billEventChannel")
     BillingContext billEvent(Long eventId);
 
-    @Gateway(requestChannel = "calculateTariffItemsAndCreateAccountItemsChannel")
-    BillingContext calculateTariffItems(BillingContext billingContext);
+    @Gateway(requestChannel = "calculateFeeComponentsAndCreateLedgerEntriesChannel")
+    BillingContext calculateFeeComponents(BillingContext billingContext);
 }
 ```
 
@@ -773,7 +773,7 @@ Cuối tháng 3, bước tạo kỳ trả nợ của EOM chạy cho tài khoản
 Đầu vào của bước này:
 
 ```text
-1. Danh sách TechnicalAccountItems chưa được fully prescribed
+1. Danh sách PostingUnits chưa được fully prescribed
    Mỗi PostingUnit: loại phí, số tiền, đã prescribe bao nhiêu
 
 2. MMI (Minimum Monthly Instalment) limit

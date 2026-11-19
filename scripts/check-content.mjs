@@ -11,7 +11,7 @@ const ROOTS = ['docs', 'i18n', 'src'].filter((d) => existsSync(d));
 const ENTITIES = 'scripts/entities.json';
 const TECH = existsSync(ENTITIES)
   ? JSON.parse(readFileSync(ENTITIES, 'utf8')).technical.map(([a, , kind]) =>
-      kind === 'regex' ? new RegExp(a) : new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
+      kind === 'regex' ? new RegExp(a.endsWith('(?![a-z0-9])') ? a.slice(0, -12) + 's?(?![a-z0-9])' : a) : new RegExp(a.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')))
   : [];
 const FORBIDDEN = existsSync(ENTITIES)
   ? JSON.parse(readFileSync(ENTITIES, 'utf8')).forbidden.map((r) => new RegExp(r, 'i'))

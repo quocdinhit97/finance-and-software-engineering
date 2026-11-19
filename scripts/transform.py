@@ -69,7 +69,22 @@ ENT = _ENT_FILE['replacements']
 # Technical identifiers (modules, tables, classes, fee codes) renamed to synonyms.
 TECH = [(re.compile(a) if kind == 'regex' else a, b) for a, b, kind, *_ in _ENT_FILE.get('technical', [])]
 
+def _plural(w):
+    if re.search(r'[^aeiou]y$', w):
+        return w[:-1] + 'ies'
+    if re.search(r'(s|x|ch|sh)$', w):
+        return w + 'es'
+    return w + 's'
+
+# Plural forms ("AccountItems") slip past patterns ending in (?![a-z0-9]),
+# so each such pattern also gets a plural twin.
+_END = '(?![a-z0-9])'
+TECH_PLURAL = [(re.compile(a.pattern[:-len(_END)] + 's' + _END), _plural(b))
+               for a, b in TECH if hasattr(a, 'pattern') and a.pattern.endswith(_END)]
+
 def rename_technical(t):
+    for a, b in TECH_PLURAL:
+        t = a.sub(b, t)
     for a, b in TECH:
         t = a.sub(b, t) if hasattr(a, 'sub') else t.replace(a, b)
     return t

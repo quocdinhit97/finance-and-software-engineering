@@ -4,30 +4,31 @@ sidebar_label: "7. Quy trình khởi tạo khoản vay"
 sidebar_position: 1
 chapter: 7
 subtitle: "Origination Engineering"
-reading_time: 31
+reading_time: 32
+description: "Quy trình khởi tạo khoản vay của chị Lan qua LOS: bộ điều phối không trạng thái, ADR và bốn lớp KYC, chấm điểm và quy tắc chính sách, QCE và đề nghị vay theo rủi ro, ký hợp đồng điện tử, tạo và kích hoạt tài khoản, các kiểu lỗi và cách khôi phục."
 source_file: "phan-2-chuong-7.md"
-editorial_status: "mechanical"
+editorial_status: "edited"
 ---
 
-> *"Origination là nơi mà business strategy, risk management, và user experience va chạm nhau trong vài phút. Thiết kế đúng: khách hàng được phục vụ tốt, rủi ro được kiểm soát. Thiết kế sai: cả ba đều fail cùng lúc."*
+> *"Khởi tạo khoản vay là nơi chiến lược kinh doanh, quản trị rủi ro và trải nghiệm khách hàng va chạm nhau trong vài phút. Thiết kế đúng thì khách hàng được phục vụ tốt và rủi ro được kiểm soát. Thiết kế sai thì cả ba cùng hỏng một lúc."*
 
-## Dẫn nhập: Năm phút quyết định Ba năm
+## Dẫn nhập: bốn phút quyết định một năm
 
 ::::story
-Chị Lan mở app lúc 10h15 sáng thứ Hai và nộp đơn vay 18,500,000 VNĐ. Lúc 10h19, app báo "Đơn của bạn đã được phê duyệt. Tiền sẽ được giải ngân trong 24 giờ."
+10 giờ 15 sáng thứ hai, chị Lan mở ứng dụng và nộp đơn vay 18,500,000 VNĐ. 10 giờ 19, ứng dụng báo: "Đơn của bạn đã được phê duyệt. Tiền sẽ được giải ngân trong 24 giờ."
 
-Bốn phút. Trong bốn phút đó, điều gì đã xảy ra?
+Bốn phút. Trong bốn phút đó, chuyện gì đã xảy ra?
 
-Câu trả lời: một pipeline phức tạp được thiết kế cẩn thận đã chạy - kiểm tra danh tính, đánh giá rủi ro, tính toán offer, và tạo account - với hàng chục business rules được execute theo đúng thứ tự, trong đúng thời gian, với tính nhất quán được đảm bảo.
+Một chuỗi xử lý được thiết kế cẩn thận đã chạy: kiểm tra danh tính, đánh giá rủi ro, tính đề nghị vay, tạo tài khoản. Hàng chục quy tắc nghiệp vụ được thực thi đúng thứ tự, đúng thời hạn, với tính nhất quán được bảo đảm.
 
-Và tất cả điều này phải hoạt động đúng với cả 99.9% trường hợp khác đang diễn ra song song - người khác cũng đang nộp đơn cùng lúc, hệ thống scoring đang được update, tariff mới vừa được active.
+Và mọi thứ phải chạy đúng cùng lúc với hàng nghìn đơn vay khác: người khác cũng đang nộp đơn, mô hình chấm điểm vừa được cập nhật, một biểu phí mới vừa có hiệu lực.
 ::::
 
-Chương này trace toàn bộ origination flow từ khi chị Lan nhấn "Nộp đơn" đến khi account được activate. Không phải trace flow một cách hời hợt - mà đi sâu vào từng quyết định thiết kế: tại sao LOS dùng stateless async pattern, tại sao approval là async, tại sao QCE là REST service chứ không phải message queue, và tại sao fail-fast là strategy thực tế thay vì saga compensation đầy đủ.
+Chương này đi theo đơn vay của chị Lan từ lúc chị bấm "Nộp đơn" đến khi tài khoản được kích hoạt. Không chỉ mô tả luồng, mà đi vào từng quyết định thiết kế: vì sao LOS là bộ điều phối không trạng thái và bất đồng bộ, vì sao QCE là REST service chứ không phải hàng đợi, và vì sao chiến lược thực tế là thất bại sớm thay vì saga bù trừ đầy đủ như đã bàn ở [Chương 6](/docs/system/ch06-financial-system-architecture).
 
-## 7.1 Tổng quan Origination Flow
+## 7.1 Tổng quan quy trình khởi tạo
 
-### Sequence Diagram đầy đủ
+### Sơ đồ tuần tự
 
 ```mermaid
 sequenceDiagram
@@ -41,38 +42,38 @@ sequenceDiagram
     participant LAS
     participant AOS
 
-    Note over LOS: Step 1 — submitApplicationForm
+    Note over LOS: Bước 1 — submitApplicationForm
     User->>LOS: POST /api/workflows/submitApplicationForm
     LOS->>PTY: findClient / createApplicant
     LOS->>ADR: storeApplication
     LOS-->>User: 202 Accepted {processingId}
 
-    Note over LOS: Step 2 — checkEligibility
+    Note over LOS: Bước 2 — checkEligibility
     User->>LOS: POST /api/workflows/checkEligibility
     LOS->>PTY: findClient
     LOS->>QCE: getIPTypes(accountNumber)
     LOS->>OFR: getEligibleOffer(cuid, amount)
     LOS-->>User: 202 Accepted
 
-    Note over LOS: Step 3 — calculateSalesQuotes
+    Note over LOS: Bước 3 — calculateSalesQuotes
     User->>LOS: POST /api/workflows/calculateSalesQuotes
     LOS->>QCE: getAposSalesQuotes(15+ domains → LPS)
     LOS-->>User: 202 Accepted
 
-    Note over LOS: Step 4 — chooseOffer (Zeebe scoring)
+    Note over LOS: Bước 5 — chooseOffer (chấm điểm qua Zeebe)
     User->>LOS: POST /api/workflows/chooseOffer
     LOS->>LOS: Zeebe "PreTransactionRiskCheck" (async)
     LOS->>AOS: createSupplement via LBS (on POSITIVE score)
     LOS-->>User: 202 Accepted
 
-    Note over LOS: Step 7 — generateAgreement (account CREATED)
+    Note over LOS: Bước 6 — generateAgreement (tài khoản CREATED)
     User->>LOS: POST /api/workflows/generateAgreement
     LOS->>SRT: processLoan()
     SRT->>LAS: create account via CTS→RabbitMQ (CREATED)
     SRT->>LOS: success
     LOS-->>User: 202 Accepted
 
-    Note over LOS: Step 8 — signAgreement (account ACTIVE)
+    Note over LOS: Bước 7 — signAgreement (tài khoản ACTIVE)
     User->>LOS: POST /api/workflows/signAgreement
     LOS->>AOS: acceptContractSupplementDocuments()
     AOS-->>LOS: ContractSupplementSigned (RabbitMQ)
@@ -80,23 +81,24 @@ sequenceDiagram
     LOS->>LAS: origination.completed (RabbitMQ)
     LOS-->>User: Account activated
 ```
-*(Account CREATED at generateAgreement step; ACTIVATED at signAgreement via RabbitMQ chain)*
 
-Trên đây là flow happy path. Trong thực tế, mỗi bước có thể fail, timeout, hoặc cần retry - và toàn bộ system phải handle gracefully.
+*Hình 7.1. Luồng khởi tạo khoản vay trong trường hợp thuận lợi. Bước 4 (tính báo giá trước hợp đồng) được lược bớt để sơ đồ gọn hơn. Tài khoản được tạo ở trạng thái CREATED tại bước 6 và kích hoạt tại bước 7 qua chuỗi sự kiện RabbitMQ.*
 
-### LOS: Stateless Async Orchestrator
+Đây là trường hợp mọi thứ suôn sẻ. Thực tế, bước nào cũng có thể lỗi, timeout hoặc cần thử lại, và cả hệ thống phải xử lý được những tình huống đó; mục 7.6 bàn chi tiết.
+
+### LOS: bộ điều phối bất đồng bộ, không trạng thái
 
 ::::story
-Kỹ sư Tuấn nhìn vào LOS codebase và ngạc nhiên: "Không có database? LOS không có một table nào?"
+Kỹ sư Tuấn mở code của LOS và ngạc nhiên: "Không có cơ sở dữ liệu? LOS không có bảng nào à?"
 
-Tech Lead xác nhận: "Đúng. LOS dùng Infinispan embedded cache - in-memory, short TTL. State được lưu trong Infinispan, không phải persistent DB."
+Trưởng nhóm kỹ thuật xác nhận: "Đúng. LOS dùng cache Infinispan nhúng, lưu trong bộ nhớ, thời gian sống ngắn. Trạng thái của quy trình nằm trong Infinispan, không nằm trong cơ sở dữ liệu."
 
-"Nhưng nếu LOS pod crash thì sao? State mất hết không?"
+"Nhưng nếu pod của LOS sập thì sao? Mất hết trạng thái à?"
 
-"Infinispan cluster replication. Nếu cả cluster mất - có reconciliation job xử lý. Design cho resilience, không phải perfect consistency."
+"Infinispan nhân bản trong cụm. Nếu mất cả cụm, đã có tác vụ đối soát xử lý. Thiết kế cho khả năng chống chịu, không phải cho nhất quán hoàn hảo."
 ::::
 
-**Tại sao LOS dùng Infinispan thay vì database:**
+Vì sao LOS dùng Infinispan thay vì cơ sở dữ liệu:
 
 ```text
 Approach database-backed:
@@ -118,7 +120,7 @@ Zeebe chỉ được dùng optional ở bước scoring
 (Zeebe integration là optional profile: "zeebe-integration").
 ```
 
-**Workflow Architecture thực tế - Controller-Driven:**
+Kiến trúc quy trình của LOS dựa trên controller chứ không dựa trên BPMN engine:
 
 ```text
 Thay vì BPMN engine, LOS dùng:
@@ -136,9 +138,7 @@ Step order:
   7. signAgreement → waits for document acceptance
 ```
 
-**Infinispan cache - cách dùng thực tế:**
-
-LOS dùng **per-step typed Infinispan caches** - không có generic `WorkflowContext` class. Mỗi workflow step có cache riêng:
+LOS dùng **mỗi bước một cache Infinispan có kiểu riêng**, không có lớp `WorkflowContext` chung:
 
 ```java
 // verified: CacheConfiguration.java trong LOS
@@ -146,7 +146,7 @@ LOS dùng **per-step typed Infinispan caches** - không có generic `WorkflowCon
 // Mỗi cache typed riêng: Cache<String, ChooseOfferCachedObject>, v.v.
 ```
 
-Workflow state được propagate qua **Kafka publish**, không phải cache.put:
+Trạng thái của quy trình được lan truyền bằng cách **phát sự kiện lên Kafka**, không phải bằng `cache.put`:
 
 ```java
 // verified: SubmitApplicationFormService.java
@@ -167,10 +167,9 @@ public class SubmitApplicationFormService {
 }
 ```
 
-Pattern: mỗi step publishes `RUNNING` → execute → publishes `SUCCEEDED`/`FAILED` tới Kafka.
-LOS client polls `GET /status/{processingId}` → LOS queries latest workflow event state.
+Mỗi bước phát trạng thái `RUNNING`, thực thi, rồi phát `SUCCEEDED` hoặc `FAILED` lên Kafka. Ứng dụng phía khách hàng gọi định kỳ `GET /status/{processingId}`, và LOS trả về trạng thái mới nhất của quy trình.
 
-**Async processing - tại sao 202 Accepted:**
+Vì sao trả về `202 Accepted` thay vì chờ xử lý xong:
 
 ```text
 Nếu return response synchronously:
@@ -190,33 +189,25 @@ Với 202 Accepted:
   → Server có thể scale mỗi step independently
 ```
 
-:::summary[LOS Architecture]
-Stateless orchestrator: Infinispan cache giữ state,
-LOS chỉ execute
-Infinispan: short-lived cache (10s TTL),
-không phải persistent storage
-202 Accepted: async pattern → mobile-friendly,
-retry-safe, horizontally scalable
-Mỗi workflow step có thể fail/retry độc lập
+:::summary[Mục 7.1]
+LOS là bộ điều phối không trạng thái: trạng thái của từng bước nằm trong cache Infinispan có thời gian sống ngắn, không nằm trong cơ sở dữ liệu, và được lan truyền qua sự kiện Kafka. Mỗi bước trả về `202 Accepted` ngay, khách hàng hỏi trạng thái định kỳ; cách này thân thiện với ứng dụng di động, thử lại an toàn và dễ mở rộng ngang. Mỗi bước có thể lỗi và thử lại độc lập.
 :::
 
-## 7.2 Application Submission và KYC
+## 7.2 Nộp đơn và KYC
 
-### ADR: Application Data Repository
+### ADR: kho dữ liệu đơn vay
 
 ::::story
-Chị Lan bắt đầu điền form trên app lúc 10h00. Lúc 10h10, điện thoại hết pin. Chị cắm sạc và mở lại app - form vẫn còn dữ liệu đã điền. Chị tiếp tục và submit lúc 10h15.
+Chị Lan bắt đầu điền đơn trên ứng dụng lúc 10 giờ. 10 giờ 10, điện thoại hết pin. Chị cắm sạc, mở lại ứng dụng, và phần đã điền vẫn còn nguyên. Chị điền tiếp và nộp lúc 10 giờ 15.
 
-Điều này không xảy ra tự nhiên - cần design cụ thể.
+Điều đó không tự nhiên mà có; nó cần được thiết kế.
 ::::
 
-**ADR là gì:**
-
-:::key
-**ADR** *(Application Data Repository)* là persistent store cho application data trong suốt origination lifecycle. Nó giữ mọi thứ từ khi user bắt đầu điền form đến khi account được tạo - và sau đó cho mục đích audit.
+:::key[ADR (Application Data Repository)]
+**ADR** là kho lưu trữ lâu dài cho dữ liệu đơn vay trong suốt quá trình khởi tạo. Nó giữ mọi thứ từ khi khách hàng bắt đầu điền đơn đến khi tài khoản được tạo, và sau đó cho mục đích kiểm toán.
 :::
 
-**Tại sao ADR tách khỏi LAS:**
+Vì sao ADR tách khỏi LAS:
 
 ```text
 LAS lưu: account sau khi activated (live financial data)
@@ -239,7 +230,7 @@ Nếu tách ra:
   → ADR events → trigger LOS steps
 ```
 
-**Schema design của ADR:**
+Thiết kế lược đồ của ADR:
 
 ```sql
 -- Application header:
@@ -270,7 +261,7 @@ CREATE TABLE application_event (
 -- Không bao giờ UPDATE hay DELETE — append-only log
 ```
 
-**Omnichannel support:**
+Hỗ trợ đa kênh, như yêu cầu ở [Chương 4](/docs/products/ch04-customer-journey): khách hàng dừng ở kênh này có thể tiếp tục ở kênh khác.
 
 ```java
 // illustrative pseudo-code — ADR method names differ from actual
@@ -292,17 +283,15 @@ Application existing = applicationService.findByCode(applicationCode);
 // (không có findByCustomerAndProduct — lookup qua code)
 ```
 
-### KYC Verification Pipeline
+### Bốn lớp KYC
 
 ::::story
-Khi chị Lan submit form, system cần xác minh: người này có thật không? Tên, CCCD, địa chỉ có khớp không? Có trong blacklist không? Có đủ điều kiện vay không?
+Khi chị Lan nộp đơn, hệ thống phải xác minh: người này có thật không? Tên, số CCCD, địa chỉ có khớp không? Có trong danh sách đen không? Có đủ điều kiện vay không?
 
-Đây là KYC *(Know Your Customer)* - một yêu cầu pháp lý, không chỉ là business requirement.
+Đó là KYC *(know your customer)*, một yêu cầu pháp lý chứ không chỉ là yêu cầu kinh doanh.
 ::::
 
-**Các lớp KYC verification:**
-
-**Lớp 1: Identity Verification (Xác minh danh tính)**
+**Lớp 1: xác minh danh tính.**
 
 ```text
 Input: Ảnh CCCD mặt trước + mặt sau + ảnh selfie
@@ -319,7 +308,7 @@ Output:
   FAIL (< 70%) → reject với reason code
 ```
 
-**Lớp 2: Sanctions và Blacklist Screening**
+**Lớp 2: sàng lọc cấm vận và danh sách đen.**
 
 ```text
 Input: Tên + ngày sinh + quốc tịch
@@ -336,7 +325,7 @@ Output:
   BLOCKED → reject immediately, log for regulatory reporting
 ```
 
-**Lớp 3: Credit Bureau Check**
+**Lớp 3: tra cứu thông tin tín dụng.**
 
 ```text
 Input: CCCD number + họ tên
@@ -349,7 +338,7 @@ Output:
   Credit report → feed vào scoring model
 ```
 
-**Lớp 4: Income Verification**
+**Lớp 4: xác minh thu nhập.**
 
 ```text
 Input: Loại thu nhập + documents (sao kê lương, thuế, BCTC...)
@@ -364,7 +353,9 @@ Output:
   Verified income amount → feed vào affordability check
 ```
 
-**CIS Module - Tại Sao Tách Riêng:**
+Bốn lớp này đi từ rẻ đến đắt và từ nhanh đến chậm. Nếu lớp đầu đã thất bại, không cần trả tiền tra cứu thông tin tín dụng hay mất công xác minh thu nhập.
+
+CIS là module riêng giữ dữ liệu KYC, vì những lý do đã bàn ở [Chương 6](/docs/system/ch06-financial-system-architecture):
 
 ```text
 CIS lưu:
@@ -383,7 +374,7 @@ Tại sao:
   4. Different team ownership: KYC team owns CIS, LAS team owns LAS
 ```
 
- **Document flow qua DMS:**
+Tài liệu của khách hàng đi qua DMS:
 
 ```text
 1. User upload CCCD → App → API Gateway → DMS
@@ -399,28 +390,21 @@ Tại sao:
    After 7 years: archive or delete per policy
 ```
 
-:::summary[Application Submission & KYC]
-ADR: persistent store, append-only events,
-omnichannel support (draft resume)
-KYC: 4 lớp - identity, sanctions, credit bureau,
-income verification
-CIS tách khỏi LAS: PII isolation, GDPR compliance,
-reuse across accounts
-DMS: encrypted document storage, lifecycle
-management, compliance retention
+:::summary[Mục 7.2]
+ADR là kho lâu dài cho dữ liệu đơn vay, cho phép khách hàng dừng giữa chừng và tiếp tục ở bất kỳ kênh nào. KYC có bốn lớp: xác minh danh tính, sàng lọc cấm vận và danh sách đen, tra cứu thông tin tín dụng, xác minh thu nhập. CIS tách khỏi LAS để cô lập dữ liệu cá nhân và dùng lại kết quả KYC cho nhiều tài khoản. DMS lưu tài liệu đã mã hóa với vòng đời và thời hạn lưu trữ theo quy định.
 :::
 
-## 7.3 Credit Scoring trong Production
+## 7.3 Chấm điểm tín dụng trong hệ thống vận hành
 
-### Từ Raw Features đến Score
+### Từ dữ liệu thô đến điểm số
 
 ::::story
-Dữ liệu của chị Lan đã được collect: CCCD verified, credit bureau report returned, income verified at 22,000,000 VNĐ/tháng. Bây giờ hệ thống phải quyết định: cho vay hay không? Và nếu cho vay thì bao nhiêu?
+Dữ liệu của chị Lan đã đủ: CCCD đã xác minh, kết quả tra cứu tín dụng đã về, thu nhập xác minh là 22,000,000 VNĐ/tháng. Giờ hệ thống phải quyết định: có cho vay không, và nếu có thì với điều kiện gì?
 
-Đây là bài toán credit scoring - và "bài toán" ở đây không chỉ là chạy một model ML. Đó là một pipeline phức tạp với nhiều thành phần, nhiều constraints, và nhiều failure modes.
+Đó là bài toán chấm điểm tín dụng. Và "bài toán" ở đây không chỉ là chạy một mô hình máy học, mà là cả một chuỗi xử lý với nhiều thành phần, nhiều ràng buộc và nhiều cách hỏng.
 ::::
 
-**Feature Engineering - Từ Raw Data Đến Input Vector:**
+Bước đầu là biến dữ liệu thô thành các biến đầu vào *(feature engineering)*:
 
 ```text
 Raw data → Feature extraction → Feature vector → Model → Score
@@ -453,7 +437,7 @@ Feature transformation:
   channel_risk = DIGITAL → MEDIUM
 ```
 
-**Scoring Model - Simplified Scorecard Example:**
+Một thẻ điểm *(scorecard)* đơn giản hóa minh họa cách các biến được quy thành điểm:
 
 ```text
 Variable              Value         Points
@@ -498,19 +482,19 @@ Chị Lan:
   TOTAL SCORE = 300 + 35 + 25 + 20 + 30 + 10 = 420
 ```
 
-**Score → Decision mapping:**
+Điểm số được ánh xạ thành quyết định và hạng giá:
 
 ```text
-Score >= 420: APPROVE — Prime tier, lowest rate
-Score 380-419: APPROVE — Standard tier, standard rate
-Score 340-379: APPROVE — Sub-prime tier, higher rate
-Score 300-339: REVIEW — Manual underwriting
-Score < 300: DECLINE
+Score >= 440:    APPROVE — Prime tier, lãi suất 15%/năm
+Score 380-439:   APPROVE — Standard tier, lãi suất 18%/năm
+Score 340-379:   APPROVE — Sub-prime tier, lãi suất 21%/năm, hạn mức tối đa thấp hơn
+Score 300-339:   REVIEW — thẩm định thủ công
+Score < 300:     DECLINE
 ```
 
-Chị Lan: score 420 → APPROVE, Prime tier → lãi suất 15%/năm (thay vì 18% standard).
+Chị Lan được 420 điểm, thuộc hạng Standard, nên được duyệt với lãi suất 18%/năm. Đây chính là khoản vay xuyên suốt cuốn sách: 18,500,000 VNĐ, 18%/năm, 12 tháng.
 
-**Tại sao không phải chỉ một threshold:**
+Một ngưỡng điểm duy nhất là quá đơn giản; quyết định thực tế kết hợp điểm số với các quy tắc chính sách:
 
 ```text
 "Score >= 380: approve" là quá đơn giản.
@@ -529,19 +513,21 @@ Soft rejects (có thể override bởi underwriter):
   - First-time borrower + large loan → MANUAL_REVIEW
 ```
 
-### Workflow Architecture: Controller-Driven, không phải BPMN
+Quy tắc từ chối cứng tồn tại vì có những rủi ro mà mô hình thống kê không được phép "bù trừ" bằng các yếu tố tốt khác. Một khách hàng trong danh sách cấm vận không được duyệt dù điểm cao đến đâu. Quy tắc về tỷ lệ nợ trên thu nhập sau khi vay là hiện thân của nguyên tắc cho vay có trách nhiệm ở [Chương 1](/docs/foundations/ch01-credit-economics).
+
+### Kiến trúc quy trình: điều khiển bằng controller, không phải BPMN
 
 ::::story
-Anh Minh hỏi Tech Lead: "Tôi thấy có Zeebe trong dependencies. LOS có dùng Zeebe để orchestrate origination không?"
+Anh Minh hỏi trưởng nhóm kỹ thuật: "Tôi thấy Zeebe trong danh sách thư viện. LOS dùng Zeebe để điều phối quy trình khởi tạo à?"
 
-Tech Lead: "Không hoàn toàn. LOS dùng Spring async controllers với Infinispan cache cho state. Zeebe chỉ được dùng optional cho một số scoring workflows, không phải main orchestrator."
+"Không hẳn. LOS dùng Spring controller bất đồng bộ với Infinispan giữ trạng thái. Zeebe chỉ được dùng tùy chọn cho một số quy trình chấm điểm, không phải bộ điều phối chính."
 
-"Vậy nếu LOS crash giữa chừng thì sao?"
+"Vậy nếu LOS sập giữa chừng?"
 
-"Infinispan cluster replicate state. Và có reconciliation job detect stuck applications, fix manually."
+"Infinispan nhân bản trạng thái. Và có tác vụ đối soát phát hiện đơn bị kẹt để xử lý thủ công."
 ::::
 
-**LOS Workflow Steps - Thứ Tự Thực Tế:**
+Thứ tự các bước của LOS:
 
 ```text
 Step 1: submitApplicationForm
@@ -583,7 +569,7 @@ Step 7: signAgreement
 [Account creation follows sign]
 ```
 
-**Không có parallel execution, không có timer boundaries:**
+Không có thực thi song song, không có bộ hẹn giờ kiểu BPMN:
 
 ```text
 Mỗi step là sequential REST calls hoặc @Async Spring methods.
@@ -601,17 +587,15 @@ Tradeoff:
   ✗ Stuck applications cần manual recovery
 ```
 
-### A/B Testing Scoring Models: Cách đúng
+### Thử nghiệm A/B cho mô hình chấm điểm
 
 ::::story
-Data Science team đã train model mới - Gini tăng từ 0.52 lên 0.61. Anh Minh muốn deploy - nhưng cần test trước khi áp dụng toàn bộ. Lưu ý: VLP hiện tại **không có** built-in Champion/Challenger framework - nhưng đây là cách design nếu implement.
+Đội khoa học dữ liệu vừa huấn luyện mô hình mới, chỉ số Gini tăng từ 0.52 lên 0.61. Anh Minh muốn triển khai, nhưng cần thử nghiệm trước khi áp dụng toàn bộ. VLP hiện chưa có sẵn khung champion/challenger, nên đây là thiết kế đề xuất.
 ::::
 
-**Nguyên tắc A/B Testing cho credit model:**
-
-> Thay vì deploy trực tiếp, chạy song song: model cũ với 95% traffic, model mới với 5%. Sau 3-6 tháng có đủ data (cần thời gian để default rate hiện ra), so sánh performance.
-
-**Design pattern (nếu implement):**
+:::key[Champion và challenger]
+Thay vì thay mô hình một lần, chạy song song: mô hình hiện tại *(champion)* nhận phần lớn lưu lượng, ví dụ 95%, mô hình mới *(challenger)* nhận phần còn lại. Sau ba đến sáu tháng, khi tỷ lệ vỡ nợ đã kịp hiện ra, so sánh kết quả của hai mô hình.
+:::
 
 ```java
 // illustrative pseudo-code — Champion/Challenger pattern (industry best practice)
@@ -646,7 +630,7 @@ public class ScoringService {  // ILLUSTRATIVE
 // VLP actual: ScoringService.createScoring() → Zeebe BPMN → POSITIVE/NEGATIVE callback
 ```
 
-**Tại sao cần ít nhất 3-6 tháng:**
+Vì sao cần ít nhất ba đến sáu tháng, và vì sao cỡ mẫu là ràng buộc thực sự:
 
 ```text
 Problem: Khi approve application → default xảy ra sau 3-12 tháng.
@@ -665,49 +649,42 @@ Kết luận thực tế: Dùng DPD 30+ thay vì 90+ làm primary metric,
                   hoặc tăng challenger % lên 20-30% để đủ sample size.
 ```
 
-:::summary[Credit Scoring Trong Production]
-Feature engineering: raw data → vector → score
-Scorecard: transparent, explainable, adjustable
-Policy rules: hard reject + soft reject kết hợp
-với score → holistic decision
-LOS workflow: controller-driven, không phải BPMN
-Zeebe chỉ optional cho scoring
-A/B testing: cần 3-6 tháng để thấy default rate
-→ sample size là constraint thực tế
+Phép tính cuối khối trên đáng chú ý: với 5% lưu lượng cho challenger, cần hơn mười năm mới đủ mẫu để phân biệt tỷ lệ DPD 90+. Vì vậy thực tế phải chọn chỉ số sớm hơn (DPD 30+) hoặc dành tỷ lệ lưu lượng lớn hơn cho challenger, chấp nhận rủi ro lớn hơn trong thời gian thử nghiệm. [Chương 11](/docs/intelligence/ch11-credit-scoring) đi sâu hơn vào vòng đời của mô hình chấm điểm.
+
+:::summary[Mục 7.3]
+Chấm điểm là một chuỗi: dữ liệu thô thành biến đầu vào, biến đầu vào thành điểm, điểm kết hợp với quy tắc chính sách thành quyết định. Thẻ điểm minh bạch và dễ giải thích; quy tắc từ chối cứng áp dụng bất kể điểm số. Chị Lan được 420 điểm, hạng Standard, lãi suất 18%/năm. LOS điều phối bằng controller, Zeebe chỉ dùng tùy chọn cho chấm điểm. Thử nghiệm mô hình mới cần ba đến sáu tháng và cỡ mẫu đủ lớn.
 :::
 
-## 7.4 Offer Calculation và Presentation
+## 7.4 Tính và trình bày đề nghị vay
 
-### QCE: Quote Calculation Engine (REST Service)
+### QCE: REST service tính báo giá
 
 ::::story
-Chị Lan được approve với Prime tier (score 420). Bây giờ hệ thống phải tính: với credit score này, income 22 triệu, yêu cầu 18.5 triệu trong 12 tháng - offer cụ thể là gì?
+Chị Lan được duyệt ở hạng Standard với 420 điểm. Giờ hệ thống phải tính: với điểm này, thu nhập 22 triệu, yêu cầu 18.5 triệu trong 12 tháng, đề nghị vay cụ thể là gì?
 ::::
 
-**QCE là gì - quan trọng để hiểu đúng:**
-
-:::key
-**QCE** *(Quote Calculation Engine)* là một **REST service**, không phải message queue. Tên có thể gây nhầm lẫn (chữ "Q" không phải "Queue"). QCE xử lý pricing calculations phức tạp, bao gồm 15+ service domains: PHONELOAN, BNPLPOS, bundles, eligibility, PLOAN, precontract, và nhiều hơn.
+:::key[QCE (Quote Calculation Engine)]
+**QCE** là một **REST service**, không phải hàng đợi thông điệp; chữ "Q" là "quote" chứ không phải "queue". QCE xử lý các phép tính giá phức tạp cho hơn 15 miền sản phẩm: PHONELOAN, BNPLPOS, sản phẩm trọn gói, kiểm tra điều kiện, PLOAN, báo giá trước hợp đồng và nhiều miền khác.
 :::
 
 ```text
 LOS → QCE: POST /calculateQuote (synchronous REST call, OpenFeign)
-           {score: 420, tier: PRIME, amount: 18.5M, tenor: 12M,
-            offerCode: "PRIME_LAPTOP_2025"}
+           {score: 420, tier: STANDARD, amount: 18.5M, tenor: 12M,
+            offerCode: "STANDARD_LAPTOP_2025"}
 
 QCE internal flow:
   1. Load product configuration + eligibility rules
-     → Tier PRIME cho product này: rate = 15%/năm
+     → Tier STANDARD cho product này: rate = 18%/năm
      → Available tenors: 6, 12, 18, 24 months
-     → Origination fee: 1%
+     → Origination fee: 1% (185,000 VNĐ, trừ vào tiền giải ngân)
 
   2. Call LPS để tính instalment plan cho mỗi tenor:
      QCE → LPS: POST /api/v3/calculators/instalment-plan/by-offer-code
-     LPS → QCE: {annuityAmount: 1,668,400, totalCost: 20,020,800, apr: 16.8%}
+     LPS → QCE: {annuityAmount: 1,696,080, totalRepayment: 20,352,957,
+                 xirr (APR, gồm phí thẩm định): ≈ 19.94%}
 
   3. Apply business rules:
-     → Check: DTI (1,668,400 / 22,000,000 = 7.6%) < max 40% → OK
-     → Check: APR (16.8%) < rate_cap → OK
+     → Check: DTI (1,696,080 / 22,000,000 = 7.7%) < max 40% → OK
      → Bundle offers (insurance, protection plans) if applicable
 
   4. Format quote for presentation:
@@ -717,7 +694,9 @@ QCE internal flow:
 QCE → LOS: formatted quote package (InstalmentPlansDto)
 ```
 
-**Tại sao QCE tồn tại - không phải LOS gọi LPS trực tiếp:**
+APR 19.94% là IRR của dòng tiền chị Lan thực nhận (18,315,000 VNĐ sau khi trừ phí thẩm định) và thực trả (12 kỳ theo lịch), nhân với 12, theo đúng phương pháp ở [Chương 2](/docs/foundations/ch02-mathematics-of-lending). Như [Chương 12](/docs/intelligence/ch12-risk-based-pricing) sẽ phân tích, LPS tính được XIRR nhưng VLP hiện chưa có bước tự động kiểm tra trần chi phí tín dụng; việc đó đang dựa vào cấu hình sản phẩm.
+
+Vì sao cần QCE, thay vì để LOS gọi thẳng LPS:
 
 ```text
 LOS job: orchestrate workflow → không nên biết về pricing details
@@ -740,97 +719,103 @@ Nếu QCE down:
   Customer must retry → không có fallback pricing
 ```
 
-### Risk-Based Offer Generation
+### Đề nghị vay theo rủi ro
 
 ::::story
-Cùng một yêu cầu 18.5 triệu, 12 tháng - nhưng ba khách hàng khác nhau nhận được offer khác nhau:
+Cùng yêu cầu 18.5 triệu trong 12 tháng, ba khách hàng khác nhau nhận ba đề nghị khác nhau.
 ::::
 
 ```text
-Khách hàng A (score 420, Prime):
-  → Approved 18,500,000 VNĐ, lãi 15%/năm, PMT 1,668,400 VNĐ/tháng
+Khách hàng A (score 450, Prime):
+  → Approved 18,500,000 VNĐ, lãi 15%/năm, PMT 1,669,779 VNĐ/tháng
 
-Khách hàng B (score 375, Standard):
+Khách hàng B, chị Lan (score 420, Standard):
   → Approved 18,500,000 VNĐ, lãi 18%/năm, PMT 1,696,080 VNĐ/tháng
 
 Khách hàng C (score 345, Sub-prime):
-  → Approved 12,000,000 VNĐ (counter-offer), lãi 21%/năm, PMT 1,114,500 VNĐ/tháng
-  → Full amount declined: DTI sẽ vượt threshold với 21% rate
+  → Approved 12,000,000 VNĐ (counter-offer), lãi 21%/năm, PMT 1,117,365 VNĐ/tháng
+  → Không duyệt đủ số tiền yêu cầu: vượt hạn mức tối đa của hạng Sub-prime
 ```
 
-**Counter-offer logic:**
-
-Với khách hàng C:
+Với khách hàng C, đề nghị thay thế *(counter-offer)* được tính như sau:
 
 ```text
 Yêu cầu: 18,500,000 VNĐ, 12 tháng
-Rate cho Sub-prime tier: 21%/năm
-PMT nếu approve full: 1,716,400 VNĐ/tháng
-DTI: 1,716,400 / 22,000,000 = 7.8% → OK (dưới 40%)
+Lãi suất hạng Sub-prime: 21%/năm (1.75%/tháng)
+PMT nếu duyệt đủ: 1,722,605 VNĐ/tháng
+DTI: 1,722,605 / 22,000,000 = 7.8% → vẫn dưới ngưỡng 40%
 
-Nhưng: Sub-prime tier có max loan amount = 12,000,000 VNĐ
-(Policy: cho Sub-prime khách hàng, limit exposure)
+Nhưng: hạng Sub-prime có hạn mức tối đa 12,000,000 VNĐ
+(chính sách: giới hạn mức rủi ro với khách hàng Sub-prime)
 
-Counter-offer: 12,000,000 VNĐ × 21%/năm × 12 tháng
+Đề nghị thay thế: 12,000,000 VNĐ, 21%/năm, 12 tháng
 PMT = 12,000,000 × 0.0175 × (1.0175)^12 / [(1.0175)^12 - 1]
-    = 12,000,000 × 0.09219
-    = 1,106,280 VNĐ/tháng
+    = 12,000,000 × 0.0175 × 1.23144 / 0.23144
+    = 12,000,000 × 0.09311
+    = 1,117,365 VNĐ/tháng
 
-Counter-offer message:
+Thông điệp:
 "Chúng tôi có thể phê duyệt 12,000,000 VNĐ với lãi suất 21%/năm.
  Bạn có muốn tiếp tục với khoản vay này không?"
 ```
 
-**Behavioral considerations trong offer design:**
+Khách hàng C bị giới hạn không phải vì khả năng trả mỗi tháng (DTI chỉ 7.8%), mà vì công ty giới hạn tổng mức rủi ro với nhóm có PD cao. Đây là định giá theo rủi ro ở [Chương 1](/docs/foundations/ch01-credit-economics) được hiện thực hóa: rủi ro cao hơn thì lãi suất cao hơn và hạn mức thấp hơn.
+
+### Trình bày đề nghị vay
+
+Như [Chương 4](/docs/products/ch04-customer-journey) đã phân tích, cách trình bày đề nghị vay có thể khai thác hoặc hóa giải hiệu ứng mỏ neo:
 
 ```text
-Trình bày offer cần tính đến anchoring bias:
+Cách khai thác thiên kiến:
+  Đưa con số lớn ra trước, rồi "chỉ 1,696,080 VNĐ/tháng" trông rẻ hơn
+  Giấu tổng chi phí, chỉ nhấn khoản trả hằng tháng
 
-SARCASTIC approach (khai thác bias):
-  Hiển thị PMT lớn trước → sau đó "chỉ 1,668,400 VNĐ/tháng" trông rẻ hơn
-
-ETHICAL approach (counter-act bias):
-  Hiển thị đầy đủ:
+Cách hóa giải thiên kiến: hiển thị đầy đủ
   ┌─────────────────────────────────────────────┐
   │ Khoản vay: 18,500,000 VNĐ                   │
   │ Kỳ hạn: 12 tháng                            │
-  │ Lãi suất: 15%/năm (APR: 16.8%)             │
-  │ Số tiền trả hàng tháng: 1,668,400 VNĐ       │
-  │ Tổng tiền phải trả: 20,020,800 VNĐ          │
-  │ Tổng lãi phải trả: 1,520,800 VNĐ            │
+  │ Lãi suất: 18%/năm (APR: 19.94%)             │
+  │ Số tiền trả hàng tháng: 1,696,080 VNĐ       │
+  │ Tổng tiền phải trả: 20,352,957 VNĐ          │
+  │ Tổng lãi phải trả: 1,852,957 VNĐ            │
   │ Phí thẩm định: 185,000 VNĐ (một lần)        │
   │ ─────────────────────────────────────────── │
-  │ Bạn cần 1,668,400 VNĐ/tháng                │
-  │ (= 7.6% thu nhập hàng tháng của bạn)        │
+  │ Bạn cần 1,696,080 VNĐ/tháng                 │
+  │ (= 7.7% thu nhập hàng tháng của bạn)        │
   └─────────────────────────────────────────────┘
 ```
 
-Hiển thị "7.6% thu nhập" counter-acts anchoring bias - giúp khách hàng hiểu PMT trong context của khả năng chi trả thực tế.
+Dòng "7.7% thu nhập" đặt khoản trả hằng tháng vào bối cảnh khả năng chi trả thực tế của chị Lan, thay vì để con số đứng một mình làm mỏ neo.
 
-## 7.5 Agreement, Activation và Account Creation
+:::summary[Mục 7.4]
+QCE là REST service đứng giữa LOS và LPS, dịch bối cảnh kinh doanh thành đầu vào tính toán và áp quy tắc sản phẩm, để LOS không phải biết chi tiết về giá. Đề nghị vay khác nhau theo hạng rủi ro: lãi suất cao hơn và hạn mức thấp hơn cho nhóm rủi ro cao. Đề nghị vay phải được trình bày đầy đủ: lãi suất, APR, tổng tiền phải trả và tỷ lệ so với thu nhập.
+:::
 
-### E-Signature và DMS
+## 7.5 Hợp đồng, kích hoạt và tạo tài khoản
+
+### Chữ ký điện tử và DMS
 
 ::::story
-Chị Lan xem offer và chấp nhận. Tiếp theo: ký hợp đồng. Năm 2025, không ai muốn in giấy, ký tay, scan lại. Nhưng hợp đồng vay tiền có giá trị pháp lý - e-signature phải được thực hiện đúng chuẩn.
+Chị Lan xem đề nghị và đồng ý. Bước tiếp theo là ký hợp đồng. Không ai muốn in giấy, ký tay rồi quét lại. Nhưng hợp đồng vay có giá trị pháp lý, nên chữ ký điện tử phải được thực hiện đúng chuẩn.
 ::::
 
-**E-Signature Requirements:**
-
 ```text
-Hợp đồng điện tử tại Việt Nam phải đáp ứng:
-  Luật Giao dịch điện tử 2005 (sửa đổi 2023)
-  Nghị định 130/2018/NĐ-CP về chữ ký điện tử
+Hợp đồng điện tử tại Việt Nam dựa trên:
+  Luật Giao dịch điện tử số 20/2023/QH15 (hiệu lực từ 1/7/2024)
+  Nghị định 23/2025/NĐ-CP về chữ ký điện tử và dịch vụ tin cậy
+    (hiệu lực từ 10/4/2025, thay thế Nghị định 130/2018/NĐ-CP)
 
-Requirements:
-  1. Xác thực danh tính người ký (đã verified ở KYC step)
-  2. Chữ ký phải liên kết với nội dung hợp đồng (content hash)
-  3. Không thể deny sau khi ký (non-repudiation)
-  4. Timestamp chính xác
-  5. Lưu trữ lâu dài (7-10 năm)
+Yêu cầu:
+  1. Xác thực danh tính người ký (đã xác minh ở bước KYC)
+  2. Chữ ký phải gắn với nội dung hợp đồng (content hash)
+  3. Không thể chối bỏ sau khi ký (non-repudiation)
+  4. Dấu thời gian chính xác
+  5. Lưu trữ lâu dài (7 đến 10 năm)
 ```
 
-**Document generation và signing flow:**
+Quy định về chữ ký điện tử thay đổi theo thời gian; [Phụ lục D](/docs/appendices/d-regulatory-reference) tổng hợp khung pháp lý, và việc áp dụng cụ thể cần bộ phận pháp chế xác nhận.
+
+Luồng tạo và ký tài liệu:
 
 ```text
 Step 1: Generate contract document
@@ -865,7 +850,7 @@ Step 3: Customer signs
     Return signedDocId = "doc-789-signed"
 ```
 
-**Tại sao OTP + Biometric, không chỉ OTP:**
+Vì sao dùng OTP kết hợp sinh trắc học, không chỉ OTP:
 
 ```text
 OTP only: "Người cầm điện thoại này đã ký"
@@ -876,13 +861,13 @@ OTP + Face match: "Người cầm điện thoại VÀ có khuôn mặt khớp v�
   → Non-repudiation tốt hơn (khó deny "không phải tôi ký")
 ```
 
-### LAS Account Creation và Activation
+### Tạo và kích hoạt tài khoản trong LAS
 
 ::::story
-Hợp đồng đã ký. Bây giờ: tạo account trong LAS và activate. Đây là bước cuối - nhưng cũng là bước phức tạp nhất từ góc độ data integrity.
+Hợp đồng đã ký. Giờ là lúc tạo tài khoản trong LAS và kích hoạt nó. Đây là bước cuối, nhưng cũng là bước phức tạp nhất về toàn vẹn dữ liệu.
 ::::
 
-**Account creation sequence:**
+Việc tạo tài khoản được dẫn dắt bằng sự kiện, không phải bằng một lời gọi REST trực tiếp:
 
 ```text
 // verified: origination-flow-complete.md, supplement-lifecycle.md, supplement-bsl-lifecycle.md
@@ -904,7 +889,7 @@ Hợp đồng đã ký. Bây giờ: tạo account trong LAS và activate. Đây 
 // Both triggered via RabbitMQ events (not synchronous REST)
 ```
 
-**LAS: Account creation với tất cả setup:**
+Khi LAS nhận yêu cầu tạo tài khoản, mọi thiết lập diễn ra trong một transaction:
 
 ```text
 LAS receives createAccount request:
@@ -921,7 +906,7 @@ LAS receives createAccount request:
   Transaction commit → account exists, status = CREATED
 ```
 
-**Tại sao CREATED → ACTIVE là separate step:**
+Vì sao `CREATED` và `ACTIVE` là hai bước tách rời:
 
 ```text
 Account CREATED: tất cả data đã setup, nhưng chưa thể dùng
@@ -942,7 +927,7 @@ Tại sao cần hai bước?
      Với manual disbursement → có thể cần 24h
 ```
 
-**Per-Step Workflow Events và LAS Activation:**
+Trạng thái của từng bước được phát lên Kafka, còn việc kích hoạt tài khoản đi qua chuỗi RabbitMQ:
 
 ```text
 LOS publish events per-step tới Kafka (CloudEvents format):
@@ -974,7 +959,7 @@ Lưu ý: Kafka producer trong LOS cấu hình
   → LAS phải handle idempotency (AlreadyActivatedException)
 ```
 
-**Tại sao sẽ có duplicate events:**
+Vì sao chắc chắn sẽ có sự kiện trùng lặp, và bên nhận phải xử lý thế nào:
 
 ```text
 Kafka non-idempotent producer + network issue:
@@ -990,43 +975,30 @@ Bài học: Idempotency phải được implement ở consumer side
          không thể rely vào producer guarantees.
 ```
 
-:::summary[Agreement & Activation]
-E-signature: OTP + face match → strong identity
-binding, non-repudiation cho hợp đồng điện tử
-Account creation: CREATED state → setup tất cả
-data (parameters, services, tariff)
-CREATED → ACTIVE: RabbitMQ chain (AOS→SRT→CTS→LAS)
-per-step (không phải single origination.done)
-RabbitMQ events: consumer must handle dupes (DLQ)
+:::key[Idempotency phải nằm ở phía bên nhận]
+Không thể dựa vào bảo đảm của bên phát. Mọi bên nhận sự kiện trong một hệ thống tài chính phải chịu được việc nhận cùng một sự kiện nhiều lần mà không làm sai dữ liệu.
 :::
 
-## 7.6 Failure Modes và Recovery
+:::summary[Mục 7.5]
+Chữ ký điện tử dùng OTP kết hợp đối chiếu khuôn mặt để gắn chặt danh tính và chống chối bỏ. Tài khoản được tạo ở trạng thái `CREATED` với đầy đủ tham số, dịch vụ và biểu phí, rồi chuyển sang `ACTIVE` qua chuỗi RabbitMQ từ AOS qua SRT, CTS tới LAS sau khi khách hàng ký. Sự kiện có thể trùng lặp, nên bên nhận phải idempotent.
+:::
 
-### Taxonomy Failure Modes trong Origination
+## 7.6 Các kiểu lỗi và cách khôi phục
 
-```text
-Loại failure        Ví dụ                    Recovery strategy
-─────────────────────────────────────────────────────────────────
-Transient failure   Credit bureau timeout    Retry với backoff
-                    Network blip             Circuit breaker
+### Phân loại lỗi trong quy trình khởi tạo
 
-Business failure    Score below threshold     Decline gracefully
-                    DTI exceeds limit         Counter-offer
+| Loại lỗi | Ví dụ | Cách khôi phục |
+|---|---|---|
+| Lỗi tạm thời | Tra cứu tín dụng timeout, mạng chập chờn | Thử lại có giãn cách, cầu dao ngắt mạch |
+| Lỗi nghiệp vụ | Điểm dưới ngưỡng, DTI vượt hạn mức | Từ chối lịch sự, đề nghị thay thế |
+| Yêu cầu trùng lặp | Bấm nộp hai lần, thử lại sau timeout | Phát hiện qua `processingId`, trả kết quả đã có |
+| Hoàn tất dở dang | KYC xong nhưng chấm điểm lỗi; có đề nghị nhưng ký bị timeout | Tiếp tục từ bước đã xong, trình bày lại đề nghị |
+| Dữ liệu không nhất quán | LAS tạo tài khoản xong nhưng sự kiện RabbitMQ bị mất | Tác vụ đối soát, hàng đợi thư chết |
 
-Idempotency         Duplicate submit          Detect via processingId
-                    Retry sau timeout         Return cached result
-
-Partial completion  KYC OK, scoring fails     Resume from KYC done
-                    Offer OK, signing timeout  Re-present offer
-
-Data inconsistency  LAS create OK, RabbitMQ event lost  Reconciliation job
-                    Event lost in RabbitMQ     Dead letter queue
-```
-
-### Timeout Handling: Trường hợp quan trọng nhất
+### Xử lý timeout: trường hợp quan trọng nhất
 
 ::::story
-Chị Lan nhấn "Xác nhận offer" lúc 10h20. App mất kết nối Internet (wifi bị ngắt). Lúc 10h25, Internet phục hồi. App tự động retry request. Điều gì xảy ra?
+10 giờ 20, chị Lan bấm "Xác nhận đề nghị". Đúng lúc đó wifi mất kết nối. 10 giờ 25, mạng có lại và ứng dụng tự gửi lại yêu cầu. Chuyện gì xảy ra?
 ::::
 
 ```text
@@ -1046,7 +1018,7 @@ Chị Lan nhấn "Xác nhận offer" lúc 10h20. App mất kết nối Internet 
        App poll GET /status/p123 → nhận docUrl
 ```
 
-**Idempotency trong origination:**
+Idempotency trong quy trình khởi tạo:
 
 ```java
 // verified: WorkflowController.java, ChooseOfferService.java
@@ -1067,11 +1039,9 @@ public ResponseEntity<WorkflowResponseTO> createChooseOfferWorkflow(
 // chooseOffer triggers: scoring via Zeebe → callback → AOS supplement creation
 ```
 
-### Fail-Fast Strategy: Thực tế Thay vì Saga đầy đủ
+### Thất bại sớm: lựa chọn thực tế thay cho saga đầy đủ
 
-**Kịch bản:** QCE fails ở step calculateSalesQuotes. Điều gì xảy ra?
-
-**VLP dùng fail-fast, không phải full saga compensation:**
+Nếu QCE lỗi ở bước `calculateSalesQuotes` thì sao? VLP dùng chiến lược thất bại sớm:
 
 ```text
 Failure tại mỗi step:
@@ -1099,7 +1069,7 @@ Duy nhất có automatic compensation:
   → AOS supplement rejected automatically
 ```
 
-**Tại sao fail-fast là practical choice:**
+Vì sao đây là lựa chọn thực tế:
 
 ```text
 Full saga compensation rất phức tạp:
@@ -1127,7 +1097,9 @@ Design principle (vẫn đúng dù không implement full saga):
   → Document signing → very late (highest commitment)
 ```
 
-**Stuck Applications - Thực Tế Xảy Ra:**
+Nguyên tắc thiết kế cuối khối trên vẫn đúng dù VLP không hiện thực saga đầy đủ: đặt các bước rẻ và đảo ngược được (tra cứu tín dụng) lên trước, các bước đắt và không đảo ngược được (tạo tài khoản, ký hợp đồng) về sau.
+
+Đơn bị kẹt vẫn xảy ra trong thực tế:
 
 ```text
 Scenario: Application signed → LAS account creation fails
@@ -1151,13 +1123,9 @@ Monitoring:
   Weekly review: stuck application count + root cause
 ```
 
-### Dead Letter Queue: Xử lý Events không được Consume
+### Hàng đợi thư chết: khi sự kiện không được xử lý
 
-**Vấn đề:**
-
-LOS publish `origination.completed` event (RabbitMQ). Nhưng LAS subscriber của event này đang down trong 5 phút. Event có bị mất không?
-
-**RabbitMQ Dead Letter Queue pattern:**
+LOS phát sự kiện `origination.completed` qua RabbitMQ, nhưng bên nhận ở LAS đang ngừng 5 phút. Sự kiện có bị mất không?
 
 ```text
 Normal flow:
@@ -1175,7 +1143,7 @@ Nhưng: nếu LAS processes event và fails (exception):
   Ops team investigate → manual reprocess hoặc fix + replay
 ```
 
-**Implementation:**
+Hiện thực:
 
 ```java
 // verified: origination-flow.md (step 8)
@@ -1194,112 +1162,83 @@ Nhưng: nếu LAS processes event và fails (exception):
 // origination.completed is the final confirmation event
 ```
 
-:::summary[Failure Modes & Recovery]
-4 loại failure: transient, business, idempotency,
-partial completion - mỗi loại có recovery khác
-Timeout: Infinispan cache state → safe retry
-Saga compensation: late steps khó compensate hơn
-→ delay commitment points
-Dead Letter Queue: buffer events khi consumer down
-→ eventual processing, no data loss
+:::summary[Mục 7.6]
+Lỗi trong quy trình khởi tạo có năm loại, mỗi loại một cách khôi phục riêng. Timeout được xử lý bằng trạng thái trong Infinispan, nhờ đó thử lại an toàn. VLP chọn thất bại sớm thay vì saga bù trừ, kết hợp tác vụ đối soát và đội vận hành cho các đơn bị kẹt, và đặt các bước không đảo ngược ở cuối. Hàng đợi thư chết giữ lại sự kiện không xử lý được để điều tra và phát lại.
 :::
 
-## Tóm tắt chương 7
+## Tổng kết chương 7
+
+Bốn phút khởi tạo khoản vay của chị Lan:
 
 ```text
-4 phút origination của chị Lan, được engineer:
+10h15:00  Ứng dụng gửi đơn
+          LOS nhận → bắt đầu xử lý bất đồng bộ (cache Infinispan theo bước)
+          ADR lưu đơn vay
+          LOS trả 202 {processingId: "p123"}
 
-10h15:00 - App gửi request
-           LOS nhận → start async processing (Infinispan cache per step + REST calls to backends)
-           ADR tạo application record
-           LOS return 202 {processingId: "p123"}
+10h15:01  Bước 1: PTY.createApplicant() → ADR.storeApplication()
 
-10h15:01 - Sequential processing (async per step):
-           Step 1: PTY.createApplicant() → ADR.storeApplication()
+10h15:03  KYC:
+          Xác minh danh tính: PASS (độ tin cậy 97%)
+          Sàng lọc cấm vận: CLEAR
+          Tra cứu tín dụng: lịch sử sạch, 2 lần tra cứu trong 6 tháng
 
-10h15:03 - KYC verification:
-           Identity check PASS (score 97%)
-           Sanctions screening CLEAR
-           Credit bureau: score 420
+10h15:07  Chấm điểm:
+          Biến đầu vào → 420 điểm → hạng STANDARD
+          DTI: 7.7% < 40% → PASS
+          Quy tắc chính sách: PASS
 
-10h15:07 - Scoring pipeline:
-           Feature extraction → 420 points → PRIME tier
-           DTI check: 7.6% < 40% → PASS
-           Policy rules: all PASS
+10h15:10  Tính đề nghị vay:
+          QCE → LPS: 18%/năm, PMT 1,696,080 VNĐ/tháng, APR 19.94%
+          Phương án thay thế 24 tháng
 
-10h15:10 - Offer calculation:
-           QCE → LPS: 15%/năm, PMT 1,668,400 VNĐ/tháng
-           APR check: 16.8% < 20% rate_cap → PASS
-           Counter-offer alternatives generated
+10h17:00  Chị Lan xem đề nghị và đồng ý
+          DMS tạo hợp đồng
+          Ký điện tử bằng OTP và đối chiếu khuôn mặt
 
-10h17:00 - Chị Lan xem offer, chấp nhận
-           DMS generate contract document
-           E-signature với OTP + face match
+10h18:00  generateAgreement: SRT → CTS → LAS tạo tài khoản (CREATED)
 
-10h18:00 - generateAgreement: SRT → CTS → LAS creates account (status: CREATED)
-           Account exists but not yet ACTIVE
+10h19:00  signAgreement: AOS → RabbitMQ → SRT → CTS → LAS
+          LAS kích hoạt tài khoản: CREATED → ACTIVE
+          LOS phát origination.completed (RabbitMQ)
+          Thông báo: "Tài khoản đã kích hoạt, tiền đang được giải ngân"
 
-10h19:00 - signAgreement complete: AOS → RabbitMQ → SRT → CTS → LAS
-           LAS activates account: CREATED → ACTIVE
-           LOS publishes origination.completed (RabbitMQ)
-           Notification: "Account activated, tiền đang được giải ngân"
-
-10h19:04 - Done. 4 phút.
-           Không có downtime. Không có data loss.
-           Mọi step được audit. Mọi failure có recovery path.
+10h19:04  Hoàn tất.
 ```
+
+Bốn phút, và mỗi bước đều có dấu vết kiểm toán, mỗi kiểu lỗi đều có đường khôi phục. Tài khoản của chị Lan giờ thuộc về LAS; [Chương 8](/docs/system/ch08-account-management) mô tả nó sống thế nào trong suốt mười hai tháng tiếp theo.
 
 ## Câu hỏi tự kiểm tra
 
-**Loại 1 - Nhớ lại:**
-1. LOS dùng Infinispan cache thay vì database - tại sao? Infinispan TTL có ý nghĩa gì trong context này?
-2. Kể 4 lớp KYC verification. Mỗi lớp giải quyết vấn đề gì?
-3. QCE là gì? Tại sao tên "Quote Calculation Engine" dễ gây nhầm lẫn với "Application Scoring Queue"?
-4. Tại sao account có trạng thái CREATED trước ACTIVE - không phải tạo ra đã ACTIVE ngay?
+**Nhớ lại**
 
-**Loại 2 - Hiểu:**
-5. Tại sao LOS trả về 202 Accepted thay vì chờ toàn bộ workflow hoàn thành rồi mới trả lời? Điều này ảnh hưởng thế nào đến client-side implementation?
-6. VLP chọn fail-fast thay vì full saga compensation. Giải thích tại sao đây là practical choice - và những rủi ro nào vẫn còn tồn tại với approach này.
-7. Kafka producer trong LOS cấu hình `enable.idempotence: false`. Điều này có nghĩa gì? Consumer (LAS) phải handle như thế nào?
-8. QCE tồn tại giữa LOS và LPS vì lý do gì? Nếu LOS gọi LPS trực tiếp, điều gì xảy ra với separation of concerns?
+1. LOS dùng cache Infinispan thay vì cơ sở dữ liệu. Vì sao? Thời gian sống của cache có ý nghĩa gì trong bối cảnh này?
+2. Kể bốn lớp KYC. Mỗi lớp giải quyết vấn đề gì?
+3. QCE là gì? Vì sao nó là REST service chứ không phải hàng đợi thông điệp?
+4. Vì sao tài khoản có trạng thái `CREATED` trước `ACTIVE`, thay vì được tạo ra ở trạng thái `ACTIVE` ngay?
 
-**Loại 3 - Áp dụng:**
-9. Khách hàng nộp đơn vay 30 triệu trên app. Sau 2 phút, họ bấm lại "Nộp đơn" vì không thấy response (họ nghĩ đơn chưa được gửi). Thiết kế hệ thống để xử lý đúng kịch bản này - bao gồm: database schema, logic idempotency, và UX response.
+**Hiểu**
 
-10. Data Science team đề xuất deploy model mới (Gini tăng từ 0.52 lên 0.65). Thiết kế Champion/Challenger experiment:
-    - (a) Traffic allocation ban đầu và lý do
-    - (b) Metrics cần monitor và tần suất
-    - (c) Success criteria để promote Challenger lên Champion
-    - (d) Rollback criteria và process
-    - (e) Ước tính business impact khi promote hoàn toàn
+5. Vì sao LOS trả về `202 Accepted` thay vì chờ toàn bộ quy trình xong mới trả lời? Điều này ảnh hưởng thế nào tới cách viết ứng dụng phía khách hàng?
+6. VLP chọn thất bại sớm thay vì saga bù trừ đầy đủ. Vì sao đây là lựa chọn thực tế, và những rủi ro nào vẫn còn?
+7. Kafka producer của LOS cấu hình `enable.idempotence: false`. Điều này có nghĩa gì? Bên nhận (LAS) phải xử lý thế nào?
+8. Vì sao QCE đứng giữa LOS và LPS? Nếu LOS gọi thẳng LPS, việc phân tách trách nhiệm bị ảnh hưởng thế nào?
 
-**Loại 4 - Phân tích:**
-11. Công ty đang xem xét thay Zeebe bằng một approach đơn giản hơn: database-backed state machine (store workflow state trong PostgreSQL, dùng cron job để advance steps). Phân tích:
-    - (a) Benefits của approach đơn giản hơn
-    - (b) Failure modes mà approach này không handle tốt
-    - (c) Scale limitations khi portfolio tăng 10x
-    - (d) Khi nào approach đơn giản hơn là acceptable?
+**Áp dụng**
 
-12. Bạn phát hiện rằng trong 3 tháng qua, 0.3% applications đã bị "stuck" ở bước DOCUMENT_SIGNED nhưng account chưa được activated trong LAS - do event `origination.completed` bị lost. Thiết kế:
-    - (a) Root cause investigation process
-    - (b) Fix cho affected applications (không thể redo signing)
-    - (c) Preventive measure cho tương lai
-    - (d) Monitoring để phát hiện sớm trong tương lai
+9. Khách hàng nộp đơn vay 30 triệu trên ứng dụng. Sau 2 phút không thấy phản hồi, họ bấm "Nộp đơn" lần nữa vì nghĩ đơn chưa được gửi. Thiết kế hệ thống xử lý đúng tình huống này: lược đồ dữ liệu, logic idempotency và thông điệp trên giao diện.
+10. Đội khoa học dữ liệu đề xuất triển khai mô hình mới (Gini tăng từ 0.52 lên 0.65). Thiết kế thử nghiệm champion/challenger: (a) phân bổ lưu lượng ban đầu và lý do; (b) chỉ số cần theo dõi và tần suất; (c) tiêu chí thành công để thay mô hình cũ; (d) tiêu chí và quy trình quay lui; (e) ước tính tác động kinh doanh khi thay hoàn toàn.
+
+**Phân tích**
+
+11. Công ty cân nhắc thay kiến trúc controller kết hợp Infinispan bằng một máy trạng thái lưu trong PostgreSQL, với tác vụ định kỳ đẩy các đơn sang bước tiếp theo. Phân tích (a) lợi ích, (b) những kiểu lỗi cách làm này xử lý kém, (c) giới hạn khi số đơn tăng gấp 10, (d) khi nào cách làm này chấp nhận được.
+12. Bạn phát hiện trong 3 tháng qua, 0.3% đơn vay bị kẹt ở bước đã ký hợp đồng nhưng tài khoản chưa được kích hoạt trong LAS, vì sự kiện `origination.completed` bị mất. Thiết kế (a) quy trình điều tra nguyên nhân gốc, (b) cách xử lý các đơn bị ảnh hưởng (không thể bắt khách hàng ký lại), (c) biện pháp phòng ngừa, (d) cách giám sát để phát hiện sớm.
 
 ## Bài tập áp dụng
 
-**Bài 1 - Origination Flow Design:**
-Công ty tài chính muốn thêm sản phẩm mới: "Vay nhanh trong 60 giây" - target cho khách hàng returning (đã có account trước đó, lịch sử tốt). Maximum amount: 5,000,000 VNĐ.
+**Bài 1. Thiết kế quy trình "vay nhanh 60 giây".** Công ty muốn ra sản phẩm "vay nhanh trong 60 giây" cho khách hàng quay lại (đã có tài khoản, lịch sử tốt), số tiền tối đa 5,000,000 VNĐ. (a) Bước KYC nào có thể bỏ qua, và vì sao an toàn? (b) Cách chấm điểm nào phù hợp với khách hàng quay lại? (c) Quy trình ký hợp đồng có thể rút gọn thế nào mà vẫn đúng luật? (d) Liệt kê các bước theo thứ tự, xác định bước nào bất đồng bộ được, bước nào phải đồng bộ. (e) Những kiểu lỗi nào trở nên quan trọng hơn với một quy trình siêu nhanh?
 
-Redesign origination flow cho sản phẩm này:
-- (a) Những KYC steps nào có thể skip (và tại sao safe để skip)?
-- (b) Scoring approach nào phù hợp với returning customer?
-- (c) Agreement process có thể simplify như thế nào (legally)?
-- (d) Thiết kế workflow steps cho sản phẩm này: liệt kê các bước theo thứ tự, xác định bước nào có thể async, bước nào phải sync
-- (e) Failure modes nào trở nên quan trọng hơn với ultra-fast flow?
-
-**Bài 2 - Champion/Challenger Analysis:**
-Bạn có data sau sau 90 ngày chạy experiment:
+**Bài 2. Phân tích champion/challenger.** Sau 90 ngày thử nghiệm, bạn có dữ liệu:
 
 ```text
                     Champion (90%)    Challenger (10%)
@@ -1311,33 +1250,22 @@ Average score:          382               391
 Processing time:       180ms             220ms (+40ms)
 ```
 
-Portfolio: 50,000 applications/tháng, average loan 12 triệu, net margin 1.2 triệu/loan.
+Mỗi tháng có 50,000 đơn vay, khoản vay bình quân 12 triệu đồng, lợi nhuận ròng 1.2 triệu đồng mỗi khoản vay. (a) Tính tác động kinh tế ròng nếu thay hoàn toàn bằng challenger. (b) Thời gian xử lý tăng 40 ms ảnh hưởng thế nào tới trải nghiệm? Có phải vấn đề quyết định không? (c) Nếu là Product Manager, bạn có đề xuất thay mô hình không, với điều kiện gì? (d) Thiết kế kế hoạch triển khai dần nếu quyết định thay.
 
-(a) Tính net economic impact nếu promote Challenger toàn bộ
-(b) Processing time tăng 40ms - tác động đến user experience như thế nào? Có deal-breaker không?
-(c) Nếu bạn là Product Manager, bạn recommend promote hay không? Với điều kiện gì?
-(d) Thiết kế gradual rollout plan nếu decide promote
-
-**Bài 3 - Failure Recovery Engineering:**
-Kỹ sư Tuấn cần implement reconciliation job để detect và fix "stuck applications" - applications đã qua bước DOCUMENT_SIGNED nhưng LAS account chưa được activated sau 2 giờ.
-
-Thiết kế complete solution:
-- (a) Detection query: SQL/logic để identify stuck applications
-- (b) Verification: trước khi fix, cần verify gì để tránh fix những trường hợp đang processing bình thường?
-- (c) Fix logic: cần thực hiện gì để activate stuck accounts an toàn?
-- (d) Idempotency: job có thể chạy nhiều lần không gây hại?
-- (e) Alerting: khi nào cần alert human, khi nào auto-fix là safe?
-- (f) Metrics: track những gì để measure health của origination pipeline?
+**Bài 3. Tác vụ khôi phục đơn bị kẹt.** Kỹ sư Tuấn cần xây tác vụ đối soát phát hiện và xử lý đơn bị kẹt: đơn đã qua bước ký hợp đồng nhưng tài khoản LAS chưa được kích hoạt sau 2 giờ. (a) Logic phát hiện. (b) Cần kiểm tra gì trước khi xử lý, để không đụng vào những đơn đang được xử lý bình thường? (c) Logic xử lý để kích hoạt tài khoản an toàn. (d) Tác vụ chạy nhiều lần có gây hại không? (e) Khi nào cần báo cho người, khi nào tự xử lý là an toàn? (f) Theo dõi những chỉ số nào để đo sức khỏe của quy trình khởi tạo?
 
 ## Đọc thêm
 
-**Workflow và Process Engines:**
-- Reiter, B. (2021). *Practical Process Automation.* O'Reilly Media. - Covers Zeebe/Camunda và BPMN workflow design cho production systems.
+**Quy trình và process engine**
 
-**Credit Scoring:**
-- Anderson, R. (2007). *The Credit Scoring Toolkit.* Oxford University Press. - Comprehensive guide về scorecard development và deployment.
+- Ruecker, B. (2021). *Practical Process Automation.* O'Reilly Media. Về tự động hóa quy trình với Camunda và Zeebe, và khi nào nên hay không nên dùng process engine.
 
-**Distributed Systems Patterns:**
-- Richardson, C. (2018). *Microservices Patterns.* Manning Publications. - Chapters 4-6 về Saga pattern và compensating transactions - essential cho origination flow design.
+**Chấm điểm tín dụng**
 
-*Chương 8 sẽ đi vào trái tim của VLP - Account Management và Billing Engine. Đây là module phức tạp nhất và quan trọng nhất: nơi mọi giao dịch được xử lý, mọi khoản lãi được tính, và mọi thay đổi trạng thái được record. Sau chương 7, bạn hiểu cách account được tạo ra. Chương 8 sẽ giải thích cách nó hoạt động trong suốt vòng đời 12-36 tháng.*
+- Anderson, R. (2007). *The Credit Scoring Toolkit.* Oxford University Press. Hướng dẫn đầy đủ về xây dựng và triển khai thẻ điểm.
+
+**Mẫu thiết kế cho hệ thống phân tán**
+
+- Richardson, C. (2018). *Microservices Patterns.* Manning Publications. Chương 4 về saga và transaction bù trừ, nền tảng cho thiết kế quy trình khởi tạo.
+
+Chương 8 đi vào trái tim của VLP: quản lý tài khoản và billing engine, nơi mọi giao dịch được xử lý, mọi khoản lãi được tính và mọi thay đổi trạng thái được ghi lại. [Chương 8. Quản lý tài khoản và billing engine](/docs/system/ch08-account-management).
