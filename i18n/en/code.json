@@ -746,18 +746,6 @@
     "message": "Glossary",
     "description": "Sidebar and pagination label of an untranslated doc"
   },
-  "doc.label.products/ch03-product-design": {
-    "message": "3. Designing financial products",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.products/ch04-customer-journey": {
-    "message": "4. The customer journey",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.products/ch05-revenue-portfolio": {
-    "message": "5. Revenue model and portfolio management",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
   "doc.label.system/ch06-financial-system-architecture": {
     "message": "6. Financial system architecture",
     "description": "Sidebar and pagination label of an untranslated doc"
