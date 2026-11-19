@@ -1,0 +1,74 @@
+/**
+ * Copyright (c) Facebook, Inc. and its affiliates.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE file in the root directory of this source tree.
+ */
+
+.categoryLink {
+  overflow: hidden;
+}
+
+/*
+TODO merge this logic back in Infima?
+ */
+:global(.menu__link--sublist-caret)::after {
+  margin-left: var(--ifm-menu-link-padding-vertical);
+}
+
+.categoryLinkLabel {
+  flex: 1;
+  overflow: hidden;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* Part rows ("book-part" categories) */
+.part {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+.partBadge {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.9rem;
+  height: 1.9rem;
+  padding: 0 0.3rem;
+  border-radius: 7px;
+  border: 1px solid var(--book-rule);
+  background: var(--book-paper);
+  color: var(--book-muted);
+  font-family: var(--book-font-serif);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.partText {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.25;
+}
+.partTitle {
+  font-weight: 600;
+  color: var(--book-ink);
+}
+.partMeta {
+  font-size: 0.76rem;
+  color: var(--book-muted);
+  font-weight: 450;
+}
+:global(.menu__list-item:not(.menu__list-item--collapsed)) > :global(.menu__list-item-collapsible) .partBadge,
+:global(.menu__link--active) .partBadge {
+  background: var(--book-mint-50);
+  border-color: var(--book-mint-200);
+  color: var(--ifm-color-primary);
+}
