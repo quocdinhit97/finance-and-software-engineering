@@ -10,13 +10,15 @@ import isInternalUrl from '@docusaurus/isInternalUrl';
 import IconExternalLink from '@theme/Icon/ExternalLink';
 import type {Props} from '@theme/DocSidebarItem/Link';
 import {iconForDoc} from '../icons';
+import {localizedDocLabel} from '@site/src/lib/docLabel';
 import styles from './styles.module.css';
 
 /** "3. Thiết kế sản phẩm" → ["3", "Thiết kế sản phẩm"]; "Phụ lục A. …" / "Appendix A. …" → ["A", "…"]. */
 const NUMBERED = /^(?:(\d+)|(?:Phụ lục|Appendix)\s+([A-Z]))\.\s+(.+)$/;
 
 export default function DocSidebarItemLink({item, onItemClick, activePath, level, index, ...props}: Props): ReactNode {
-  const {href, label, className, autoAddBaseUrl} = item;
+  const {href, className, autoAddBaseUrl} = item;
+  const label = localizedDocLabel((item as {docId?: string}).docId, item.label);
   const isActive = isActiveSidebarItem(item, activePath);
   const isInternalLink = isInternalUrl(href);
   const Icon = iconForDoc((item as {docId?: string}).docId);
