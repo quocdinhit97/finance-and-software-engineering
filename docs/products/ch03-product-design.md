@@ -462,7 +462,7 @@ Tariff: STANDARD_2025  // illustrative — actual codes are short (e.g., "SVCFEE
   version: 4
   validFrom: 2025-01-01
   validTo: null  ← null trong DB → Java convert sang sentinel date
-                   (3000-01-01 cho AccountParameter, tùy entity — xem Phụ lục B)
+                   (3000-01-01 cho AccountParameter, tùy entity — xem Phụ lục A)
                    Ý nghĩa: tariff này còn hiệu lực không xác định
   feeComponents: [
     INTEREST_CASH_STANDARD_V2,  ← Rate có thể đã thay đổi
