@@ -733,29 +733,5 @@
   "sidebar.part.chapters": {
     "message": "Chapters {range}",
     "description": "Chapter range under a part title in the sidebar"
-  },
-  "doc.label.table-of-contents": {
-    "message": "Table of contents",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.introduction/preface": {
-    "message": "Preface",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.glossary/index": {
-    "message": "Glossary",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.appendices/a-architecture-reference": {
-    "message": "Appendix A. Reference architecture",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.appendices/c-math-reference": {
-    "message": "Appendix C. Financial formulas",
-    "description": "Sidebar and pagination label of an untranslated doc"
-  },
-  "doc.label.appendices/d-regulatory-reference": {
-    "message": "Appendix D. Regulatory reference",
-    "description": "Sidebar and pagination label of an untranslated doc"
   }
 }
